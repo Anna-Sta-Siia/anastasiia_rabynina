@@ -1,0 +1,80 @@
+.lapot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--tab-h, 56px);
+  text-decoration: none;
+  color: var(--text);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Внутренняя обёртка — на неё вешаем переворот/наклон/шаг */
+.wrap {
+  width: 100%;
+  height: 100%;
+  transform-origin: 78% 80%;          /* точка качания — в районе носка */
+  transition: transform 0.18s ease;
+}
+
+/* Картинка лаптя с прозрачным фоном */
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+}
+
+/* Надпись по центру */
+.label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0 8px;
+  font-weight: 700;
+  line-height: 1.15;
+  font-size: clamp(14px, calc(var(--tab-w, 180px) * 0.11), 22px);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Направление взгляда/шага */
+.dirRight .wrap { --flip: 1;  --dir: 1;  }
+.dirLeft  .wrap { --flip: -1; --dir: -1; }
+
+/* Базовые позы: слегка вверх (правая) и слегка вниз (левая) */
+.poseUp   .wrap { --tilt: -4deg; }   /* носок чуть приподнят */
+.poseDown .wrap { --tilt:  4deg; }   /* носок чуть опущен  */
+
+/* Итоговое состояние трансформации */
+.lapot .wrap { transform: scaleX(var(--flip)) rotate(var(--tilt)) translate(0,0); }
+
+/* Hover — мягкое покачивание вокруг базовой позы в текущую сторону */
+.lapot:hover .wrap { animation: wiggle 480ms ease-in-out; }
+
+/* Шаг при автопрокрутке/кликах — короткий и деликатный */
+.stepping .wrap { animation: step 460ms ease-in-out; }
+
+/* Ключевые кадры (учитывают направление и базовый наклон) */
+@keyframes wiggle {
+  0%,100% { transform: scaleX(var(--flip)) rotate(var(--tilt)) translate(0,0); }
+  25%     { transform: scaleX(var(--flip)) rotate(calc(var(--tilt) + 5deg * var(--dir))) translate(calc(1.5px * var(--dir)), -1px); }
+  50%     { transform: scaleX(var(--flip)) rotate(var(--tilt)) translate(0,0); }
+  75%     { transform: scaleX(var(--flip)) rotate(calc(var(--tilt) + 4deg * var(--dir))) translate(calc(1px * var(--dir)), -1px); }
+}
+
+@keyframes step {
+  0%   { transform: scaleX(var(--flip)) rotate(var(--tilt)) translate(0,0); }
+  30%  { transform: scaleX(var(--flip)) rotate(calc(var(--tilt) + 7deg * var(--dir))) translate(calc(3px * var(--dir)), -2px); }
+  60%  { transform: scaleX(var(--flip)) rotate(var(--tilt)) translate(0,0); }
+  100% { transform: scaleX(var(--flip)) rotate(var(--tilt)) translate(0,0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lapot:hover .wrap,
+  .stepping .wrap { animation: none !important; transition: none; }
+}
