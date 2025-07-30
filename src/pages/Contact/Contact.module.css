@@ -1,0 +1,32 @@
+.contact {
+  padding: var(--spacing-lg) var(--spacing);
+  max-width: 500px;
+  margin: 0 auto;
+}
+.contact h2 {
+  text-align: center;
+  margin-bottom: var(--spacing);
+}
+.contact .form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+.contact input,
+.contact textarea {
+  padding: var(--spacing-sm);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+.contact button {
+  padding: var(--spacing-sm) var(--spacing);
+  background: var(--green-main);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.contact button:hover {
+  opacity: 0.9;
+}

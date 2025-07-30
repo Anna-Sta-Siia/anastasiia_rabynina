@@ -1,0 +1,10 @@
+.footer {
+  background: var(--footer-bg);
+  color: var(--text);
+  text-align: center;
+  padding: var(--spacing);
+  font-size: 20px;
+}
+.footerbutton{
+  background-color: greenyellow;
+}

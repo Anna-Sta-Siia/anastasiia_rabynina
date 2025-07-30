@@ -1,0 +1,15 @@
+.services {
+  padding: var(--spacing-lg) var(--spacing);
+  text-align: center;
+}
+.services h2 {
+  margin-bottom: var(--spacing);
+}
+.services .list {
+  list-style: none;
+  padding: 0;
+}
+.services .list li {
+  margin: var(--spacing-sm) 0;
+  font-size: 1.1rem;
+}

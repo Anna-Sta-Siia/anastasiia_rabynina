@@ -1,0 +1,53 @@
+/* 1. Reset basique */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. Police globale */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+ /* shorthand background permet de tout combiner */
+  background: var(--bg-color) var(--bg-img) repeat center/150px;
+  color: var(--text);
+  line-height: 1.5;
+   overflow-x: hidden; 
+}
+
+/* 3. Variables par défaut (light mode) */
+:root {
+  /* Couleurs */
+  --green-main: #4caf50;
+  --cream:      #fff5e1;
+  --brown:      #a67c52;
+  --text:       #333333;
+
+  /* Fond clair + motif Gzhel */
+  --bg-color:   #ffffff;
+  --bg-img: url('./assets/images/gzhel-pattern.png');
+
+  /* Header / footer */
+  --header-bg:  var(--cream);
+  --footer-bg:  var(--brown);
+
+  /* Espacement */
+  --spacing:    1rem;
+}
+
+/* 4. Dark mode overrides */
+.dark {
+  --text:#333333;
+
+  /* Fond sombre + motif Khokhloma */
+  --bg-color:   #1e1e1e;
+  --bg-img: url('./assets/images/khokhloma-pattern.png');
+}
+
+/* 5. Utilitaires globales */
+.mt-1     { margin-top: var(--spacing); }
+.mx-auto  { margin-left: auto; margin-right: auto; }
+.text-center { text-align: center; }
+

@@ -1,0 +1,9 @@
+.CV {
+  padding: var(--spacing-lg) var(--spacing);
+  display: flex;
+}
+.text{display: flex;}
+.CV h2 {
+  margin-bottom: var(--spacing);
+  text-align: center;
+}

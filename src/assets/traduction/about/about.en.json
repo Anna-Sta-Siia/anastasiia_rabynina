@@ -1,0 +1,12 @@
+{
+  "title": "About me",
+  "paragraphs": [
+    "Hello! I'm Anastasia, a web integrator.",
+    "I love creating interfaces inspired by nature and Russian folklore.",
+    "You’ll find my projects, skills, and services here, and you’ll also be able to contact me via the form."
+  ],
+   "alt": {
+  "portrait": "Portrait of Anastasia Rabynina in the traditional russian style",
+  "medallionBack": "Medallion lid"
+}
+}

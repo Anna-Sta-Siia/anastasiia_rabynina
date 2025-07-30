@@ -1,0 +1,27 @@
+.formation {
+  padding: var(--spacing-lg) var(--spacing);
+}
+.formation h2 {
+  text-align: center;
+  margin-bottom: var(--spacing);
+}
+.formation .timeline {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.formation .timeline li {
+  display: flex;
+  gap: var(--spacing);
+  margin-bottom: var(--spacing);
+}
+.formation .year {
+  font-weight: bold;
+  color: var(--green-main);
+  width: 4rem;
+}
+.formation li div p {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+}
