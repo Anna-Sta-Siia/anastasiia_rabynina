@@ -1,18 +1,78 @@
 .petal {
-  display: block;
-  margin: 0.5rem 0;
-  padding: 0.6rem 1rem;
+  /* Remplit la largeur passée par le parent */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: var(--petal-h, 48px);   /* piloté depuis le parent */
+
+  /* Espace interne confortable et fluide */
+  padding-block: clamp(8px, 1.2vw, 14px);
+  padding-inline: clamp(12px, 1.6vw, 18px);
+  margin: 0;                          /* l’espacement vient du gap parent */
+
   background: var(--bg);
   color: var(--text);
   text-decoration: none;
-  border-radius: 40%   ;
-  border: 2px solid rgba(0,0,0,0.15);
+
+  /* 🌸 Forme “pétale” organique */
+  border-radius: 38% 62% 21% 79% / 60% 99% 1% 40%;
+  border: 2px solid rgba(0,0,0,0.12);
   box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-  transition: transform 0.2s, box-shadow 0.2s;
-  font-size: 24px;
-  width: fit-content;
+
+  /* Typo fluide basée sur la largeur réelle du pétale */
+  font-size: 16px; /* fallback */
+  font-size: clamp(14px, calc(var(--petal-w) * 0.10), 22px);
+  line-height: 1.25;
+  font-weight: 600;
+
+  /* gestion des libellés longs */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Micro inclinaison naturelle – contrôlée via une variable */
+  --r: 0deg;
+  transform: rotate(var(--r));
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+  will-change: transform;
 }
+
+/* Variantes de forme & micro-rotation pour un rendu “naturel” */
+.petal:nth-child(2n) {
+  border-radius: 46% 54% 33% 67% / 53% 78% 22% 47%;
+  --r: -0.6deg;
+}
+.petal:nth-child(3n) {
+  border-radius: 42% 58% 25% 75% / 66% 88% 12% 34%;
+  --r: 0.7deg;
+}
+.petal:nth-child(4n) {
+  border-radius: 50% 50% 36% 64% / 62% 94% 16% 44%;
+  --r: -0.4deg;
+}
+.petal:nth-child(5n) {
+  border-radius: 47% 53% 28% 72% / 70% 90% 10% 40%;
+  --r: 0.5deg;
+}
+
 .petal:hover {
-  transform: scale(1.05);
+  transform: rotate(var(--r)) scale(1.05);
   box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.petal:active {
+  transform: rotate(var(--r)) translateY(1px) scale(1.02);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.petal:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal { transition: none; }
+  .petal:hover, .petal:active { transform: rotate(var(--r)); }
 }

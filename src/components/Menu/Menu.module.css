@@ -18,20 +18,26 @@
 
 .slider {
   display: flex;
-  justify-content: space-evenly;
-  gap: 1.2em;
+  justify-content: center;
+  align-items: center;              /* évite l'impression “collé en bas” */
+  gap: var(--petal-gap, 16px);
   overflow: hidden;
   flex: 1;
   opacity: 1;
   transition: opacity 0.3s ease-in-out;
+  padding-block: 6px;               /* un peu d’air au-dessus/en dessous */
 }
 
-
-.slider::-webkit-scrollbar {
-  display: none;
+.fade {
+  opacity: 0.2;
 }
 
-.slider {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* Chaque enfant (racine de <Petal/>) occupe la largeur calculée en JS */
+.slider > * {
+  flex: 0 0 var(--petal-w, 160px);
+  max-width: var(--petal-w, 160px);
+  max-height: calc(var(--petal-h, 48px) + 12px);
 }
+
+.slider::-webkit-scrollbar { display: none; }
+.slider { scrollbar-width: none; -ms-overflow-style: none; }

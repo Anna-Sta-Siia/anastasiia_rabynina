@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { forwardRef } from 'react';
 import styles from './Petal.module.css';
 
-// ici on donne un nom à la fonction
+
 const Petal = forwardRef(function PetalComponent({ name, path, color }, ref) {
   const isExternal = path.startsWith('http');
   const style = { '--bg': color };
@@ -15,6 +15,7 @@ const Petal = forwardRef(function PetalComponent({ name, path, color }, ref) {
       rel="noopener noreferrer"
       className={styles.petal}
       style={style}
+      aria-label={name}
     >
       {name}
     </a>
@@ -24,6 +25,7 @@ const Petal = forwardRef(function PetalComponent({ name, path, color }, ref) {
       to={path}
       className={styles.petal}
       style={style}
+      aria-label={name}
     >
       {name}
     </Link>
