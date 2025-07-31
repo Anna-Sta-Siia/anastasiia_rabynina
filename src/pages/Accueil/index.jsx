@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { useUI } from '../../context/UIContext';
 
 import medallionBack from '../../assets/images/medaillon_back.webp';
@@ -22,39 +22,45 @@ export default function Accueil({ phase, onFinish }) {
 
   // 🔁 Détection responsive
   useEffect(() => {
-    function handleResize() {
-      setIsMobile(window.innerWidth <= 768);
-    }
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 🎬 Contrôle de l’animation
+  // 🎬 Lecture unique de l’anim
   useEffect(() => {
     const alreadyPlayed = sessionStorage.getItem('hasPlayedOnce') === 'true';
     setHasPlayedOnce(alreadyPlayed);
 
     if (phase === 'medallion' && !alreadyPlayed) {
-      setTimeout(() => setFlipped(true), 500);
-      setTimeout(() => {
+      const t1 = setTimeout(() => setFlipped(true), 500);
+      const t2 = setTimeout(() => {
         onFinish?.();
         setHasPlayedOnce(true);
         sessionStorage.setItem('hasPlayedOnce', 'true');
       }, 2500);
-    } else if (phase === 'medallion' && alreadyPlayed) {
-      onFinish?.(); // déjà joué — on enchaîne
+      return () => { clearTimeout(t1); clearTimeout(t2); };
     }
+    if (phase === 'medallion' && alreadyPlayed) onFinish?.();
   }, [phase, onFinish]);
 
-  // 🌀 Rotation adaptée à l’écran
+  // ✅ Осмысленные состояния анимации
+  const opened = flipped || hasPlayedOnce || phase === 'app';
   const animate = isMobile
-    ? { rotateX: flipped || hasPlayedOnce || phase === 'app' ? 180 : 0 }
-    : { rotateY: flipped || hasPlayedOnce || phase === 'app' ? -180 : 0 };
+    ? { rotateX: opened ? 180 : 0 }
+    : { rotateY: opened ? -180 : 0 };
+
+  // ✅ initial = 0 на нужной оси, чтобы не было «вспышки задника»
+  const initial = isMobile ? { rotateX: 0 } : { rotateY: 0 };
+
+  // ✅ Класс для выбора правильной оси в CSS (см. чек‑лист ниже)
+  const axisClass = isMobile ? styles.mobile : styles.desktop;
 
   return (
     <section className={styles.accueil}>
-      <motion.div
-        className={styles.medallion}
+      <Motion.div
+        className={`${styles.medallion} ${axisClass}`}
+        initial={initial}
         animate={animate}
         transition={{ duration: 1.8, ease: 'easeInOut' }}
       >
@@ -64,7 +70,8 @@ export default function Accueil({ phase, onFinish }) {
         <div className={styles.back}>
           <img src={portrait} alt={about.alt.portrait} />
         </div>
-      </motion.div>
+      </Motion.div>
+
       <About />
     </section>
   );

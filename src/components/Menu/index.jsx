@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUI } from '../../context/UIContext';
-import LapotImg from '../LapotImg';
+import Petal from '../Petal';
 import styles from './Menu.module.css';
 
 import menuEn from '../../assets/traduction/menu/menu.en.json';
@@ -10,13 +10,13 @@ import menuRu from '../../assets/traduction/menu/menu.ru.json';
 const labels = { en: menuEn, fr: menuFr, ru: menuRu };
 
 const items = [
-  { key: 'projects', path: '/projects' },
-  { key: 'services', path: '/services' },
-  { key: 'formation', path: '/formation' },
-  { key: 'contact', path: '/contact' },
-  { key: 'linkedin', path: 'https://www.linkedin.com/in/anastasia-rabynina-139992312/' },
-  { key: 'github', path: 'https://github.com/Anna-Sta-Siia' },
-  { key: 'cv', path: '/cv' }
+  { key: 'projects', path: '/projects', color: '#F8BBD0' },
+  { key: 'services', path: '/services', color: '#FFF9C4' },
+  { key: 'formation', path: '/formation', color: '#FFCC80' },
+  { key: 'contact', path: '/contact', color: '#B0BEC5' },
+  { key: 'linkedin', path: 'https://www.linkedin.com/in/anastasia-rabynina-139992312/', color: '#81D4FA' },
+  { key: 'github', path: 'https://github.com/Anna-Sta-Siia', color: '#D1C4E9' },
+  { key: 'cv', path: '/cv', color: '#bbf8c5' }
 ];
 
 export default function Menu() {
@@ -24,33 +24,26 @@ export default function Menu() {
   const translated = labels[language] || labels.en;
 
   const [index, setIndex] = useState(0);
-  const [fade, setFade] = useState(false);   // триггер «шажка»
+  const [fade, setFade] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
-  const [dir, setDir] = useState('right');   // 'left' | 'right'
 
   const sliderRef = useRef(null);
+  const petalRef = useRef(null); // pour mesurer un Petal
 
-  // параметры адаптации
-  const MIN_TAB = 150;
-  const MAX_TAB = 280;
-  const GAP = 14;
-
-  // автопрокрутка — по умолчанию вправо
+  // 🔄 défilement automatique
   useEffect(() => {
     const interval = setInterval(() => {
-      setDir('right');
       setFade(true);
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % items.length);
         setFade(false);
-      }, 240);
-    }, 4500);
+      }, 300);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // клики по стрелкам
+  // ↔️ gestion clics manuels
   const handleScroll = (direction) => {
-    setDir(direction);
     setFade(true);
     setTimeout(() => {
       setIndex((prev) =>
@@ -59,64 +52,46 @@ export default function Menu() {
           : (prev - 1 + items.length) % items.length
       );
       setFade(false);
-    }, 220);
+    }, 300);
   };
 
-  // расчёт количества и размеров (без дублей)
+  // calcule combien de pétales peuvent tenir dans le container
   useEffect(() => {
-    if (!sliderRef.current) return;
-    const el = sliderRef.current;
+    function updateVisibleCount() {
+      const containerWidth = sliderRef.current?.offsetWidth;
+      const petalWidth = petalRef.current?.offsetWidth;
 
-    const update = () => {
-      const W = el.clientWidth;
-      if (!W) return;
+      if (containerWidth && petalWidth) {
+        const count = Math.floor(containerWidth / petalWidth);
+        setVisibleCount(count || 1);
+      }
+    }
 
-      const countByMin = Math.floor((W + GAP) / (MIN_TAB + GAP));
-      const count = Math.max(1, Math.min(countByMin, items.length));
-      setVisibleCount(count);
-
-      const tabW = Math.min(MAX_TAB, Math.floor((W - GAP * (count - 1)) / count));
-      const tabH = Math.round(Math.max(46, Math.min(76, tabW * 0.36)));
-
-      el.style.setProperty('--tab-w', `${tabW}px`);
-      el.style.setProperty('--tab-h', `${tabH}px`);
-      el.style.setProperty('--tab-gap', `${GAP}px`);
-    };
-
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
   }, []);
 
   return (
     <div className={styles.wrapper}>
-      <button className={styles.arrow} onClick={() => handleScroll('left')} aria-label="Назад">◀</button>
-
-      <div
-        ref={sliderRef}
-        className={`${styles.slider} ${fade ? styles.fade : ''}`}
-        role="list"
-        aria-label="Главное меню"
-      >
-        {Array.from({ length: visibleCount }).map((_, i) => {
+      <button className={styles.arrow} onClick={() => handleScroll('left')}>◀</button>
+      
+      <div ref={sliderRef} className={`${styles.slider} ${fade ? styles.fade : ''}`}>
+        {Array(visibleCount).fill(0).map((_, i) => {
           const item = items[(index + i) % items.length];
-          const name = translated[item.key] || item.key;
-          const pose = ((index + i) % 2 === 0) ? 'up' : 'down'; // чередуем базовый наклон
           return (
-            <LapotImg
-              key={`${item.key}-${i}`}
-              name={name}
+            <Petal
+              ref={i === 0 ? petalRef : null} // juste le premier pour mesurer
+              key={item.key}
+              name={translated[item.key] || item.key}
               path={item.path}
-              dir={dir}        // направление шага/взгляда
-              pose={pose}      // базовый наклон
-              stepping={fade}  // короткий «шажок»
+              color={item.color}
             />
           );
         })}
       </div>
 
-      <button className={styles.arrow} onClick={() => handleScroll('right')} aria-label="Вперёд">▶</button>
+      <button className={styles.arrow} onClick={() => handleScroll('right')}>▶</button>
     </div>
   );
 }

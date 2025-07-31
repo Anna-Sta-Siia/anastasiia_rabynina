@@ -33,7 +33,7 @@ export default function App() {
   };
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       {phase === 'matryoshka' && <MatryoshkaLoader onComplete={handleMatryoshkaEnd} />}
 
       <AnimatePresence>

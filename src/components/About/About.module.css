@@ -1,36 +1,52 @@
-.about { width: 45%; 
-flex:1;
-    background-color: white;
-    aspect-ratio: 0.67;
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    position: relative;
-    right: 0;
-    z-index: 1;
-}
-.about h2{
+/* Ovale About : même taille que le médaillon */
+.about {
+  width: 45%;
+  aspect-ratio:0.67;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 0;
+  flex: 1 1;
+  overflow: hidden;
   text-align: center;
-  padding: 10% 0 3% 0;
-  font-weight: bold;
- font-family: var(--logo-font);
+  container-type: inline-size;
+  }
+/* typo fluide bornée (évite l’effet “rond”) */
+.about h2 {
+  font-family: var(--logo-font);
+  font-weight: 700;
+  margin:8%;
+    /* optionnel mais joli sur 2–3 lignes */
+  text-wrap: balance;
+  hyphens: manual; /* on évite les césures automatiques dans le titre */
 }
-.about p{
-  text-align: center;
-  padding: 4% 16% 0 16% ;
+.about p {
+  margin: 6%;
+  line-height: 1.5;
+   hyphens: auto;
+  -webkit-hyphens: auto;     /* Safari/iOS */
+  overflow-wrap: break-word;  /* casse proprement les très longs mots/URLs */
+  word-break: normal;         /* pas de cassures “sauvages” */
 }
+ .about h2 { font-size: clamp(28px, 7cqw, 44px); }
+  .about p  { font-size: clamp(17px, 5.5cqw, 40px); }
+
 
 .first::first-letter {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: 500;
   line-height: 1;
-  padding-top: 4px;
-  color: #8B0000; /* Rouge foncé impérial */
-  font-family: 'Marcellus', 'Georgia', serif; /* ou une fonte style cyrillique stylisée */
+  padding-top: 2px;
+  color: #8B0000;
+  font-family: 'Marcellus','Georgia',serif;
   text-shadow: 1px 1px 0 #300000;
 }
-/* Responsive */
+
+/* couture invisible (si besoin) */
 @media (max-width: 768px) {
-  .about{
-    width: 50%
-  }
+  .about {width: 100%;
+  margin-top: -150%;}
+  .about h2 { font-size: clamp(20px, 7.6vw, 44px); }   /* ~26.25px à 375px */
+.about p  { font-size: clamp(12px, 5.2vw, 80px); } /* ~19.5px à 375px, max relevé à 20 */
 }

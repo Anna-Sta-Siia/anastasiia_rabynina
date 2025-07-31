@@ -18,23 +18,20 @@
 
 .slider {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--tab-gap, 16px);
+  justify-content: space-evenly;
+  gap: 1.2em;
   overflow: hidden;
   flex: 1;
-  transition: opacity 0.25s ease-in-out;
-  padding-block: 6px;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
 }
 
-.fade { opacity: 0.25; }
 
-/* каждый ребёнок получает рассчитанную ширину */
-.slider > * {
-  flex: 0 0 var(--tab-w, 180px);
-  max-width: var(--tab-w, 180px);
-  max-height: calc(var(--tab-h, 54px) + 10px);
+.slider::-webkit-scrollbar {
+  display: none;
 }
 
-.slider::-webkit-scrollbar { display: none; }
-.slider { scrollbar-width: none; -ms-overflow-style: none; }
+.slider {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
