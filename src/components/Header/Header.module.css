@@ -13,22 +13,21 @@
   display: flex;
   flex-wrap: wrap;justify-content: center;align-items:center;gap: 5px;
 }
-.right button,
+
 .right select {
-  padding: 0.3rem; border-radius: 4px; border: 1px solid var(--text);
+  padding: 0.4rem 0.3rem; border-radius: 4px; border: 1px solid var(--text);
   background: var(--cream); cursor: pointer;
-}
-.right select { appearance: none; }
+  appearance: none;}
 .option{
-  font-size: 26px;
+  font-size: 20px;
   font-family: var(--logo-font);
 }
+
 .themeButton {
-  background: none;
-  border: none;
-  padding: 0;
-  margin-right: 10px;
-  cursor: pointer;
+  border: 1px solid;
+  border-radius: 4px;
+  background: var(--cream); cursor: pointer;
+  padding: 0 0.1rem;
 }
 
 .icon {

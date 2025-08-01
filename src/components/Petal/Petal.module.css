@@ -1,18 +1,32 @@
 .petal {
   display: block;
-  margin: 0.5rem 0;
   padding: 0.6rem 1rem;
+  margin: 0; 
   background: var(--bg);
   color: var(--text);
   text-decoration: none;
   border-radius: 40%   ;
   border: 2px solid rgba(0,0,0,0.15);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 3px 6px #00000026;
+  transition: transform 0.2s, box-shadow 0.8s;
   font-size: 24px;
   width: fit-content;
+  transition-property: transform, box-shadow, filter;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+  transition-delay: 0ms;
+  will-change: transform;
+  cursor: pointer;
+}  
+/* Desktop / souris : hover réel */
+@media (hover: hover) and (pointer: fine) {
+  .petal:hover { transform: scale(1.06); box-shadow: 0 10px 20px rgba(0,0,0,.15); }
 }
-.petal:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+
+/* Mobile / tactile : feedback au tap */
+@media (hover: none) and (pointer: coarse) {
+  .petal:active { transform: scale(1.04); filter: brightness(0.98); }
 }
+
+/* Clavier (accessibilité) partout */
+.petal:focus-visible { transform: scale(1.06); box-shadow: 0 10px 20px rgba(0,0,0,.15); }
