@@ -4,6 +4,7 @@
   position: relative;
   width: 100%;
   max-width: 100%;
+  z-index: 2;      
 }
 
 .arrow {
@@ -27,9 +28,11 @@
   transition: opacity 0.3s ease-in-out;
   pointer-events: auto;
   padding-inline: 6px;
+  cursor: grab;
+  user-select: none;
 }
 
-
+.slider.grabbing { cursor: grabbing; }
 .slider::-webkit-scrollbar {
   display: none;
 }

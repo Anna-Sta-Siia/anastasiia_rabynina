@@ -20,29 +20,29 @@ export default function Header() {
         </div>
       {/* Droite : contrôles */}
       <div className={styles.right}>
-        <select
-          value={language}
-          onChange={e => setLanguage(e.target.value)}
-          aria-label="Select language"
-          className={styles.option}
-        >
-          <option value="en">EN</option>
-          <option value="fr">FR</option>
-          <option value="ru">RU</option>
-        </select>
+  <select
+    value={language}
+    onChange={e => setLanguage(e.target.value)}
+    aria-label="Select language"
+    className={`${styles.control} ${styles.langSelect}`}   // <<< ici
+  >
+    <option value="en">EN</option>
+    <option value="fr">FR</option>
+    <option value="ru">RU</option>
+  </select>
 
-        <button
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          aria-label="Toggle theme"
-          className={styles.themeButton}
-        >
-          <img
-            src={theme === 'light' ? luna : solnyshko}
-            alt={theme === 'light' ? 'Moon icon' : 'Sun icon'}
-            className={styles.icon}
-          />
-        </button>
-      </div>
+  <button
+    onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+    aria-label="Toggle theme"
+    className={`${styles.control} ${styles.themeButton}`}   // <<< et ici
+  >
+    <img
+      src={theme === 'light' ? luna : solnyshko}
+      alt={theme === 'light' ? 'Moon icon' : 'Sun icon'}
+      className={styles.icon}
+    />
+  </button>
+</div>
       </div>
       {/* Centre : le slider de pétales */}
       <div className={styles.header_bottom}>

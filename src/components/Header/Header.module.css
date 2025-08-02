@@ -1,44 +1,68 @@
+:root { --ctrl-size: 38px; }           /* ajuste à 36/40 si tu préfères */
+
+@media (min-width: 768px) {
+  :root { --ctrl-size: 40px; }         /* un poil plus grand sur desktop */
+}
+
 .header {
   display: flex; justify-content: space-between; align-items: center;flex-direction: column;
   padding: var(--spacing); 
   background: var(--header-bg);
+  position: relative;z-index: 2;
 }
 .header_up{
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-between;
+  position: relative;
+  z-index: 1;
 }
-.right {
-  display: flex;
-  flex-wrap: wrap;justify-content: center;align-items:center;gap: 5px;
-}
+.right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 
-.right select {
-  padding: 0.4rem 0.3rem; border-radius: 4px; border: 1px solid var(--text);
-  background: var(--cream); cursor: pointer;
-  appearance: none;}
+
+.control {
+  box-sizing: border-box;
+  width: var(--ctrl-size);
+  height: var(--ctrl-size);
+  border: 1px solid var(--text);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--text);
+  font: 600 16px/1 var(--logo-font);   /* texte centré et lisible */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Effets communs */
+.control:hover { box-shadow: 0 2px 8px rgba(0,0,0,.15); transform: scale(1.03); }
+.control:active { transform: scale(0.98); }
+.control:focus { outline: none; }                    /* on remplace le focus par :focus-visible */
+.control:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+.langSelect { width: var(--ctrl-size); }
+
 .option{
   font-size: 20px;
   font-family: var(--logo-font);
 }
 
 .themeButton {
-  border: 1px solid;
-  border-radius: 4px;
-  background: var(--cream); cursor: pointer;
-  padding: 0 0.1rem;
+  padding: 0;                 /* pas de padding: on centre l'icône dans le carré */
+  background: var(--cream);
 }
 
 .icon {
-  width: 30px;
-  height: 30px;
-  transition: transform 0.3s ease;
+  width: calc(var(--ctrl-size) - 12px);
+  height: calc(var(--ctrl-size) - 12px);
+  transition: transform 1s ease-in-out;
 }
 
-.icon:hover {
-  transform: rotate(10deg) scale(1.1);
-}
+.themeButton:hover .icon { transform: rotate(360deg) scale(1.06) ; }
+
 .header_bottom {
   flex: 1 1 auto;
   display: flex;
@@ -46,4 +70,5 @@
   scroll-behavior: smooth;
   gap: 0.5rem;
   width: 100%;
+  padding-block: .25rem;
 }
