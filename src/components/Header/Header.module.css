@@ -14,8 +14,6 @@
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-between;
-  position: relative;
-  z-index: 1;
 }
 .right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 

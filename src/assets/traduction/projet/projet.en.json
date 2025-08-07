@@ -2,7 +2,7 @@
   {
     "id": "ohmyfood",
     "title": "OhMyFood",
-    "image": "ohmyfood.jpg",
+    "image": "images/ohmyfood.png",
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Mobile-first website listing gourmet restaurant menus with CSS animations.",
     "stack": ["HTML", "SASS", "Responsive", "Animations"],

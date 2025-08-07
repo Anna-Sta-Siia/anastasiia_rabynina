@@ -1,5 +1,7 @@
 import styles from './ProjetCard.module.css';
 
+
+
 export default function ProjetCard({ project }) {
   const {
     title,
@@ -8,6 +10,7 @@ export default function ProjetCard({ project }) {
     description,
     stack,
     competences,
+    color
   } = project;
 
   return (
@@ -15,12 +18,14 @@ export default function ProjetCard({ project }) {
       <div className={styles.inner}>
         {/* Face avant */}
         <div className={styles.front} style={{ backgroundColor: color }}>
-          <img
-            src={`/assets/images/projects/${image}`}
-            alt={`aperçu ${title}`}
-            className={styles.image}
-          />
-          <h3>{title}</h3>
+<h3>{title}</h3>
+<img
+  src={`${import.meta.env.BASE_URL}${image}`}
+  alt={`aperçu ${title}`}
+  className={styles.image}
+/>
+
+          
           <a href={link} target="_blank" rel="noopener noreferrer">
             Voir le site
           </a>
