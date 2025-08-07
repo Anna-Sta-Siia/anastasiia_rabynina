@@ -1,0 +1,10 @@
+{
+  "id": "ohmyfood",
+  "title": "OhMyFood",
+  "image": "ohmyfood.jpg",            
+  "link": "https://anna-sta-siia.github.io/Ohmyfood/",              
+  "description": "Brief court du projet",
+  "stack": ["HTML", "SASS", "CSS Animations"],
+  "competences": "Ce projet m’a permis de renforcer mes compétences en responsive design et animations CSS...",
+  "color":"#eaf7ec"
+}

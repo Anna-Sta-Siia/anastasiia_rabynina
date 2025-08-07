@@ -20,7 +20,7 @@
 .slider {
   display: flex;
   justify-content: space-evenly;
-  gap: 1.2em;
+  gap: 0.85em;
   overflow-x: hidden;
   overflow-y: visible;
   flex: 1;
@@ -28,11 +28,10 @@
   transition: opacity 0.3s ease-in-out;
   pointer-events: auto;
   padding-inline: 6px;
-  cursor: grab;
+  cursor: pointer;
   user-select: none;
 }
 
-.slider.grabbing { cursor: grabbing; }
 .slider::-webkit-scrollbar {
   display: none;
 }

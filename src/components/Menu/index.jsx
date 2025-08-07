@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUI } from '../../context/UIContext';
-import Petal from '../Petal';
+import Petal from '../Petal/PetalMenu'
 import styles from './Menu.module.css';
 
 import menuEn from '../../assets/traduction/menu/menu.en.json';

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { forwardRef } from 'react';
-import styles from './Petal.module.css';
+import styles from '../Petal.module.css';
 
 const Petal = forwardRef(function PetalComponent({ name, path, color }, ref) {
   const isExternal = path.startsWith('http');
