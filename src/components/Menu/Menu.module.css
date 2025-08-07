@@ -30,7 +30,6 @@
   padding-inline: 6px;
   cursor: grab;
   user-select: none;
-  touch-action: pan-y;    /* on garde le scroll vertical natif, on gère l’horizontal */
 }
 
 .slider.grabbing { cursor: grabbing; }

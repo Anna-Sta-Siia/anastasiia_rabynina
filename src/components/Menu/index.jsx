@@ -44,12 +44,6 @@ export default function Menu() {
   const FADE_MS = 400;     // durée du fondu
   const AUTO_MS = 6000;    // période souhaitée entre deux steps automatiques
   const RESUME_AFTER = 2000; // ← reprise 2s après avoir quitté le slider ou aprés le clicl manuel
-  
- // seuil de déclenchement d’un step quand on a glissé
-const DRAG_THRESHOLD = 60; // px
-
-// état du drag (pas dans le state React pour éviter les re-renders)
-const dragRef = useRef({ active: false, startX: 0, deltaX: 0, pointerId: null });
 
    function startAuto() {
   clearInterval(intervalRef.current);
@@ -147,60 +141,6 @@ function resumeAutoDelayed() {
   const canHover =
   typeof window !== 'undefined' &&
   window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-function onPointerDown(e) {
-  // on récupère la coordonnée X, souris ou touch
-  const x = e.clientX ?? e.touches?.[0]?.clientX;
-  if (x == null) return;
-
-  // on stoppe l’auto tout de suite
-  pauseAuto();
-
-  dragRef.current = {
-    active: true,
-    startX: x,
-    deltaX: 0,
-    pointerId: e.pointerId ?? null,
-  };
-
-  // petit feedback visuel
-  sliderRef.current.classList.add(styles.grabbing);
-  // capture du pointeur (si dispo) pour continuer à recevoir les events
-  sliderRef.current.setPointerCapture?.(dragRef.current.pointerId);
-}
-
-function onPointerMove(e) {
-  if (!dragRef.current.active) return;
-  const x = e.clientX ?? e.touches?.[0]?.clientX;
-  if (x == null) return;
-
-  dragRef.current.deltaX = x - dragRef.current.startX;
-
-  // suivi visuel : on décale légèrement la piste
-  sliderRef.current.style.transform = `translateX(${dragRef.current.deltaX}px)`;
-}
-
-function endDrag() {
-  if (!dragRef.current.active) return;
-
-  const { deltaX, pointerId } = dragRef.current;
-
-  // reset visuel
-  sliderRef.current.style.transform = '';
-  sliderRef.current.classList.remove(styles.grabbing);
-  if (pointerId != null) sliderRef.current.releasePointerCapture?.(pointerId);
-
-  dragRef.current.active = false;
-
-  // si on a suffisamment glissé, on déclenche un step
-  if (Math.abs(deltaX) > DRAG_THRESHOLD) {
-    const dir = deltaX < 0 ? +1 : -1; // glisser vers la gauche → suivant (+1)
-    step(dir);
-  }
-
-  // on reprogramme l’auto (comme pour le survol)
-  resumeAutoDelayed();
-}
-
 
   return (
     <div className={styles.wrapper}>
@@ -215,14 +155,11 @@ function endDrag() {
   onMouseEnter={canHover ? pauseAuto : undefined}
   onMouseLeave={canHover ? resumeAutoDelayed : undefined}
 
-  // 🖱️/👆 drag commun (souris + tactile)
-  onPointerDown={onPointerDown}
-  onPointerMove={onPointerMove}
-  onPointerUp={endDrag}
-  onPointerCancel={endDrag}
-  onPointerLeave={endDrag}
+  // 👆 Tactile / pointeur générique : arrêt au contact, reprise différée
+  onPointerDown={!canHover ? pauseAuto : undefined}
+  onPointerUp={!canHover ? resumeAutoDelayed : undefined}
 
-  // ⌨️ accessibilité (focus clavier)
+  // ⌨️ Clavier (accessibilité)
   onFocus={pauseAuto}
   onBlur={resumeAutoDelayed}
 >
