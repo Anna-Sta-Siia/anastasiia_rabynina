@@ -1,4 +1,5 @@
-import React from 'react';
+import PageTitle from '../../components/PageTitle';
+import { usePageMeta } from '../../config/hooks/usePageMeta'
 import styles from './Formation.module.css';
 
 const timeline = [
@@ -8,9 +9,10 @@ const timeline = [
 ];
 
 export default function Formation() {
+  const { label, color } = usePageMeta();
   return (
     <section className={styles.formation}>
-      <h2>Formation</h2>
+      <PageTitle text={label} color={color} />
       <ul className={styles.timeline}>
         {timeline.map(item => (
           <li key={item.year}>

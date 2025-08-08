@@ -1,14 +1,10 @@
 import { useForm } from 'react-hook-form';
 import styles from './Contact.module.css';
-import { useLocation } from 'react-router-dom';
 import PageTitle from '../../components/PageTitle';
-import menuItems from '../../config/menuConfig';
+import { usePageMeta } from '../../config/hooks/usePageMeta'
 
 export default function Contact() {
-    const location = useLocation();
-    const currentPath = location.pathname;
-    const pageData = menuItems.find(item => item.path === currentPath);
-    const color = pageData?.color || '#eee';
+  const { label, color } = usePageMeta();
   const { register, handleSubmit, reset } = useForm();
   const onSubmit = data => {
     console.log(data);
@@ -18,7 +14,7 @@ export default function Contact() {
 
   return (
     <section className={styles.contact}>
-      <PageTitle text="Projects" color={color} />
+       <PageTitle text={label} color={color} />
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <input {...register('name')} placeholder="Votre nom" required />
         <input {...register('email')} type="email" placeholder="Votre email" required />
