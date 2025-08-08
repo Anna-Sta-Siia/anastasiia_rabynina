@@ -1,4 +1,4 @@
-{
+[{
   "id": "ohmyfood",
   "title": "OhMyFood",
   "image": "images/ohmyfood.jpg",            
@@ -6,5 +6,6 @@
   "description": "Brief court du projet",
   "stack": ["HTML", "SASS", "CSS Animations"],
   "competences": "Ce projet m’a permis de renforcer mes compétences en responsive design et animations CSS...",
-  "color":"#eaf7ec"
+  "color":"#FF79DA"
 }
+]

@@ -33,3 +33,10 @@
   transform: scale(1.08);
   font-weight: bold;
 }
+.petal.active {
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.15), inset 0 0 0 3px #fff;
+  transform: scale(1.08);
+  font-weight: bold;
+  z-index: 1;
+}
+

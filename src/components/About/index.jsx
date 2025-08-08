@@ -1,8 +1,8 @@
-import { useUI } from '../../context/UIContext';
-import styles from './About.module.css';
+import { useUI } from '../../context';
 import aboutFr from '../../assets/traduction/about/about.fr.json';
 import aboutEn from '../../assets/traduction/about/about.en.json';
 import aboutRu from '../../assets/traduction/about/about.ru.json';
+import styles from './About.module.css'
 
 export default function About() {
   const { language } = useUI();

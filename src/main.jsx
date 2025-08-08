@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { UIProvider } from './context/UIContext';
+import { UIProvider } from './context'; 
 import App from './App.jsx';
 import './index.css';
 

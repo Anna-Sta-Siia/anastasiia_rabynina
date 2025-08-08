@@ -1,5 +1,5 @@
 import styles from './Footer.module.css';
-import { useUI } from '../../context/UIContext';
+import { useUI } from '../../context';
 import footerEn from '../../assets/traduction/footer/footer.en.json';
 import footerFr from '../../assets/traduction/footer/footer.fr.json';
 import footerRu from '../../assets/traduction/footer/footer.ru.json';

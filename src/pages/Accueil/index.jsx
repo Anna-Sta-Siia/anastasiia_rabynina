@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
-import { useUI } from '../../context/UIContext';
+import { useUI } from '../../context';
+
 
 import medallionBack from '../../assets/images/medaillon_back.webp';
 import portrait from '../../assets/images/AnastasiaGirard.png';
