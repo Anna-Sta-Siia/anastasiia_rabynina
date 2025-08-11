@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { useUI } from '../../context';
 import { useLocation, Link } from 'react-router-dom';
 import menuItems from '../../config/menuConfig';
@@ -7,19 +8,21 @@ import solnyshko from '../../assets/images/solnyshko.svg';
 import styles from './Header.module.css';
 import Menu from '../Menu';
 
-export default function Header() {
+const Header = forwardRef(function Header({ className = '', style }, ref) {
   const { theme, setTheme, language, setLanguage } = useUI();
   const location = useLocation();
   const currentPath = location.pathname;
 
   const logoText = language === 'ru' ? 'Анастасия Р. ' : 'Anastasia R.';
-
-  // Trouver la couleur de fond de la page active
   const matched = menuItems.find(item => item.path === currentPath);
-  const bgColor = matched?.color || '#FFFFFF'; // fallback
+  const bgColor = matched?.color || '#FFFFFF';
 
   return (
-    <header className={styles.header} style={{ backgroundColor: bgColor }}>
+    <header
+      ref={ref}
+      className={`${styles.header} ${className}`}
+      style={{ backgroundColor: bgColor, ...style }}
+    >
       <div className={styles.header_up}>
         {/* Gauche : logo */}
         <div className={styles.left}>
@@ -61,4 +64,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+});
+
+export default Header;

@@ -1,4 +1,5 @@
 const menuItems = [
+  { key: 'accueil', path: '/', color: '#fff5e1' },
   { key: 'projects', path: '/projects', color: '#F8BBD0' },
   { key: 'services', path: '/services', color: '#FFF9C4' },
   { key: 'formation', path: '/formation', color: '#FFCC80' },

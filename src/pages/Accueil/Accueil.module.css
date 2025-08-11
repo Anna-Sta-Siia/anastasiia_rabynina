@@ -1,4 +1,3 @@
-/* ===== Conteneur : une mesure commune ===== */
 .accueil {
   display: flex;
   justify-content: center;
@@ -6,20 +5,22 @@
   padding: 2rem 1rem 3rem;
   box-sizing: border-box;
   position: relative;
-  perspective: 1200px;                  /* la 3D se fait ici */
+  perspective: 1200px;
+  height: calc(100dvh - var(--header-h,96px) - var(--footer-h,64px));
+  max-width: 1240px;    
+  height: 100%;        
 }
 
 /* ===== Médaillon (portrait) ===== */
 .medallion {
-  width:45%;
+  height: 100%;
   aspect-ratio: 0.67;
   position: relative;
   transform-style: preserve-3d;
   z-index: 1;
   flex: 1 1;     
   left:50%; 
-  transform-origin: left center;  
-  perspective: 1000px;          
+  transform-origin: left center;          
 }
 
 /* Faces */

@@ -1,7 +1,7 @@
 [{
   "id": "ohmyfood",
   "title": "OhMyFood",
-  "image": "images/ohmyfood.jpg",            
+  "image": "images/ohmyfood.png",            
   "link": "https://anna-sta-siia.github.io/Ohmyfood/",              
   "description": "Brief court du projet",
   "stack": ["HTML", "SASS", "CSS Animations"],

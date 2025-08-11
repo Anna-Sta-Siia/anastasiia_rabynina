@@ -1,16 +1,16 @@
 /* Ovale About : même taille que le médaillon */
 .about {
-  width: 45%;
-  aspect-ratio:0.67;
+  flex:1 1;
+  aspect-ratio: 2 / 3;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   position: relative;
   z-index: 0;
-  flex: 1 1;
   overflow: hidden;
   text-align: center;
   container-type: inline-size;
+  height: 100%;
   }
 /* typo fluide bornée (évite l’effet “rond”) */
 .about h2 {
