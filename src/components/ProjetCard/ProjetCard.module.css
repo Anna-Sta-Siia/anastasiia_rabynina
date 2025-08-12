@@ -21,26 +21,35 @@
 
 .front, .back {
   position: absolute;
+  display: flex;
   width: 100%;
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
   padding: 1rem;
-  backface-visibility: hidden;
+  backface-visibility: hidden; 
+  flex-direction: column;
 }
 
 .front {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   z-index: 2;
   gap: 10px;;
 }
+/* ProjetCard.module.css */
+.titleLogo {
+  height: clamp(28px, 4cqw, 44px);
+  max-width: 90%;
+  object-fit: contain;
+  display: block;
+  margin: 20px auto;
+}
+.title { margin: 8px 0 12px; }
 
 .back {
   background: white;
   transform: rotateY(180deg);
   text-align: left;
+  gap:15px;
 }
 
 .image {
@@ -49,7 +58,12 @@
   height: 70%;
   object-position: bottom;
 }
-
+.projectcardbottom{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 .arrowContainer {
   display: flex;
   justify-content: center;
@@ -79,3 +93,5 @@
 .flipBack {
   transform: rotateY(180deg);
 }
+
+

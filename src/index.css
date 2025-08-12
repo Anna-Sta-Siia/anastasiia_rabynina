@@ -50,6 +50,11 @@ body {
 .mt-1     { margin-top: var(--spacing); }
 .mx-auto  { margin-left: auto; margin-right: auto; }
 .text-center { text-align: center; }
+/* 6.Les liens */
+a, Link{
+  text-decoration: none;
+  font-weight: 600;
+}
 
 /* --- Firefox --- */
 html {

@@ -1,5 +1,6 @@
 {
   "all": "Tous",
-  "clear": "Réinitialiser",
-  "search": "Rechercher un projet…"
+  "search": "Rechercher un projet…",
+  "sortAZ": "A→Z",
+  "sortZA": "Z→A"
 }

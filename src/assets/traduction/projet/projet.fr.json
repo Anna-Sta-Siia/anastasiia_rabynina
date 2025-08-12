@@ -1,11 +1,12 @@
 [{
   "id": "ohmyfood",
   "title": "OhMyFood",
-  "image": "images/ohmyfood.png",            
+   "titleLogo": "images/logos/ohmyfood.svg",
+  "image": "images/ohmyfood.png",           
   "link": "https://anna-sta-siia.github.io/Ohmyfood/",              
-  "description": "Brief court du projet",
+  "description": "Site « mobile-first » qui répertorie des menus de restaurants gastronomiques avec des animations CSS.",
   "stack": ["HTML", "SASS", "CSS Animations"],
   "competences": "Ce projet m’a permis de renforcer mes compétences en responsive design et animations CSS...",
-  "color":"#FF79DA"
+  "color": "linear-gradient(90deg, #FF79DA, #9356DC)"
 }
 ]

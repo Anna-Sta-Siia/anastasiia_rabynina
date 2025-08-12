@@ -1,7 +1,79 @@
+/* src/components/Filter/Filter.module.css */
+
 .filterBar {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0 24px;
+}
+
+/* Rangée 1 — bulles */
+.pillsRow {
+  display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: 10px 14px;
+  align-items: center;
+}
+
+/* Rangée 2 — recherche + tri */
+.toolsRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Barre de recherche plus courte */
+.search {
+  width: clamp(220px, 40vw, 420px); /* plus courte sur desktop */
+  padding: 10px 14px;
+  border: 1px solid #d0d0d0;
+  border-radius: 999px;
+  font-size: 16px;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 1px 0 #0000000d;
+}
+
+.search::placeholder {
+  color: #8c8c8c;
+}
+
+/* Tri */
+.sortBtns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sortBtns > button {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 #0000000d;
+  transition: background .15s ease, color .15s ease, border-color .15s ease,
+              transform .12s ease;
+}
+.sortBtns > button:hover { transform: translateY(-1px); }
+.sortBtns > button:focus-visible {
+  outline: 2px solid var(--link, #6aa0ff);
+  outline-offset: 2px;
+}
+.activeBtn {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/* Mobile : on laisse respirer, la search peut s’étendre */
+@media (max-width: 768px) {
+  .toolsRow {
+    gap: 8px;
+  }
+  .search {
+    width: min(100%, 420px);
+  }
 }

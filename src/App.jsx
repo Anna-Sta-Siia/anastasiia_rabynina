@@ -8,7 +8,7 @@ import Layout from './components/Layout';
 import Accueil from './pages/Accueil';
 import Projects from './pages/Projects';
 import Services from './pages/Services';
-import Formation from './pages/Formation';
+import Competences from './pages/Competences';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import CV from './pages/CV';
@@ -48,7 +48,7 @@ export default function App() {
                 <Route index element={<Accueil phase={phase} onFinish={handleMedallionEnd} />} />
                 <Route path="projects" element={<Projects />} />
                 <Route path="services" element={<Services />} />
-                <Route path="formation" element={<Formation />} />
+                <Route path="skills" element={<Competences />} />
                 <Route path="contact" element={<Contact />} />
                 <Route path="cv" element={<CV />} />
                 <Route path="*" element={<NotFound />} />

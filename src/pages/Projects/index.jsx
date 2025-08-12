@@ -1,3 +1,4 @@
+// src/pages/Projects/index.jsx
 import styles from './Projects.module.css';
 import Filter from '../../components/Filter';
 import ProjetCard from '../../components/ProjetCard';
@@ -14,9 +15,10 @@ export default function Projects() {
   const { label, color } = usePageMeta();
   const { language } = useUI();
 
-  const [activeFilters, setActiveFilters] = useState([]);
+  // Nouvel état combiné : filtres + recherche + tri
+  const [query, setQuery] = useState({ filters: [], search: '', sort: '' });
 
-  // choisir le dataset par langue
+  // Choisir le dataset par langue
   const allProjects = useMemo(() => {
     switch (language) {
       case 'en': return projectsEn;
@@ -25,19 +27,54 @@ export default function Projects() {
     }
   }, [language]);
 
-  // filtrage par clés de stack
+  // Normalisation pour recherche (insensible à la casse/accents)
+  const norm = (s = '') =>
+    s.toLowerCase()
+     .normalize('NFD')
+     .replace(/\p{Diacritic}/gu, '');
+
+  // Filtrage + recherche + tri
   const filteredProjects = useMemo(() => {
-    if (!activeFilters.length) return allProjects;
-    return allProjects.filter(project =>
-      activeFilters.every(f => project.stack.includes(f))
-    );
-  }, [activeFilters, allProjects]);
+    const { filters, search, sort } = query;
+    let list = allProjects;
+
+    // 1) filtres par stack (ET logique)
+    if (filters.length) {
+      list = list.filter(p => filters.every(f => p.stack.includes(f)));
+    }
+
+    // 2) recherche par titre
+    if (search.trim()) {
+      const q = norm(search);
+      list = list.filter(p => norm(p.title).includes(q));
+    }
+
+    // 3) tri A→Z / Z→A (locale-aware)
+    if (sort === 'az') {
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title, language));
+    } else if (sort === 'za') {
+      list = [...list].sort((a, b) => b.title.localeCompare(a.title, language));
+    }
+
+    return list;
+  }, [query, allProjects, language]);
+
+  // Compatibilité avec l’ancienne version du <Filter />
+  function handleFilterChange(payload) {
+    if (Array.isArray(payload)) {
+      // Ancienne signature: on ne recevait que les filtres
+      setQuery(prev => ({ ...prev, filters: payload }));
+    } else {
+      // Nouvelle signature: { filters, search, sort }
+      setQuery(payload);
+    }
+  }
 
   return (
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
 
-      <Filter onChange={setActiveFilters} />
+      <Filter onChange={handleFilterChange} />
 
       <div className={styles.grid}>
         {filteredProjects.map(project => (

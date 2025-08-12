@@ -1,5 +1,6 @@
 {
   "all": "All",
-  "clear": "Clear filters",
-  "search": "Search projects…"
+  "search": "Search projects…",
+  "sortAZ": "A→Z",
+  "sortZA": "Z→A"
 }

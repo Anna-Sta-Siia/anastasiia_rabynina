@@ -1,81 +1,107 @@
-import { useMemo, useState } from 'react';
+// src/components/Filter/index.jsx
+import { useState, useMemo } from 'react';
 import { useUI } from '../../context';
-import base from '../../assets/traduction/filters/filters.base.json';
-
-import labelsFr from '../../assets/traduction/filters/filters.fr.json';
-import labelsEn from '../../assets/traduction/filters/filters.en.json';
-import labelsRu from '../../assets/traduction/filters/filters.ru.json';
-
-import uiFr from '../../assets/traduction/filters/ui.fr.json';
-import uiEn from '../../assets/traduction/filters/ui.en.json';
-import uiRu from '../../assets/traduction/filters/ui.ru.json';
-
 import PetalFilter from '../Petal/PetalFilter';
 import styles from './Filter.module.css';
 
+import baseFilters from '../../assets/traduction/filters/filters.base.json';
+import labelsFR from '../../assets/traduction/filters/filters.fr.json';
+import labelsEN from '../../assets/traduction/filters/filters.en.json';
+import labelsRU from '../../assets/traduction/filters/filters.ru.json';
+import uiFR from '../../assets/traduction/filters/ui.fr.json';
+import uiEN from '../../assets/traduction/filters/ui.en.json';
+import uiRU from '../../assets/traduction/filters/ui.ru.json';
+
 export default function Filter({ onChange }) {
   const { language } = useUI();
+  const [selected, setSelected] = useState([]);
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState(''); // '', 'az', 'za'
 
-  const labels = useMemo(() => {
-    switch (language) {
-      case 'en': return labelsEn;
-      case 'ru': return labelsRu;
-      default:   return labelsFr;
-    }
-  }, [language]);
-
-  const ui = useMemo(() => {
-    switch (language) {
-      case 'en': return uiEn;
-      case 'ru': return uiRu;
-      default:   return uiFr;
-    }
-  }, [language]);
-
-  // fusion méta (key,color) + libellé traduit
-  const pills = useMemo(
-    () => base.map(t => ({ ...t, label: labels[t.key] ?? t.key })),
-    [labels]
+  const labelsMap = useMemo(
+    () => ({ fr: labelsFR, en: labelsEN, ru: labelsRU }[language] || labelsEN),
+    [language]
+  );
+  const ui = useMemo(
+    () => ({ fr: uiFR, en: uiEN, ru: uiRU }[language] || uiEN),
+    [language]
   );
 
-  const [selected, setSelected] = useState([]);
+  const items = useMemo(
+    () => baseFilters.map(f => ({ ...f, label: labelsMap[f.key] ?? f.key })),
+    [labelsMap]
+  );
 
-  const toggle = (key) => {
-    setSelected(prev => {
-      const next = prev.includes(key)
-        ? prev.filter(k => k !== key)
-        : [...prev, key];
-      onChange?.(next);
-      return next;
-    });
-  };
+  function pushChange(nextSelected = selected, nextSearch = search, nextSort = sort) {
+    onChange?.({ filters: nextSelected, search: nextSearch, sort: nextSort });
+  }
 
-  const resetAll = () => {
+  function toggle(key) {
+    const next = selected.includes(key)
+      ? selected.filter(k => k !== key)
+      : [...selected, key];
+    setSelected(next);
+    pushChange(next);
+  }
+
+  function clearAll() {
     setSelected([]);
-    onChange?.([]); // [] = tous les projets
-  };
+    setSearch('');
+    setSort('');
+    onChange?.({ filters: [], search: '', sort: '' });
+  }
 
   return (
     <div className={styles.filterBar}>
-      {/* Bouton "Tous" */}
-      <PetalFilter
-        key="_ALL_"
-        name={ui.all}
-        color="#e0e0e0"
-        active={selected.length === 0}
-        onClick={resetAll}
-      />
-
-      {/* Pills techniques & méthodes */}
-      {pills.map(({ key, label, color }) => (
+      {/* 1) RANGÉE DES FILTRES : “Tous” + bulles colorées */}
+      <div className={styles.pillsRow}>
         <PetalFilter
-          key={key}
-          name={label}
-          color={color}
-          active={selected.includes(key)}
-          onClick={() => toggle(key)}
+          name={ui.all}
+          color="#ddd"
+          active={!selected.length}
+          onClick={clearAll}
         />
-      ))}
+        {items.map(({ key, color, label }) => (
+          <PetalFilter
+            key={key}
+            name={label}
+            color={color}
+            active={selected.includes(key)}
+            onClick={() => toggle(key)}
+          />
+        ))}
+      </div>
+
+      {/* 2) RANGÉE OUTILS : recherche + tri */}
+      <div className={styles.toolsRow}>
+        <input
+          className={styles.search}
+          type="search"
+          placeholder={ui.search}
+          value={search}
+          onChange={(e) => {
+            const v = e.target.value;
+            setSearch(v);
+            pushChange(selected, v);
+          }}
+        />
+        <div className={styles.sortBtns}>
+          <button
+            type="button"
+            className={sort === 'az' ? styles.activeBtn : ''}
+            onClick={() => { setSort('az'); pushChange(selected, search, 'az'); }}
+          >
+            {ui.sortAZ}
+          </button>
+          <button
+            type="button"
+            className={sort === 'za' ? styles.activeBtn : ''}
+            onClick={() => { setSort('za'); pushChange(selected, search, 'za'); }}
+          >
+            {ui.sortZA}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
