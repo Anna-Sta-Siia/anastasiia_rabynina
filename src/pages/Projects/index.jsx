@@ -4,36 +4,32 @@ import ProjetCard from '../../components/ProjetCard';
 import { useState, useMemo } from 'react';
 import { useUI } from '../../context';
 import PageTitle from '../../components/PageTitle';
-import { usePageMeta } from '../../config/hooks/usePageMeta'
+import { usePageMeta } from '../../config/hooks/usePageMeta';
 
 import projectsFr from '../../assets/traduction/projet/projet.fr.json';
 import projectsEn from '../../assets/traduction/projet/projet.en.json';
 import projectsRu from '../../assets/traduction/projet/projet.ru.json';
 
 export default function Projects() {
- const { label, color } = usePageMeta();
+  const { label, color } = usePageMeta();
+  const { language } = useUI();
 
   const [activeFilters, setActiveFilters] = useState([]);
-  const { language } = useUI(); // <<< DOIT être à l'intérieur du composant
 
-  // 🌍 Sélectionne le bon fichier de projets selon la langue
+  // choisir le dataset par langue
   const allProjects = useMemo(() => {
     switch (language) {
-      case 'en':
-        return projectsEn;
-      case 'ru':
-        return projectsRu;
-      default:
-        return projectsFr;
+      case 'en': return projectsEn;
+      case 'ru': return projectsRu;
+      default:   return projectsFr;
     }
   }, [language]);
 
-  // 🔎 Applique le filtre actif aux projets
+  // filtrage par clés de stack
   const filteredProjects = useMemo(() => {
-    if (activeFilters.length === 0) return allProjects;
-
+    if (!activeFilters.length) return allProjects;
     return allProjects.filter(project =>
-      activeFilters.every(filter => project.stack.includes(filter))
+      activeFilters.every(f => project.stack.includes(f))
     );
   }, [activeFilters, allProjects]);
 

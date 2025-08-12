@@ -1,6 +1,6 @@
-// src/hooks/usePageMeta.js
+// src/config/hooks/usePageMeta.js
 import { useLocation } from 'react-router-dom';
-import { useUI } from '../../context'
+import { useUI } from '../../context';
 import menuItems from '../menuConfig';
 
 import menuEn from '../../assets/traduction/menu/menu.en.json';
@@ -13,13 +13,21 @@ export function usePageMeta() {
   const { pathname } = useLocation();
   const { language } = useUI();
 
-  const current = menuItems.find(item =>
-    !item.path.startsWith('http') && pathname.startsWith(item.path)
-  );
+  // Ne garder que les routes internes
+  const routeItems = menuItems.filter(it => typeof it.path === 'string' && it.path.startsWith('/'));
 
-  const key = current?.key;
-  const color = current?.color || '#eee';
-  const label = labels[language]?.[key] || key || '...';
+  // ====> le plus long préfixe gagnant
+  const current =
+    routeItems
+      .slice()
+      .sort((a, b) => b.path.length - a.path.length)
+      .find(it => pathname === it.path || pathname.startsWith(`${it.path}/`))
+    || routeItems.find(it => it.path === '/')
+    || routeItems[0];
+
+  const key   = current?.key ?? 'accueil';
+  const color = current?.color ?? '#eee';
+  const label = labels[language]?.[key] || key;
 
   return { key, color, label };
 }

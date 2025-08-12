@@ -1,0 +1,12 @@
+[
+  { "key": "HTML",  "color": "#e34c26" },
+  { "key": "CSS",   "color": "#2965f1" },
+  { "key": "JS",    "color": "#f7df1e" },
+  { "key": "React", "color": "#61dafb" },
+  { "key": "API",   "color": "#008094" },
+  { "key": "RTK",   "color": "#764abc" },
+
+  { "key": "SASS",  "color": "#cd6799" },
+  { "key": "SEO",   "color": "#ffb74d" }
+
+]
