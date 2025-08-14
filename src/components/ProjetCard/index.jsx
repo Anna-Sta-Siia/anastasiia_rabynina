@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useUI } from "../../context";
 import menuItems from "../../config/menuConfig";
@@ -51,6 +51,7 @@ export default function ProjetCard({ project }) {
   const skillsPath = skillsItem?.path || "/formation";
 
   const {
+    id,
     title,
     titleLogo,
     titleLogoAlt,              // <- alt localisé pour le logo (optionnel)
@@ -77,6 +78,31 @@ export default function ProjetCard({ project }) {
   }, [imageEffect]);
 
   const [isFlipped, setIsFlipped] = useState(false);
+ // --- CLAMP + MODAL ---
+  const descRef = useRef(null);
+  const [isOverflow, setIsOverflow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  // вычисляем факт переполнения (scrollHeight > clientHeight)
+  const measureOverflow = () => {
+    const el = descRef.current;
+    if (!el) return;
+    setIsOverflow(el.scrollHeight - 1 > el.clientHeight); // -1 для надёжности
+  };
+   useEffect(() => {
+    measureOverflow();
+    const onResize = () => measureOverflow();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [language, description]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') setShowModal(false);
+    };
+    if (showModal) window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showModal]);
 
   return (
     <div className={styles.card}>
@@ -146,7 +172,23 @@ export default function ProjetCard({ project }) {
         {/* ---------- FACE ARRIÈRE ---------- */}
         <div className={styles.back} style={{ background: color }}>
           <h4 className={styles.descriptiontitle}>{ui.preview}</h4>
-          <p className={styles.description}>{description}</p>
+           {/* Контейнер фиксированной высоты с line-clamp */}
+          <div className={styles.descBox} ref={descRef} aria-live="polite">
+            {description}
+          </div>
+
+          {/* Кнопка Voir plus при переполнении */}
+          {isOverflow && (
+            <button
+              type="button"
+              className={styles.seeMoreBtn}
+              onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+              aria-haspopup="dialog"
+              aria-expanded={showModal ? 'true' : 'false'}
+            >
+              {ui.seeMore}…
+            </button>
+          )}
 
           {!!stack.length && (
             <>
@@ -158,7 +200,6 @@ export default function ProjetCard({ project }) {
               </ul>
             </>
           )}
-
           <div className={styles.projectcardbottom}>
             <div className={styles.skillsCta}>
               <Link
@@ -190,6 +231,35 @@ export default function ProjetCard({ project }) {
           </div>
         </div>
       </div>
+  
+     {/* MODAL с полным описанием */}
+      {showModal && (
+        <div
+          className={styles.modalOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`desc-title-${id || title}`}
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className={styles.modal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id={`desc-title-${id || title}`} className={styles.modalTitle}>
+              {title} — {ui.preview}
+            </h3>
+            <p className={styles.modalText}>{description}</p>
+            <button
+              type="button"
+              className={styles.modalClose}
+              onClick={() => setShowModal(false)}
+            >
+              {ui.close}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
