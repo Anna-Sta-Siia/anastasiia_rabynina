@@ -5,6 +5,7 @@
   flex-direction: column;
   gap: 12px;
   margin: 12px 0 24px;
+  align-items: center;
 }
 
 /* Rangée 1 — bulles */

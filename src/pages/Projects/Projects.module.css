@@ -1,11 +1,7 @@
 .projects {
   padding: var(--spacing-lg) var(--spacing);
 }
-.projects h2 {
-  margin-bottom: var(--spacing);
-  text-align: center;
-  color: aliceblue;
-}
-.projects p {
-  text-align: center;
+.projectslist{
+  display: flex;
+  flex-wrap: wrap;
 }

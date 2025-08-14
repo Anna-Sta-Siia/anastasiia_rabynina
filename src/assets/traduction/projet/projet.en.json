@@ -3,11 +3,26 @@
     "id": "ohmyfood",
     "title": "OhMyFood",
      "titleLogo": "images/logos/ohmyfood.svg",
-  "image": "images/ohmyfood.png",
+  "image": "images/projects/ohmyfood.png",
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Mobile-first website listing gourmet restaurant menus with CSS animations.",
     "stack": ["HTML", "SASS", "Responsive", "Animations"],
     "competences": "This project helped me improve my responsive design, CSS animations, and Figma-based integration skills.",
-    "color": "linear-gradient(90deg, #FF79DA, #9356DC)"
-  }
+    "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
+     "imageEffect": "spin",
+     "slogan":"Book your next menu"
+  },
+  {
+  "id": "kasa",
+  "title": "Kasa",
+  "titleLogo": "images/logos/kasa.png",
+  "image": "images/projects/kasa.png",
+  "link": "https://anna-sta-siia.github.io/Kasa/",
+  "description": "Front-end redesign of Kasa with React (Vite): SPA using React Router, reusable components, and responsive Figma integration. Local JSON data while waiting for the API.",
+  "stack": ["JS", "React", "SASS"],
+  "color": "#ffffff",
+  "imageEffect": "fade",
+  "slogan": "Your home, everywhere and anywhere"
+}
+
 ]

@@ -76,7 +76,7 @@ export default function Projects() {
 
       <Filter onChange={handleFilterChange} />
 
-      <div className={styles.grid}>
+      <div className={styles.projectslist}>
         {filteredProjects.map(project => (
           <ProjetCard key={project.id} project={project} />
         ))}

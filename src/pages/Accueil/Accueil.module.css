@@ -8,7 +8,8 @@
   perspective: 1200px;
   height: calc(100dvh - var(--header-h,96px) - var(--footer-h,64px));
   max-width: 1240px;    
-  height: 100%;        
+  height: 100%;   
+  width: 80%;     
 }
 
 /* ===== Médaillon (portrait) ===== */

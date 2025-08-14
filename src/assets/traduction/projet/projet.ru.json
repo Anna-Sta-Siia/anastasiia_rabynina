@@ -3,11 +3,26 @@
     "id": "ohmyfood",
     "title": "OhMyFood",
      "titleLogo": "images/logos/ohmyfood.svg",
-  "image": "images/ohmyfood.png",
+  "image": "images/projects/ohmyfood.png",
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Мобильный сайт, отображающий меню ресторанов высокой кухни с CSS-анимациями.",
     "stack": ["HTML", "SASS", "Адаптивность", "Анимации"],
     "competences": "Этот проект помог мне улучшить навыки адаптивной верстки, CSS-анимаций и интеграции по макету из Figma.",
-    "color": "linear-gradient(90deg, #FF79DA, #9356DC)"
-  }
+    "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
+     "imageEffect": "spin",
+     "slogan":"Забронируйте своё следующее меню"
+  },
+{
+  "id": "kasa",
+  "title": "Kasa",
+  "titleLogo": "images/logos/kasa.png",
+  "image": "images/projects/kasa.png",
+  "link": "https://anna-sta-siia.github.io/Kasa/",
+  "description": "Редизайн фронтенда Kasa на React (Vite): SPA с React Router, переиспользуемые компоненты и адаптивная вёрстка по макетам Figma. Данные из локального JSON до появления API.",
+  "stack": ["JS", "React", "SASS"],
+  "color": "#ffffff",
+  "imageEffect": "fade",
+  "slogan":"Дома — где бы вы ни были"
+}
+
 ]

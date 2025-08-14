@@ -6,7 +6,6 @@
   { "key": "API",   "color": "#008094" },
   { "key": "RTK",   "color": "#764abc" },
 
-  { "key": "SASS",  "color": "#cd6799" },
-  { "key": "SEO",   "color": "#ffb74d" }
+  { "key": "SASS",  "color": "#cd6799" }
 
 ]
