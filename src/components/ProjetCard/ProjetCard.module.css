@@ -1,10 +1,24 @@
-/* Légère élévation au survol */
-.card {
+:root{
+  /* Taille identique pour toutes les cartes/œufs */
+  --egg-w: 300px;
+  --egg-h: 400px;
+
+  /* Diamètre du média (photo/assiette) — identique partout */
+  --media-size: 230px;
+
+  /* Aperçu (nombre de lignes visibles) */
+  --desc-lines: 8;   /* ajuste à 7, 8, 9… suivant ton design */
+  --desc-lh: 1.55;   /* line-height utilisé pour le calcul de hauteur */
+}
+
+.card{
   perspective: 1000px;
-  width: 300px;
-  height: 400px;
+  width: var(--egg-w);
+  height: var(--egg-h);
   user-select: none;
   transition: transform .25s ease, filter .25s ease;
+  /* ombre externe pour l’effet « posé » */
+  filter: drop-shadow(0 14px 22px rgba(0,0,0,.18));
 }
 .card:hover { transform: translateY(-2px); filter: saturate(1.02); }
 
@@ -34,7 +48,16 @@
     inset 0 -18px 28px rgba(0,0,0,.06);       /* vignette bas */
   pointer-events: none;
 }
-
+/* surcouche « convexe » (highlight/vignette) */
+.front::after,
+.back::after{
+  content:"";
+  position:absolute; inset:0; border-radius:50%;
+  background:
+    radial-gradient(130% 95% at 50% -10%, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 45%),
+    radial-gradient(140% 110% at 50% 120%, rgba(0,0,0,.12) 0%, rgba(0,0,0,0) 60%);
+  pointer-events:none;
+}
 /* Garde : la rotation / flip existants */
 .inner { position: relative; width: 100%; height: 100%;
   transition: transform .8s ease; transform-style: preserve-3d; }
@@ -53,14 +76,14 @@
 
 /* --- MEDIA CIRCULAIRE COMMUN (OhMyFood / Kasa) --- */
 .mediaWrap{
-  /* Conteneur carré + rond */
-  width: clamp(160px, 68%, 260px);   /* adapte la taille de la bulle */
-  aspect-ratio: 1 / 1;               /* carré -> rond avec border-radius */
+  position: relative;
+  width: var(--media-size);
+  height: var(--media-size);  /* plus de clamp : taille fixe */
   border-radius: 50%;
   overflow: hidden;
-  position: relative;
-  margin: 6px auto 8px;
-  /* pour centrer facilement l’image/le slogan */
+  margin: -10px auto -10px;
+
+  /* centrage facile du visuel & du slogan */
   display: grid;
   place-items: center;
 }
@@ -73,9 +96,16 @@
   border-radius: inherit;  /* hérite du 50% */
 }
 
-/* Effets seulement (pas de tailles ici !) */
+
 @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-.imgSpin { animation: spin 10s linear infinite; }
+.imgSpin{
+  animation: spin 10s linear infinite;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: contain;
+  box-shadow: none;         /* pas d’anneau blanc */
+  background: #99E2D0;     /* disque  sous l’icône */
+}
 
 @keyframes fadeSoft {
   from { opacity: .85; transform: scale(1.00); }
@@ -109,6 +139,9 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    gap: 5px;
+    margin-top: 10px;
+    align-items: center;
 }
 .arrowContainer{
   display: flex;
@@ -136,34 +169,37 @@
 }
 /* ====== Одинаковая высота «Aperçu» + многоточие ====== */
 .descBox{
-  --lines: 6;      /* nombre de lignes visibles */
-  --lh: 1.6;       /* line-height en em */
+  /* contrôle fin de l’aperçu */
+  --lines: var(--desc-lines);
+  --lh: var(--desc-lh);
 
   line-height: var(--lh);
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
 
-  /* Standard (Firefox/Chromium récents) */
-  line-clamp: var(--lines);
-
-  /* Ancien WebKit/Safari/Chromium */
+  /* clamp multi-navigateurs */
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--lines);
-
-  /* nécessaire pour masquer le surplus */
-  overflow: clip; /* ou hidden */
+  line-clamp: var(--lines);             /* nouveaux moteurs */
+  overflow: hidden;
   text-overflow: ellipsis;
+
+  /* même hauteur partout (lignes x line-height) */
+  min-height: calc(var(--lines) * 1em * var(--lh));
+  position: relative;
 }
 
-/* Fallback “sécurité” si line-clamp non supporté */
-@supports not (line-clamp: 3) {
-  .previewClamp {
-    /* limite visuelle par la hauteur */
-    max-height: calc(var(--lines) * 1em * var(--lh));
-    overflow: hidden;
-    /* petit fondu optionnel sur les dernières lignes */
-    mask-image: linear-gradient(#000 85%, transparent);
-  }
+/* petit fondu bas pour adoucir la coupure */
+.descBox::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:0;
+  height: calc(1em * var(--lh));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.96) 70%);
+  pointer-events:none;
 }
+
 .seeMoreBtn{
   margin: 6px auto 8px;
   background: transparent;
@@ -187,7 +223,7 @@
 .modal{
   background: #fff;
   color: #222;
-  width: min(640px, 92vw);
+  width: 100%;
   max-height: 82vh;
   overflow: auto;
   border-radius: 16px;
