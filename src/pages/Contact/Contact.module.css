@@ -1,16 +1,10 @@
 .contact {
-  /* Layout */
-  padding: var(--spacing-lg) var(--spacing);
+  margin-bottom: 20px;
   min-height: calc(100dvh - var(--header-h, 64px));
-  display: grid;
-  justify-items: center; /* centre PageTitle + œuf */
-  align-content: start;
-  gap: clamp(16px, 3vw, 28px);
-
-  /* Fond : reprend éventuellement ton motif global si défini */
-  background-image: var(--bg-pattern, none);
-  background-size: var(--bg-size, 180px);
-  background-repeat: repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Un petit souffle en bas sur desktop pour éviter que l’œuf touche le footer */

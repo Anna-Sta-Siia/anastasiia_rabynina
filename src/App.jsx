@@ -1,43 +1,42 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import MatryoshkaLoader from './components/MatryoshkaLoader';
-import Layout from './components/Layout';
+import MatryoshkaLoader from "./components/MatryoshkaLoader";
+import Layout from "./components/Layout";
 
-import Accueil from './pages/Accueil';
-import Projects from './pages/Projects';
-import Services from './pages/Services';
-import Competences from './pages/Competences';
-import Contact from './pages/Contact';
-import NotFound from './pages/NotFound';
-import CV from './pages/CV';
+import Accueil from "./pages/Accueil";
+import Projects from "./pages/Projects";
+import Competences from "./pages/Competences";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
+import CV from "./pages/CV";
 
 export default function App() {
-  const hasPlayedOnce = sessionStorage.getItem('hasPlayedOnce') === 'true';
-  const [phase, setPhase] = useState('matryoshka');
+  const hasPlayedOnce = sessionStorage.getItem("hasPlayedOnce") === "true";
+  const [phase, setPhase] = useState("matryoshka");
 
   const handleMatryoshkaEnd = () => {
     setTimeout(() => {
       if (hasPlayedOnce) {
-        setPhase('app');
+        setPhase("app");
       } else {
-        setPhase('medallion');
+        setPhase("medallion");
       }
     }, 500);
   };
 
   const handleMedallionEnd = () => {
-    sessionStorage.setItem('hasPlayedOnce', 'true');
-    setPhase('app');
+    sessionStorage.setItem("hasPlayedOnce", "true");
+    setPhase("app");
   };
 
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
-      {phase === 'matryoshka' && <MatryoshkaLoader onComplete={handleMatryoshkaEnd} />}
+      {phase === "matryoshka" && <MatryoshkaLoader onComplete={handleMatryoshkaEnd} />}
 
       <AnimatePresence>
-        {phase !== 'matryoshka' && (
+        {phase !== "matryoshka" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -47,7 +46,6 @@ export default function App() {
               <Route path="/" element={<Layout phase={phase} />}>
                 <Route index element={<Accueil phase={phase} onFinish={handleMedallionEnd} />} />
                 <Route path="projects" element={<Projects />} />
-                <Route path="services" element={<Services />} />
                 <Route path="skills" element={<Competences />} />
                 <Route path="contact" element={<Contact />} />
                 <Route path="cv" element={<CV />} />

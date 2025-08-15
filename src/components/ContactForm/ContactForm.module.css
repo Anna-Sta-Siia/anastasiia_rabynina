@@ -1,17 +1,17 @@
-/* ─────────────────────────────
-   ContactForm.module.css
-   Œuf convex + champs arrondis + espacements confort
-   ───────────────────────────── */
-
 .egg {
+  /* couleurs de contrôle */
+  --neutral: #b0bec5; /* gris par défaut pour bordures/bouton */
+  --ok: #2e7d32; /* vert quand valide */
+
   /* largeur bornée et ratio compact */
   --egg-w: clamp(300px, 62vw, 460px);
   width: var(--egg-w);
-  aspect-ratio: 5 / 6; /* plus plat que 2/3 = moins haut */
+  aspect-ratio: 5 / 6; /* plus plat que 2/3 */
   border-radius: 50% / 46%;
   padding: clamp(16px, 3vw, 24px);
   margin: clamp(10px, 2vh, 20px) auto 0;
 
+  /* --accent est passée en inline style depuis le parent */
   background: radial-gradient(
       120% 120% at 30% 25%,
       rgba(255, 255, 255, 0.75),
@@ -22,22 +22,26 @@
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.16), inset 0 2px 0 rgba(255, 255, 255, 0.8),
     inset 0 -2px 6px rgba(0, 0, 0, 0.05);
 
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .form {
   width: 100%;
   max-width: min(520px, calc(var(--egg-w) - clamp(36px, 6vw, 72px)));
-  display: grid;
-  gap: clamp(14px, 3.2vw, 24px); /* espace entre les champs */
-  grid-auto-rows: max-content;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 30px 0 30px;
 }
 
 /* Groupe champ + label + erreur */
 .field {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+  align-items: center;
 }
 
 /* Labels lisibles */
@@ -58,7 +62,7 @@ label {
   appearance: none;
   padding: 14px 16px;
   border-radius: 18px;
-  border: 1px solid color-mix(in oklab, var(--accent) 24%, #888 76%);
+  border: 1px solid var(--neutral); /* gris par défaut */
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
   font: inherit;
@@ -74,21 +78,20 @@ label {
 /* Focus accessible */
 .form input:focus,
 .form textarea:focus {
-  border-color: color-mix(in oklab, var(--accent) 70%, #000 30%);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 30%, #fff 70%);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--neutral) 35%, #fff 65%);
 }
 
-/* Erreurs */
+/* Erreur (RHF met aria-invalid="true") */
 .form input[aria-invalid="true"],
 .form textarea[aria-invalid="true"] {
   border-color: #d33;
 }
 
-.error {
-  min-height: 1.2em;
-  color: #b42318;
-  font-size: 0.92rem;
-  margin-left: 2px;
+/* OK si rempli ET pas d’erreur */
+.form input[aria-invalid="false"]:not(:placeholder-shown),
+.form textarea[aria-invalid="false"]:not(:placeholder-shown) {
+  border-color: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 25%, #fff 75%);
 }
 
 /* Zone de message */
@@ -96,8 +99,11 @@ textarea {
   min-height: clamp(120px, 20vh, 220px);
   resize: vertical;
 }
-
-/* Bouton convex */
+.submitconteneur {
+  display: flex;
+  justify-content: center;
+}
+/* Bouton – fallback neutre (sans color-mix) */
 .convexBtn {
   justify-self: center;
   margin-top: 4px;
@@ -110,16 +116,22 @@ textarea {
       rgba(255, 255, 255, 0.9),
       rgba(255, 255, 255, 0)
     ),
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--accent) 70%, #fff 30%),
-      color-mix(in oklab, var(--accent) 55%, #ddd 45%)
-    );
+    linear-gradient(180deg, var(--neutral), #dfe6ea);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
     inset 0 -2px 6px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   font-weight: 700;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease, background 0.2s ease;
+}
+
+/* Quand le formulaire est valide -> vert (fallback) */
+.convexBtn.valid {
+  background: radial-gradient(
+      120% 150% at 30% 20%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(180deg, var(--ok), #b8e0c0);
 }
 
 .convexBtn:hover {
@@ -131,7 +143,35 @@ textarea {
 }
 .convexBtn:disabled {
   opacity: 0.7;
-  cursor: progress;
+  cursor: not-allowed;
+}
+
+/* Amélioration si color-mix est dispo */
+@supports (color: color-mix(in oklab, white, black)) {
+  .convexBtn {
+    background: radial-gradient(
+        120% 150% at 30% 20%,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0)
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--neutral) 70%, #fff 30%),
+        color-mix(in oklab, var(--neutral) 55%, #ddd 45%)
+      );
+  }
+  .convexBtn.valid {
+    background: radial-gradient(
+        120% 150% at 30% 20%,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0)
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--ok) 70%, #fff 30%),
+        color-mix(in oklab, var(--ok) 55%, #ddd 45%)
+      );
+  }
 }
 
 /* Message de succès */
@@ -143,7 +183,7 @@ textarea {
   color: color-mix(in oklab, var(--accent) 60%, #123 40%);
 }
 
-/* Champ honeypot anti-bot */
+/* Champ honeypot anti-bot (invisible) */
 .honey {
   position: absolute;
   left: -9999px;
@@ -152,14 +192,14 @@ textarea {
   pointer-events: none;
 }
 
-/* Responsive fin : encore plus contenant sur très grands écrans */
+/* Responsive fin : encore plus contenu sur très grands écrans */
 @media (min-width: 1200px) {
   .egg {
     --egg-w: clamp(320px, 50vw, 440px);
   }
 }
 
-/* Variante optionnelle “compact” à ajouter en className si besoin */
+/* Variante optionnelle “compact” à ajouter si besoin */
 .compact {
   --egg-w: clamp(300px, 56vw, 420px);
   aspect-ratio: 1 / 1.2;

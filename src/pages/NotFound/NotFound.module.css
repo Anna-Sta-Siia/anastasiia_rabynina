@@ -1,6 +1,6 @@
 .notfound {
   text-align: center;
-  padding: var(--spacing-lg) var(--spacing);
+  padding: 20px;
 }
 .notfound h1 {
   font-size: 4rem;
