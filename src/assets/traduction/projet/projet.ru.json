@@ -28,7 +28,7 @@
     "title": "Sophie Bluel",
     "titleLogo": "images/logos/sophie-bluel.webp",
     "image": "images/projects/sophie-bluel.webp",
-    "link": " https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
+    "link": "https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
     "description": "Разработка динамичной веб-страницы для архитектора-дизайнера интерьеров Sophie Bluel на JavaScript с использованием предоставленного API: получение работ и фильтрация по категориям, страница входа администратора с аутентификацией по токену (токен сохраняется в sessionStorage после перезагрузки и сбрасывается при возврате на страницу логина), а также доступное модальное окно для загрузки новых медиа с валидацией/предпросмотром и удалением работ. Front-end выполнен на основе предоставленного HTML и макетов Figma: манипуляции с DOM и обработка событий, асинхронные запросы fetch, обработка ошибок и форм (сообщение об ошибке под полем пароля).",
     "stack": ["HTML", "CSS", "JS", "API"],
     "color": "#FAF9F3",
@@ -58,5 +58,17 @@
     "color": "#ffffff",
     "imageEffect": "none",
     "slogan": "Быстрее, доступнее, заметнее"
+  },
+  {
+    "id": "mon-projet",
+    "title": "Anastasia R.",
+    "titleLogo": "images/logos/anastasia-rabynina.webp",
+    "image": "images/projects/anastasia-rabynina.webp",
+    "link": "https://anna-sta-siia.github.io/mon_projet/",
+    "description": "Личный портфолио-сайт на React (Vite) и SASS: анимированная главная (медальон), карточки-«яйца» проектов, фильтры-лепестки, страница Навыков, связанная с проектами, i18n (FR/RU/EN), акцент на доступность и хорошую производительность (Lighthouse). Форма контакта с валидацией (react-hook-form) и плавным UX.",
+    "stack": ["JS", "React", "CSS", "HTML", "SEO"],
+    "color": "#F8BBD0",
+    "imageEffect": "spin",
+    "slogan": "Живое портфолио"
   }
 ]
