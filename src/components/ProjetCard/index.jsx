@@ -209,7 +209,7 @@ export default function ProjetCard({ project }) {
               <img
                 src={`${import.meta.env.BASE_URL}${image}`}
                 alt={imageAlt || title}
-                className={imgEffectClass}
+                className={`${styles.mediaImg ?? ""} ${imgEffectClass}`} // <- используем
                 decoding="async"
                 loading="lazy"
               />
