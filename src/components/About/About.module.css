@@ -1,7 +1,4 @@
-:root{
-  --desc-lines: 4;   /* nombre de lignes visibles */
-  --desc-lh: 1.55;   /* line-height */
-}
+
 /* Ovale About : même taille que le médaillon */
 .about {
   flex:0 0 auto;
@@ -16,6 +13,7 @@
   container-type: inline-size;
   height: auto !important; 
   width: clamp(280px, 34vw, 460px);  
+  margin-left: -15%;
   }
 /* typo fluide bornée (évite l’effet “rond”) */
 .about h2 {
