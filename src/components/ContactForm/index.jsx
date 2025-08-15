@@ -36,9 +36,9 @@ export default function ContactForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful, isValid },
+    formState: { errors, isSubmitting, isValid },
     reset,
-  } = useForm({ mode: "onChange" }); // validation live
+  } = useForm({ mode: "onChange" });
 
   const [showOverlay, setShowOverlay] = useState(false);
 

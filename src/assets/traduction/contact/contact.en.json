@@ -5,6 +5,7 @@
   "emailPlaceholder": "Your email",
   "messageLabel": "Message",
   "messagePlaceholder": "Your message…",
+  "companyLabel": "Company",
   "companyPlaceholder": "Company (leave empty)",
   "send": "Send",
   "sending": "Sending…",

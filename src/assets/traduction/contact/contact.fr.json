@@ -4,6 +4,7 @@
   "emailLabel": "E-mail",
   "emailPlaceholder": "Votre e-mail",
   "messageLabel": "Message",
+  "companyLabel": "Société",
   "companyPlaceholder": "Société (laissez vide)",
   "messagePlaceholder": "Votre message…",
   "send": "Envoyer",
