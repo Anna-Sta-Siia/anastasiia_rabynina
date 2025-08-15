@@ -10,6 +10,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-align: center;
+  container-type: inline-size;
 }
 
 .about h2 {
@@ -32,7 +33,7 @@
   -webkit-hyphens: auto; /* Safari/iOS */
   overflow-wrap: break-word; /* casse proprement les très longs mots/URLs */
   word-break: normal; /* pas de cassures “sauvages” */
-  font-size: clamp(15px, 5.5cqw, 20px);
+  font-size: clamp(8px, 5.5cqw, 20px);
 }
 
 .first::first-letter {
@@ -45,16 +46,12 @@
   text-shadow: 1px 1px 0 #300000;
 }
 
-/* couture invisible (si besoin) */
 @media (max-width: 768px) {
   .about {
-    width: 100%;
-    margin-top: -150%;
+    top: var(--oval-h); /* нижняя половина сцены */
+    left: 0;
+    width: var(--oval-w);
+    height: var(--oval-h);
+    z-index: 1;
   }
-  .about h2 {
-    font-size: clamp(20px, 7.6vw, 44px);
-  } /* ~26.25px à 375px */
-  .about p {
-    font-size: clamp(12px, 5.2vw, 80px);
-  } /* ~19.5px à 375px, max relevé à 20 */
 }
