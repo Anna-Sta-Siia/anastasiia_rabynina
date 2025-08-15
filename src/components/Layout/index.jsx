@@ -27,7 +27,7 @@ export default function Layout({ phase }) {
     };
   }, []);
 
-  // Recalcule quand tu affiches/masques le header/footer
+  // Recalcule quand on affiche/masques le header/footer
   useEffect(() => {
     requestAnimationFrame(() => {
       const h = headerRef.current?.offsetHeight ?? 0;

@@ -1,6 +1,6 @@
 :root {
   --ctrl-size: 38px;
-} /* ajuste à 36/40 si tu préfères */
+}
 
 @media (min-width: 768px) {
   :root {

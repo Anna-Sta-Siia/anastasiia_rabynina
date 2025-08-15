@@ -6,8 +6,6 @@
   height: calc(100svh - var(--header-h, 96px) - var(--footer-h, 64px));
   overflow: hidden;
   margin-inline: auto;
-
-  /* tailles communes (tu as déjà ces vars ; je les rappelle) */
   --vpad: 2rem;
   --oval-h: min(
     clamp(280px, 72vh, 780px),

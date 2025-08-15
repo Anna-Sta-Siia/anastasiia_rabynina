@@ -15,7 +15,7 @@
 }
 
 /* (Optionnel) Animation d’arrivée douce pour le composant ContactForm :
-   passe className="popIn" à <ContactForm /> si tu veux l’utiliser */
+   passe className="popIn" à <ContactForm /> si on veut  l’utiliser */
 .popIn {
   animation: popIn 0.4s ease-out both;
 }

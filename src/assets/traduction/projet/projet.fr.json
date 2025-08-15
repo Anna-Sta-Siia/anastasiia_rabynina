@@ -34,5 +34,17 @@
     "color": "#FAF9F3",
     "imageEffect": "none",
     "slogan": "Design d’espace"
+  },
+  {
+    "id": "argentbank",
+    "title": "Argent Bank",
+    "titleLogo": "images/logos/argentbank.webp",
+    "image": "images/projects/argentbank.webp",
+    "link": "#",
+    "description": "Développement front-end d’une application bancaire en React et Redux avec intégration au back-end via API REST. Phase 1 : authentification (login/logout, gestion d’erreurs), profil utilisateur (édition du pseudo), état global Redux et bonnes pratiques de green code. Phase 2 : conception des routes d’API pour les transactions (liste mensuelle par compte, détail, édition d’infos) et document Swagger exporté en YAML.",
+    "stack": ["JS", "React", "Redux Toolkit", "API REST", "Swagger", "Node.js"],
+    "color": "#12002b",
+    "imageEffect": "none",
+    "slogan": "Vos comptes, clairs et sécurisés"
   }
 ]
