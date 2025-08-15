@@ -23,6 +23,19 @@
   "color": "#ffffff",
   "imageEffect": "fade",
   "slogan": "Your home, everywhere and anywhere"
+},
+{
+  "id": "sophie-bluel",
+  "title": "Sophie Bluel",
+  "titleLogo": "images/logos/sophie-bluel.png",
+  "image": "images/projects/sophie-bluel.png",
+  "link": " https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
+  "description": "Building a dynamic web page for interior designer Sophie Bluel using JavaScript and a provided API: fetching projects and filtering by category, an admin login page with token-based authentication (token persisted in sessionStorage across reloads and reset when returning to the login page), and an accessible modal to upload new media with validation/preview and project deletion. Front-end built from the provided HTML/Figma mockups: DOM manipulation and event handling, asynchronous fetch requests, error handling, and forms (error message under the password field).",
+  "stack": ["HTML", "CSS", "JS", "API"],
+  "color": "#FAF9F3",
+  "imageEffect": "none",
+  "slogan": "Space design"
 }
+
 
 ]

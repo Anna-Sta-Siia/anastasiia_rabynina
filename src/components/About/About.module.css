@@ -1,3 +1,7 @@
+:root{
+  --desc-lines: 4;   /* nombre de lignes visibles */
+  --desc-lh: 1.55;   /* line-height */
+}
 /* Ovale About : même taille que le médaillon */
 .about {
   flex:1 1;

@@ -23,6 +23,19 @@
   "color": "#ffffff",
   "imageEffect": "fade",
   "slogan":"Дома — где бы вы ни были"
+},
+{
+  "id": "sophie-bluel",
+  "title": "Sophie Bluel",
+  "titleLogo": "images/logos/sophie-bluel.png",
+  "image": "images/projects/sophie-bluel.png",
+  "link": " https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
+  "description": "Разработка динамичной веб-страницы для архитектора-дизайнера интерьеров Sophie Bluel на JavaScript с использованием предоставленного API: получение работ и фильтрация по категориям, страница входа администратора с аутентификацией по токену (токен сохраняется в sessionStorage после перезагрузки и сбрасывается при возврате на страницу логина), а также доступное модальное окно для загрузки новых медиа с валидацией/предпросмотром и удалением работ. Front-end выполнен на основе предоставленного HTML и макетов Figma: манипуляции с DOM и обработка событий, асинхронные запросы fetch, обработка ошибок и форм (сообщение об ошибке под полем пароля).",
+  "stack": ["HTML", "CSS", "JS", "API"],
+  "color": "#FAF9F3",
+  "imageEffect": "none",
+  "slogan": "Дизайн пространства"
 }
+
 
 ]

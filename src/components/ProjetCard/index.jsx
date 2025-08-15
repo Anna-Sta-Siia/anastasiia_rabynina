@@ -20,32 +20,24 @@ export default function ProjetCard({ project }) {
   // UI localisée
   const ui = useMemo(() => {
     switch (language) {
-      case "en":
-        return uiEn;
-      case "ru":
-        return uiRu;
-      default:
-        return uiFr;
+      case "en": return uiEn;
+      case "ru": return uiRu;
+      default:   return uiFr;
     }
   }, [language]);
 
   // Dictionnaire de libellés pour les stacks
   const filterLabels = useMemo(() => {
     switch (language) {
-      case "en":
-        return labelsEn;
-      case "ru":
-        return labelsRu;
-      default:
-        return labelsFr;
+      case "en": return labelsEn;
+      case "ru": return labelsRu;
+      default:   return labelsFr;
     }
   }, [language]);
 
   // On essaie d’abord “skills”, sinon “formation”
   const skillsItem = useMemo(
-    () =>
-      menuItems.find((i) => i.key === "skills") ??
-      menuItems.find((i) => i.key === "formation"),
+    () => menuItems.find((i) => i.key === "skills") ?? menuItems.find((i) => i.key === "formation"),
     []
   );
   const skillsPath = skillsItem?.path || "/formation";
@@ -54,55 +46,104 @@ export default function ProjetCard({ project }) {
     id,
     title,
     titleLogo,
-    titleLogoAlt,              // <- alt localisé pour le logo (optionnel)
+    titleLogoAlt,          // alt localisé pour le logo (optionnel)
     image,
-    imageAlt,                  // <- alt localisé pour l'image
+    imageAlt,              // alt localisé pour l'image
     link,
     description,
     stack = [],
     color,
-    imageEffect = "none",      // "spin" | "fade" | "none"
-    slogan                     // <- nouveau : texte superposé sur l'image
+    imageEffect = "none",  // "spin" | "fade" | "none"
+    slogan                 // texte superposé sur l'image
   } = project;
 
-  // Classe d'effet visuel sur l'image selon JSON
+  // Classe d'effet visuel sur l'image selon JSON (spin/fade)
   const imgEffectClass = useMemo(() => {
     switch (imageEffect) {
-      case "spin":
-        return styles.imgSpin;
-      case "fade":
-        return styles.imgFade;
-      default:
-        return "";
+      case "spin": return styles.imgSpin;
+      case "fade": return styles.imgFade;
+      default:     return "";
     }
   }, [imageEffect]);
 
   const [isFlipped, setIsFlipped] = useState(false);
- // --- CLAMP + MODAL ---
+
+  /* ===========================
+     CLAMP + MODAL « Voir plus »
+     =========================== */
+
+  // Conteneur à “clamp”
   const descRef = useRef(null);
+  // Bouton « Voir plus… » (pour restituer le focus à la fermeture)
+  const openerRef = useRef(null);
+  // Bouton « Fermer » dans la modale
+  const closeBtnRef = useRef(null);
+
   const [isOverflow, setIsOverflow] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // вычисляем факт переполнения (scrollHeight > clientHeight)
+  // Mesure fiable de l’overflow (scrollHeight > clientHeight)
   const measureOverflow = () => {
     const el = descRef.current;
     if (!el) return;
-    setIsOverflow(el.scrollHeight - 1 > el.clientHeight); // -1 для надёжности
+    setIsOverflow(el.scrollHeight > el.clientHeight + 1); // +1 px pour la marge sub-pixel
   };
-   useEffect(() => {
+
+  // 👉 useLayoutEffect pour mesurer après layout, + ResizeObserver + resize
+  useLayoutEffect(() => {
     measureOverflow();
+
     const onResize = () => measureOverflow();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
+
+    let ro;
+    if (window.ResizeObserver && descRef.current) {
+      ro = new ResizeObserver(measureOverflow);
+      ro.observe(descRef.current);
+    }
+    return () => {
+      window.removeEventListener("resize", onResize);
+      ro?.disconnect();
+    };
   }, [language, description]);
 
+  // Escape pour fermer la modale
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') setShowModal(false);
-    };
-    if (showModal) window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    const onKey = (e) => { if (e.key === "Escape") setShowModal(false); };
+    if (showModal) window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [showModal]);
+
+  // Focus management : focus sur « Fermer » à l’ouverture, retour sur « Voir plus » à la fermeture
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => closeBtnRef.current?.focus(), 0);
+    } else {
+      openerRef.current?.focus?.();
+    }
+  }, [showModal]);
+
+  // ID « safe » pour aria-labelledby (supprime espaces/accents)
+  const modalTitleId = useMemo(() => {
+    const base = (id || title || "desc")
+      .toString()
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]+/g, "-");
+    return `desc-title-${base}`;
+  }, [id, title]);
+
+  // (Optionnel) piège Tab dans la modale pour ne pas sortir du dialog
+  function trapTab(e) {
+    if (e.key !== "Tab") return;
+    const root = e.currentTarget;
+    const f = root.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
 
   return (
     <div className={styles.card}>
@@ -123,12 +164,13 @@ export default function ProjetCard({ project }) {
             <h3 className={styles.title}>{title}</h3>
           )}
 
+          {/* Bulle média ronde (image + slogan éventuel) */}
           {image && (
             <figure className={styles.mediaWrap}>
               <img
                 src={`${import.meta.env.BASE_URL}${image}`}
                 alt={imageAlt || title}
-                className={`${styles.media} ${imgEffectClass}`}
+                className={imgEffectClass}     
                 decoding="async"
                 loading="lazy"
               />
@@ -172,24 +214,27 @@ export default function ProjetCard({ project }) {
         {/* ---------- FACE ARRIÈRE ---------- */}
         <div className={styles.back} style={{ background: color }}>
           <h4 className={styles.descriptiontitle}>{ui.preview}</h4>
-           {/* Контейнер фиксированной высоты с line-clamp */}
+
+          {/* Conteneur à hauteur fixe + line-clamp */}
+          <div className={styles.previewZone}>
           <div className={styles.descBox} ref={descRef} aria-live="polite">
             {description}
           </div>
 
-          {/* Кнопка Voir plus при переполнении */}
+          {/* Bouton Voir plus… si overflow détecté */}
           {isOverflow && (
             <button
               type="button"
               className={styles.seeMoreBtn}
               onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
               aria-haspopup="dialog"
-              aria-expanded={showModal ? 'true' : 'false'}
+              aria-expanded={showModal ? "true" : "false"}
+              ref={openerRef}
             >
               {ui.seeMore}…
             </button>
           )}
-
+          </div>
           {!!stack.length && (
             <>
               <h4 className={styles.descriptiontitle}>{ui.tools}</h4>
@@ -200,6 +245,7 @@ export default function ProjetCard({ project }) {
               </ul>
             </>
           )}
+
           <div className={styles.projectcardbottom}>
             <div className={styles.skillsCta}>
               <Link
@@ -231,28 +277,33 @@ export default function ProjetCard({ project }) {
           </div>
         </div>
       </div>
-  
-     {/* MODAL с полным описанием */}
+
+      {/* ---------- MODALE APERÇU COMPLET ---------- */}
       {showModal && (
         <div
           className={styles.modalOverlay}
           role="dialog"
           aria-modal="true"
-          aria-labelledby={`desc-title-${id || title}`}
+          aria-labelledby={modalTitleId}
+          aria-describedby={`${modalTitleId}-desc`}
           onClick={() => setShowModal(false)}
         >
           <div
             className={styles.modal}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={trapTab}           // piège Tab (optionnel mais recommandé)
           >
-            <h3 id={`desc-title-${id || title}`} className={styles.modalTitle}>
+            <h3 id={modalTitleId} className={styles.modalTitle}>
               {title} — {ui.preview}
             </h3>
-            <p className={styles.modalText}>{description}</p>
+            <p id={`${modalTitleId}-desc`} className={styles.modalText}>
+              {description}
+            </p>
             <button
               type="button"
               className={styles.modalClose}
               onClick={() => setShowModal(false)}
+              ref={closeBtnRef}
             >
               {ui.close}
             </button>
@@ -262,4 +313,3 @@ export default function ProjetCard({ project }) {
     </div>
   );
 }
-

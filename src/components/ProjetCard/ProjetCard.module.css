@@ -7,7 +7,7 @@
   --media-size: 230px;
 
   /* Aperçu (nombre de lignes visibles) */
-  --desc-lines: 8;   /* ajuste à 7, 8, 9… suivant ton design */
+  --desc-lines: 4;   
   --desc-lh: 1.55;   /* line-height utilisé pour le calcul de hauteur */
 }
 
@@ -196,12 +196,23 @@
   content:"";
   position:absolute; left:0; right:0; bottom:0;
   height: calc(1em * var(--lh));
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.96) 70%);
   pointer-events:none;
 }
 
+/* zone qui englobe texte + bouton, avec une hauteur mini commune */
+.previewZone{
+  /* réserve la place des lignes + une ligne pour le bouton */
+  min-height: calc(var(--desc-lines) * 1em * var(--desc-lh) + 2.0rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
 .seeMoreBtn{
-  margin: 6px auto 8px;
+  line-height: 1.2;
+  height: 1.8rem;
+  margin-top: .25rem;   /* petit écart avec le texte clampé */
   background: transparent;
   border: none;
   color: #1e3a8a;
