@@ -1,0 +1,21 @@
+{
+  "nameLabel": "Name",
+  "namePlaceholder": "Your name",
+  "emailLabel": "Email",
+  "emailPlaceholder": "Your email",
+  "messageLabel": "Message",
+  "messagePlaceholder": "Your message…",
+  "companyPlaceholder": "Company (leave empty)",
+  "send": "Send",
+  "sending": "Sending…",
+  "sent": "Thanks! Your message was sent.",
+  "errors": {
+    "nameRequired": "Name is required.",
+    "nameMin": "At least 2 characters.",
+    "namePattern": "Letters, spaces and dashes only.",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Invalid email format.",
+    "messageRequired": "Message is required.",
+    "messageMin": "At least 10 characters."
+  }
+}

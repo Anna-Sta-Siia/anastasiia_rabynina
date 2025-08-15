@@ -1,26 +1,23 @@
-import { useForm } from 'react-hook-form';
-import styles from './Contact.module.css';
-import PageTitle from '../../components/PageTitle';
-import { usePageMeta } from '../../config/hooks/usePageMeta'
+import PageTitle from "../../components/PageTitle";
+import ContactForm from "../../components/ContactForm";
+import { usePageMeta } from "../../config/hooks/usePageMeta";
+import { useUI } from "../../context";
+
+import tEn from "../../assets/traduction/contact/contact.en.json";
+import tFr from "../../assets/traduction/contact/contact.fr.json";
+import tRu from "../../assets/traduction/contact/contact.ru.json";
+
+const dict = { en: tEn, fr: tFr, ru: tRu };
 
 export default function Contact() {
-  const { label, color } = usePageMeta();
-  const { register, handleSubmit, reset } = useForm();
-  const onSubmit = data => {
-    console.log(data);
-    alert('Merci ! Votre message a été envoyé.');
-    reset();
-  };
+  const { label, color } = usePageMeta(); // le label de la page + couleur d’accent
+  const { language } = useUI();
+  const t = dict[language] ?? dict.en;
 
   return (
-    <section className={styles.contact}>
-       <PageTitle text={label} color={color} />
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <input {...register('name')} placeholder="Votre nom" required />
-        <input {...register('email')} type="email" placeholder="Votre email" required />
-        <textarea {...register('message')} placeholder="Votre message" required />
-        <button type="submit">Envoyer</button>
-      </form>
+    <section style={{ padding: "var(--spacing-lg) var(--spacing)" }}>
+      <PageTitle text={label} color={color} />
+      <ContactForm t={t} accent={color} />
     </section>
   );
 }

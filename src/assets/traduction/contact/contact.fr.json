@@ -1,0 +1,21 @@
+{
+  "nameLabel": "Nom",
+  "namePlaceholder": "Votre nom",
+  "emailLabel": "E-mail",
+  "emailPlaceholder": "Votre e-mail",
+  "messageLabel": "Message",
+  "companyPlaceholder": "Société (laissez vide)",
+  "messagePlaceholder": "Votre message…",
+  "send": "Envoyer",
+  "sending": "Envoi…",
+  "sent": "Merci ! Votre message a été envoyé.",
+  "errors": {
+    "nameRequired": "Le nom est requis.",
+    "nameMin": "Au moins 2 caractères.",
+    "namePattern": "Lettres, espaces, tirets/apostrophes uniquement.",
+    "emailRequired": "L’e-mail est requis.",
+    "emailInvalid": "Format d’e-mail invalide.",
+    "messageRequired": "Le message est requis.",
+    "messageMin": "Au moins 10 caractères."
+  }
+}

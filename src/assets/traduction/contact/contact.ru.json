@@ -1,0 +1,21 @@
+{
+  "nameLabel": "Имя",
+  "namePlaceholder": "Ваше имя",
+  "emailLabel": "Email",
+  "emailPlaceholder": "Ваш email",
+  "messageLabel": "Сообщение",
+  "messagePlaceholder": "Ваше сообщение…",
+  "companyPlaceholder": "Компания (оставьте пустым)",
+  "send": "Отправить",
+  "sending": "Отправка…",
+  "sent": "Спасибо! Ваше сообщение отправлено.",
+  "errors": {
+    "nameRequired": "Введите имя.",
+    "nameMin": "Не меньше 2 символов.",
+    "namePattern": "Допустимы буквы, пробелы и дефисы.",
+    "emailRequired": "Введите email.",
+    "emailInvalid": "Неверный формат email.",
+    "messageRequired": "Введите сообщение.",
+    "messageMin": "Минимум 10 символов."
+  }
+}
