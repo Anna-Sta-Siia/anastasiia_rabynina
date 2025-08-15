@@ -1,3 +1,8 @@
+/* ─────────────────────────────
+   ContactForm.module.css
+   Œuf convex + champs arrondis + états neutre/ok + overlay succès
+   ───────────────────────────── */
+
 .egg {
   /* couleurs de contrôle */
   --neutral: #b0bec5; /* gris par défaut pour bordures/bouton */
@@ -33,7 +38,7 @@
   max-width: min(520px, calc(var(--egg-w) - clamp(36px, 6vw, 72px)));
   display: flex;
   flex-direction: column;
-  padding: 40px 30px 0 30px;
+  padding: 0 30px;
 }
 
 /* Groupe champ + label + erreur */
@@ -56,11 +61,11 @@ label {
 /* CHAMPS ARRONDIS + confort */
 .form input,
 .form textarea {
-  width: 100%;
+  width: 80%;
   box-sizing: border-box;
   -webkit-appearance: none;
   appearance: none;
-  padding: 14px 16px;
+  padding: 10px 12px;
   border-radius: 18px;
   border: 1px solid var(--neutral); /* gris par défaut */
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
@@ -99,10 +104,13 @@ textarea {
   min-height: clamp(120px, 20vh, 220px);
   resize: vertical;
 }
+
 .submitconteneur {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
 }
+
 /* Bouton – fallback neutre (sans color-mix) */
 .convexBtn {
   justify-self: center;
@@ -174,15 +182,6 @@ textarea {
   }
 }
 
-/* Message de succès */
-.success {
-  text-align: center;
-  font-weight: 600;
-  min-height: 1.25rem;
-  margin-top: 6px;
-  color: color-mix(in oklab, var(--accent) 60%, #123 40%);
-}
-
 /* Champ honeypot anti-bot (invisible) */
 .honey {
   position: absolute;
@@ -190,6 +189,59 @@ textarea {
   top: -9999px;
   opacity: 0;
   pointer-events: none;
+}
+
+/* (Option) honeypot visible pour debug */
+.honeyDebug {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px dashed #f39c12;
+  background: #fff7e6;
+}
+
+/* Overlay de succès plein écran (affichée après envoi) */
+.overlay {
+  position: fixed; /* couvre toute la page */
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: rgba(46, 125, 50, 0.88); /* vert profond semi-opaque */
+  backdrop-filter: blur(2px);
+  animation: overlayFadeIn 0.18s ease-out both;
+}
+
+.overlayCard {
+  padding: 16px 22px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95); /* carte claire */
+  color: #2e2e2e; /* texte gris */
+  font-weight: 700;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  animation: overlayPop 0.22s ease-out both;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes overlayPop {
+  from {
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Responsive fin : encore plus contenu sur très grands écrans */
