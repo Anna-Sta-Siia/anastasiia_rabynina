@@ -24,7 +24,7 @@
 .salut {
   font-family: var(--logo-font);
   font-size: clamp(20px, 7cqw, 28px);
-  margin: -25px auto;
+  margin: -20px auto 5px auto;
 }
 .about p {
   margin: 4% 10%;
