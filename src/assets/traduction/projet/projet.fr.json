@@ -7,7 +7,6 @@
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Site mobile-first pour OhMyFood, conçu à partir des maquettes Figma : catalogue de 4 restaurants avec menus détaillés. Les clients peuvent réserver et composer leur repas à l’avance pour gagner du temps à l’arrivée. Intégration responsive (mobile/tablette/desktop) en SASS, animations CSS fluides et attention portée à l’accessibilité.",
     "stack": ["HTML", "SASS", "CSS Animations"],
-    "competences": "Ce projet m’a permis de renforcer mes compétences en responsive design et animations CSS...",
     "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
     "imageEffect": "spin",
     "slogan": "Réservez votre prochain menu"

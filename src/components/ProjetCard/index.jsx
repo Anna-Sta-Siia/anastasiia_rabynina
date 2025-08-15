@@ -20,39 +20,58 @@ export default function ProjetCard({ project }) {
   // UI localisée
   const ui = useMemo(() => {
     switch (language) {
-      case "en": return uiEn;
-      case "ru": return uiRu;
-      default:   return uiFr;
+      case "en":
+        return uiEn;
+      case "ru":
+        return uiRu;
+      default:
+        return uiFr;
     }
   }, [language]);
 
   // Dictionnaire de libellés pour les stacks
   const filterLabels = useMemo(() => {
     switch (language) {
-      case "en": return labelsEn;
-      case "ru": return labelsRu;
-      default:   return labelsFr;
+      case "en":
+        return labelsEn;
+      case "ru":
+        return labelsRu;
+      default:
+        return labelsFr;
     }
   }, [language]);
 
-  // Lien vers la page compétences/formation
+  // Lien vers la page skills
   const skillsPath = useMemo(() => {
-    const item = menuItems.find(i => i.key === "skills") ?? menuItems.find(i => i.key === "formation");
-    return item?.path || "/formation";
+    const item =
+      menuItems.find((i) => i.key === "skills") ?? menuItems.find((i) => i.key === "skills");
+    return item?.path || "/skills";
   }, []);
 
   const {
-    id, title, titleLogo, titleLogoAlt,
-    image, imageAlt, link, description,
-    stack = [], color, imageEffect = "none", slogan
+    id,
+    title,
+    titleLogo,
+    titleLogoAlt,
+    image,
+    imageAlt,
+    link,
+    description,
+    stack = [],
+    color,
+    imageEffect = "none",
+    slogan,
   } = project;
 
   // Effet visuel image
   const imgEffectClass = useMemo(() => {
     switch (imageEffect) {
-      case "spin": return styles.imgSpin;
-      case "fade": return styles.imgFade;
-      default:     return "";
+      case "spin":
+        return styles.imgSpin;
+      case "fade":
+        return styles.imgFade;
+      default:
+        return "";
     }
   }, [imageEffect]);
 
@@ -98,18 +117,27 @@ export default function ProjetCard({ project }) {
 
     let ro1, ro2;
     if (window.ResizeObserver) {
-      if (descRef.current) { ro1 = new ResizeObserver(() => setOverflowFromRef(descRef, setIsOverflow)); ro1.observe(descRef.current); }
-      if (toolsRef.current){ ro2 = new ResizeObserver(() => setOverflowFromRef(toolsRef, setToolsOverflow)); ro2.observe(toolsRef.current); }
+      if (descRef.current) {
+        ro1 = new ResizeObserver(() => setOverflowFromRef(descRef, setIsOverflow));
+        ro1.observe(descRef.current);
+      }
+      if (toolsRef.current) {
+        ro2 = new ResizeObserver(() => setOverflowFromRef(toolsRef, setToolsOverflow));
+        ro2.observe(toolsRef.current);
+      }
     }
     return () => {
       window.removeEventListener("resize", onResize);
-      ro1?.disconnect(); ro2?.disconnect();
+      ro1?.disconnect();
+      ro2?.disconnect();
     };
   }, [language, description, stack, setOverflowFromRef]);
 
   // Escape pour fermer la modale
   useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") setModalType(null); };
+    const onKey = (e) => {
+      if (e.key === "Escape") setModalType(null);
+    };
     if (showModal) window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [showModal]);
@@ -122,7 +150,7 @@ export default function ProjetCard({ project }) {
 
   // Outils condensés (clampables)
   const toolsHuman = useMemo(
-    () => stack.map(k => filterLabels[k] ?? k).join(" · "),
+    () => stack.map((k) => filterLabels[k] ?? k).join(" · "),
     [stack, filterLabels]
   );
 
@@ -130,7 +158,8 @@ export default function ProjetCard({ project }) {
   const modalTitleId = useMemo(() => {
     const base = (id || title || "desc")
       .toString()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .replace(/[^a-z0-9_-]+/g, "-")
       .replace(/(^-|-$)/g, "");
@@ -141,11 +170,19 @@ export default function ProjetCard({ project }) {
   const trapTab = (e) => {
     if (e.key !== "Tab") return;
     const root = e.currentTarget;
-    const f = root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    const f = root.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
     if (!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    const first = f[0],
+      last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   };
 
   return (
@@ -198,7 +235,10 @@ export default function ProjetCard({ project }) {
               <p>{ui.flip}</p>
               <button
                 className={styles.flipArrow}
-                onClick={(e) => { e.stopPropagation(); setIsFlipped(true); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFlipped(true);
+                }}
                 aria-label={ui.flip}
                 title={ui.flip}
               >
@@ -284,7 +324,10 @@ export default function ProjetCard({ project }) {
                 className={`${styles.flipArrow} ${styles.flipBack}`}
                 aria-label={ui.flipBack}
                 title={ui.flipBack}
-                onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFlipped(false);
+                }}
               >
                 ◀
               </button>
@@ -303,21 +346,21 @@ export default function ProjetCard({ project }) {
           aria-describedby={`${modalTitleId}-desc`}
           onClick={() => setModalType(null)}
         >
-          <div
-            className={styles.modal}
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={trapTab}
-          >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()} onKeyDown={trapTab}>
             <h3 id={modalTitleId} className={styles.modalTitle}>
               {title} — {modalType === "tools" ? ui.tools : ui.preview}
             </h3>
 
             {modalType === "tools" ? (
               <ul id={`${modalTitleId}-desc`} className={styles.modalList}>
-                {stack.map((k) => <li key={k}>{filterLabels[k] ?? k}</li>)}
+                {stack.map((k) => (
+                  <li key={k}>{filterLabels[k] ?? k}</li>
+                ))}
               </ul>
             ) : (
-              <p id={`${modalTitleId}-desc`} className={styles.modalText}>{description}</p>
+              <p id={`${modalTitleId}-desc`} className={styles.modalText}>
+                {description}
+              </p>
             )}
 
             <button

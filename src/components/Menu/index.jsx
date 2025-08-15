@@ -12,7 +12,7 @@ const labels = { en: menuEn, fr: menuFr, ru: menuRu };
 
 const items = [
   { key: "projects", path: "/projects", color: "#F8BBD0" },
-  { key: "formation", path: "/formation", color: "#FFCC80" },
+  { key: "skills", path: "/skills", color: "#FFCC80" },
   { key: "contact", path: "/contact", color: "#B0BEC5" },
   {
     key: "linkedin",

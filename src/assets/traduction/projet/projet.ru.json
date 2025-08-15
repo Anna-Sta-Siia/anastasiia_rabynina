@@ -7,7 +7,6 @@
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Мобильный сайт, отображающий меню ресторанов высокой кухни с CSS-анимациями.",
     "stack": ["HTML", "SASS"],
-    "competences": "Этот проект помог мне улучшить навыки адаптивной верстки, CSS-анимаций и интеграции по макету из Figma.",
     "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
     "imageEffect": "spin",
     "slogan": "Забронируйте своё следующее меню"

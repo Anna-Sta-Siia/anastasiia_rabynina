@@ -7,7 +7,7 @@ import Layout from "./components/Layout";
 
 import Accueil from "./pages/Accueil";
 import Projects from "./pages/Projects";
-import Competences from "./pages/Competences";
+import Skills from "./pages/Skills";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import CV from "./pages/CV";
@@ -46,7 +46,7 @@ export default function App() {
               <Route path="/" element={<Layout phase={phase} />}>
                 <Route index element={<Accueil phase={phase} onFinish={handleMedallionEnd} />} />
                 <Route path="projects" element={<Projects />} />
-                <Route path="skills" element={<Competences />} />
+                <Route path="skills" element={<Skills />} />
                 <Route path="contact" element={<Contact />} />
                 <Route path="cv" element={<CV />} />
                 <Route path="*" element={<NotFound />} />
