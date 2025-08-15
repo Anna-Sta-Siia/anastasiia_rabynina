@@ -6,7 +6,7 @@
   "image": "images/projects/ohmyfood.png",
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Mobile-first website listing gourmet restaurant menus with CSS animations.",
-    "stack": ["HTML", "SASS", "Responsive", "Animations"],
+    "stack": ["HTML", "SASS"],
     "competences": "This project helped me improve my responsive design, CSS animations, and Figma-based integration skills.",
     "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
      "imageEffect": "spin",

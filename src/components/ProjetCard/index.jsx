@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useUI } from "../../context";
 import menuItems from "../../config/menuConfig";
@@ -35,29 +35,19 @@ export default function ProjetCard({ project }) {
     }
   }, [language]);
 
-  // On essaie d’abord “skills”, sinon “formation”
-  const skillsItem = useMemo(
-    () => menuItems.find((i) => i.key === "skills") ?? menuItems.find((i) => i.key === "formation"),
-    []
-  );
-  const skillsPath = skillsItem?.path || "/formation";
+  // Lien vers la page compétences/formation
+  const skillsPath = useMemo(() => {
+    const item = menuItems.find(i => i.key === "skills") ?? menuItems.find(i => i.key === "formation");
+    return item?.path || "/formation";
+  }, []);
 
   const {
-    id,
-    title,
-    titleLogo,
-    titleLogoAlt,
-    image,
-    imageAlt,
-    link,
-    description,
-    stack = [],
-    color,
-    imageEffect = "none",
-    slogan
+    id, title, titleLogo, titleLogoAlt,
+    image, imageAlt, link, description,
+    stack = [], color, imageEffect = "none", slogan
   } = project;
 
-  // Classe d'effet visuel sur l'image
+  // Effet visuel image
   const imgEffectClass = useMemo(() => {
     switch (imageEffect) {
       case "spin": return styles.imgSpin;
@@ -77,79 +67,86 @@ export default function ProjetCard({ project }) {
   const descOpenerRef = useRef(null);
   const [isOverflow, setIsOverflow] = useState(false);
 
-  // --- OUTILS (NOUVEAU) ---
+  // --- OUTILS ---
   const toolsRef = useRef(null);
   const toolsOpenerRef = useRef(null);
   const [toolsOverflow, setToolsOverflow] = useState(false);
 
-  // Modale commune
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'desc' | 'tools'
+  // Modale commune (null | 'desc' | 'tools')
+  const [modalType, setModalType] = useState(null);
+  const showModal = modalType !== null;
   const closeBtnRef = useRef(null);
-  const lastOpenerRef = useRef(null); // pour redonner le focus au bon bouton
+  const lastOpenerRef = useRef(null); // rendre le focus au bon bouton
 
-  // Mesures overflow
-  const measureOverflow = () => {
-    const el = descRef.current;
+  // Mesure générique d'overflow
+  const setOverflowFromRef = useCallback((ref, setter) => {
+    const el = ref.current;
     if (!el) return;
-    setIsOverflow(el.scrollHeight > el.clientHeight + 1);
-  };
-  const measureToolsOverflow = () => {
-    const el = toolsRef.current;
-    if (!el) return;
-    setToolsOverflow(el.scrollHeight > el.clientHeight + 1);
-  };
+    setter(el.scrollHeight > el.clientHeight + 1);
+  }, []);
 
-  // Mesure après layout + resize + ResizeObserver
+  // Mesures après layout + resize + ResizeObserver
   useLayoutEffect(() => {
-    measureOverflow();
-    measureToolsOverflow();
+    setOverflowFromRef(descRef, setIsOverflow);
+    setOverflowFromRef(toolsRef, setToolsOverflow);
 
-    const onResize = () => { measureOverflow(); measureToolsOverflow(); };
+    const onResize = () => {
+      setOverflowFromRef(descRef, setIsOverflow);
+      setOverflowFromRef(toolsRef, setToolsOverflow);
+    };
     window.addEventListener("resize", onResize);
 
     let ro1, ro2;
     if (window.ResizeObserver) {
-      if (descRef.current) { ro1 = new ResizeObserver(measureOverflow); ro1.observe(descRef.current); }
-      if (toolsRef.current){ ro2 = new ResizeObserver(measureToolsOverflow); ro2.observe(toolsRef.current); }
+      if (descRef.current) { ro1 = new ResizeObserver(() => setOverflowFromRef(descRef, setIsOverflow)); ro1.observe(descRef.current); }
+      if (toolsRef.current){ ro2 = new ResizeObserver(() => setOverflowFromRef(toolsRef, setToolsOverflow)); ro2.observe(toolsRef.current); }
     }
     return () => {
       window.removeEventListener("resize", onResize);
       ro1?.disconnect(); ro2?.disconnect();
     };
-  }, [language, description, stack]);
+  }, [language, description, stack, setOverflowFromRef]);
 
   // Escape pour fermer la modale
   useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") { setShowModal(false); setModalType(null); } };
+    const onKey = (e) => { if (e.key === "Escape") setModalType(null); };
     if (showModal) window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [showModal]);
 
   // Focus management
   useEffect(() => {
-    if (showModal) {
-      setTimeout(() => closeBtnRef.current?.focus(), 0);
-    } else {
-      lastOpenerRef.current?.focus?.();
-    }
+    if (showModal) setTimeout(() => closeBtnRef.current?.focus(), 0);
+    else lastOpenerRef.current?.focus?.();
   }, [showModal]);
 
-  // Outils en une phrase clampable
+  // Outils condensés (clampables)
   const toolsHuman = useMemo(
     () => stack.map(k => filterLabels[k] ?? k).join(" · "),
     [stack, filterLabels]
   );
-// ID stable et accessible pour aria-labelledby / aria-describedby
-const modalTitleId = useMemo(() => {
-  const base = (id || title || "desc")
-    .toString()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // retire les accents
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-  return `desc-title-${base}`;
-}, [id, title]);
+
+  // ID stable pour aria-labelledby / aria-describedby
+  const modalTitleId = useMemo(() => {
+    const base = (id || title || "desc")
+      .toString()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    return `desc-title-${base}`;
+  }, [id, title]);
+
+  // Piège Tab (accessibilité)
+  const trapTab = (e) => {
+    if (e.key !== "Tab") return;
+    const root = e.currentTarget;
+    const f = root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
 
   return (
     <div className={styles.card} data-project={id}>
@@ -162,7 +159,6 @@ const modalTitleId = useMemo(() => {
               src={`${import.meta.env.BASE_URL}${titleLogo}`}
               alt={titleLogoAlt || title}
               width={180}
-              height="auto"
               decoding="async"
               loading="lazy"
             />
@@ -229,7 +225,6 @@ const modalTitleId = useMemo(() => {
                   e.stopPropagation();
                   lastOpenerRef.current = descOpenerRef.current;
                   setModalType("desc");
-                  setShowModal(true);
                 }}
                 aria-haspopup="dialog"
                 aria-expanded={showModal && modalType === "desc" ? "true" : "false"}
@@ -257,7 +252,6 @@ const modalTitleId = useMemo(() => {
                       e.stopPropagation();
                       lastOpenerRef.current = toolsOpenerRef.current;
                       setModalType("tools");
-                      setShowModal(true);
                     }}
                     aria-haspopup="dialog"
                     aria-expanded={showModal && modalType === "tools" ? "true" : "false"}
@@ -307,22 +301,12 @@ const modalTitleId = useMemo(() => {
           aria-modal="true"
           aria-labelledby={modalTitleId}
           aria-describedby={`${modalTitleId}-desc`}
-          onClick={() => { setShowModal(false); setModalType(null); }}
+          onClick={() => setModalType(null)}
         >
           <div
             className={styles.modal}
             onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key !== "Tab") return;
-              const root = e.currentTarget;
-              const f = root.querySelectorAll(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-              );
-              if (!f.length) return;
-              const first = f[0], last = f[f.length - 1];
-              if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-              else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-            }}
+            onKeyDown={trapTab}
           >
             <h3 id={modalTitleId} className={styles.modalTitle}>
               {title} — {modalType === "tools" ? ui.tools : ui.preview}
@@ -339,7 +323,7 @@ const modalTitleId = useMemo(() => {
             <button
               type="button"
               className={styles.modalClose}
-              onClick={() => { setShowModal(false); setModalType(null); }}
+              onClick={() => setModalType(null)}
               ref={closeBtnRef}
             >
               {ui.close}

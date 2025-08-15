@@ -11,14 +11,29 @@ import projectsFr from '../../assets/traduction/projet/projet.fr.json';
 import projectsEn from '../../assets/traduction/projet/projet.en.json';
 import projectsRu from '../../assets/traduction/projet/projet.ru.json';
 
+/* ===== Helpers hors composant (stables) ===== */
+const normalize = (s = '') =>
+  s.toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // remove accents
+    .toLowerCase()
+    .trim();
+
+const startsAtWord = (title, q) => {
+  const t = normalize(title);
+  const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escape regex
+  const re = new RegExp(`(^|[\\s-_])${n}`, 'i');                 // début de mot
+  return re.test(t);
+};
+
 export default function Projects() {
   const { label, color } = usePageMeta();
   const { language } = useUI();
 
-  // Nouvel état combiné : filtres + recherche + tri
+  // filtres + recherche + tri
   const [query, setQuery] = useState({ filters: [], search: '', sort: '' });
 
-  // Choisir le dataset par langue
+  // dataset par langue
   const allProjects = useMemo(() => {
     switch (language) {
       case 'en': return projectsEn;
@@ -27,29 +42,19 @@ export default function Projects() {
     }
   }, [language]);
 
-  // Normalisation pour recherche (insensible à la casse/accents)
-  const norm = (s = '') =>
-    s.toLowerCase()
-     .normalize('NFD')
-     .replace(/\p{Diacritic}/gu, '');
-
-  // Filtrage + recherche + tri
+  // filtre + recherche (début de mot) + tri
   const filteredProjects = useMemo(() => {
     const { filters, search, sort } = query;
     let list = allProjects;
 
-    // 1) filtres par stack (ET logique)
     if (filters.length) {
       list = list.filter(p => filters.every(f => p.stack.includes(f)));
     }
 
-    // 2) recherche par titre
     if (search.trim()) {
-      const q = norm(search);
-      list = list.filter(p => norm(p.title).includes(q));
+      list = list.filter(p => startsAtWord(p.title, search));
     }
 
-    // 3) tri A→Z / Z→A (locale-aware)
     if (sort === 'az') {
       list = [...list].sort((a, b) => a.title.localeCompare(b.title, language));
     } else if (sort === 'za') {
@@ -57,15 +62,12 @@ export default function Projects() {
     }
 
     return list;
-  }, [query, allProjects, language]);
+  }, [query, allProjects, language]); 
 
-  // Compatibilité avec l’ancienne version du <Filter />
   function handleFilterChange(payload) {
     if (Array.isArray(payload)) {
-      // Ancienne signature: on ne recevait que les filtres
       setQuery(prev => ({ ...prev, filters: payload }));
     } else {
-      // Nouvelle signature: { filters, search, sort }
       setQuery(payload);
     }
   }
@@ -73,9 +75,7 @@ export default function Projects() {
   return (
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
-
       <Filter onChange={handleFilterChange} />
-
       <div className={styles.projectslist}>
         {filteredProjects.map(project => (
           <ProjetCard key={project.id} project={project} />

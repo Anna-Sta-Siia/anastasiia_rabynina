@@ -1,3 +1,4 @@
+
 .accueil {
   display: flex;
   justify-content: center;
@@ -7,21 +8,20 @@
   position: relative;
   perspective: 1200px;
   height: calc(100dvh - var(--header-h,96px) - var(--footer-h,64px));
-  max-width: 1240px;    
-  height: 100%;   
-  width: 80%;     
+  max-width: 1240px;       
 }
 
 /* ===== Médaillon (portrait) ===== */
 .medallion {
-  height: 100%;
-  aspect-ratio: 0.67;
+  aspect-ratio: 2/3;
   position: relative;
   transform-style: preserve-3d;
   z-index: 1;
-  flex: 1 1;     
-  left:50%; 
-  transform-origin: left center;          
+  flex: 0 0 auto;     
+  left:35%; 
+  transform-origin: left center; 
+  height: auto !important; 
+  width: clamp(280px, 34vw, 460px);         
 }
 
 /* Faces */
