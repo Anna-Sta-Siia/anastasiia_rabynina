@@ -6,7 +6,7 @@
     "image": "images/projects/ohmyfood.webp",
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Site mobile-first pour OhMyFood, conçu à partir des maquettes Figma : catalogue de 4 restaurants avec menus détaillés. Les clients peuvent réserver et composer leur repas à l’avance pour gagner du temps à l’arrivée. Intégration responsive (mobile/tablette/desktop) en SASS, animations CSS fluides et attention portée à l’accessibilité.",
-    "stack": ["HTML", "SASS", "CSS Animations"],
+    "stack": ["HTML", "SASS"],
     "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
     "imageEffect": "spin",
     "slogan": "Réservez votre prochain menu"
@@ -18,7 +18,7 @@
     "image": "images/projects/kasa.webp",
     "link": "https://anna-sta-siia.github.io/Kasa/",
     "description": "Refonte front-end de Kasa en React (Vite) : SPA avec React Router, composants réutilisables et intégration responsive Figma. Données JSON locales en attendant l’API.",
-    "stack": ["JS", "React", "SASS"],
+    "stack": ["JS", "React", "SASS", "HTML", "API"],
     "color": "#ffffff",
     "imageEffect": "fade",
     "slogan": "Chez vous, partout et ailleurs"
@@ -40,11 +40,23 @@
     "title": "Argent Bank",
     "titleLogo": "images/logos/argentbank.webp",
     "image": "images/projects/argentbank.webp",
-    "link": "#",
-    "description": "Développement front-end d’une application bancaire en React et Redux avec intégration au back-end via API REST. Phase 1 : authentification (login/logout, gestion d’erreurs), profil utilisateur (édition du pseudo), état global Redux et bonnes pratiques de green code. Phase 2 : conception des routes d’API pour les transactions (liste mensuelle par compte, détail, édition d’infos) et document Swagger exporté en YAML.",
-    "stack": ["JS", "React", "Redux Toolkit", "API REST", "Swagger", "Node.js"],
-    "color": "#12002b",
+    "link": "https://anna-sta-siia.github.io/ArgentBank/",
+    "description": "Application bancaire front-end en React et Redux Toolkit : authentification sécurisée (login/logout, gestion d’erreurs), tableau de bord utilisateur responsive avec édition du pseudo et état global fiable. Intégration au back-end via API REST documentées. Approche green code : images optimisées et composants réutilisables. Conception des routes de transactions et livraison d’une spécification Swagger au format YAML (liste mensuelle par compte, détails, modification d’informations sans création/suppression).",
+    "stack": ["JS", "React", "RTK", "API", "HTML", "CSS"],
+    "color": "#ffffff",
     "imageEffect": "none",
     "slogan": "Vos comptes, clairs et sécurisés"
+  },
+  {
+    "id": "nina-carducci",
+    "title": "Nina Carducci",
+    "titleLogo": "images/logos/nina-carducci.webp",
+    "image": "images/projects/nina-carducci.webp",
+    "link": "https://anna-sta-siia.github.io/Nina-Carducci/",
+    "description": "Mission d’optimisation SEO : audit (Lighthouse), correction des points bloquants de performance et d’accessibilité, refonte sémantique du HTML, images allégées (webp, dimensions, lazy), métadonnées pour les moteurs et les réseaux sociaux (Open Graph/Twitter). Mise en place du référencement local via Schema.org et livraison d’un rapport avant/après documenté.",
+    "stack": ["SEO", "HTML", "CSS"],
+    "color": "#ffffff",
+    "imageEffect": "none",
+    "slogan": "Plus rapide, plus accessible, mieux référencé"
   }
 ]

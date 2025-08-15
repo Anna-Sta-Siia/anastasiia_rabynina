@@ -18,7 +18,7 @@
     "image": "images/projects/kasa.webp",
     "link": "https://anna-sta-siia.github.io/Kasa/",
     "description": "Front-end redesign of Kasa with React (Vite): SPA using React Router, reusable components, and responsive Figma integration. Local JSON data while waiting for the API.",
-    "stack": ["JS", "React", "SASS"],
+    "stack": ["JS", "React", "SASS", "HTML", "API"],
     "color": "#ffffff",
     "imageEffect": "fade",
     "slogan": "Your home, everywhere and anywhere"
@@ -34,5 +34,29 @@
     "color": "#FAF9F3",
     "imageEffect": "none",
     "slogan": "Space design"
+  },
+  {
+    "id": "argentbank",
+    "title": "Argent Bank",
+    "titleLogo": "images/logos/argentbank.webp",
+    "image": "images/projects/argentbank.webp",
+    "link": "https://anna-sta-siia.github.io/ArgentBank/",
+    "description": "Banking web app front end built with React and Redux Toolkit: secure authentication (login/logout, error handling), a responsive user dashboard with nickname editing, and a consistent global state. Integrated with the back end through documented REST APIs. Green-code mindset with optimized images and reusable components. Designed transaction routes and delivered a Swagger specification in YAML (monthly listing per account, details, editing info without create/delete).",
+    "stack": ["JS", "React", "RTK", "API", "CSS", "HTML"],
+    "color": "#ffffff",
+    "imageEffect": "none",
+    "slogan": "Your accounts, clear and secure"
+  },
+  {
+    "id": "nina-carducci",
+    "title": "Nina Carducci",
+    "titleLogo": "images/logos/nina-carducci.webp",
+    "image": "images/projects/nina-carducci.webp",
+    "link": "https://anna-sta-siia.github.io/Nina-Carducci/",
+    "description": "SEO optimization: audit with Lighthouse, fixes for performance and accessibility, semantic HTML cleanup, lighter images (webp, proper sizes, lazy loading), and complete metadata for search and social (Open Graph/Twitter). Added local SEO using Schema.org and delivered a documented before/after report.",
+    "stack": ["SEO", "HTML", "CSS"],
+    "color": "#ffffff",
+    "imageEffect": "none",
+    "slogan": "Faster, accessible, and better ranked"
   }
 ]

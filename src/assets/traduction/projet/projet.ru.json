@@ -18,7 +18,7 @@
     "image": "images/projects/kasa.webp",
     "link": "https://anna-sta-siia.github.io/Kasa/",
     "description": "Редизайн фронтенда Kasa на React (Vite): SPA с React Router, переиспользуемые компоненты и адаптивная вёрстка по макетам Figma. Данные из локального JSON до появления API.",
-    "stack": ["JS", "React", "SASS"],
+    "stack": ["JS", "React", "SASS", "HTML", "API"],
     "color": "#ffffff",
     "imageEffect": "fade",
     "slogan": "Дома — где бы вы ни были"
@@ -34,5 +34,29 @@
     "color": "#FAF9F3",
     "imageEffect": "none",
     "slogan": "Дизайн пространства"
+  },
+  {
+    "id": "argentbank",
+    "title": "Argent Bank",
+    "titleLogo": "images/logos/argentbank.webp",
+    "image": "images/projects/argentbank.webp",
+    "link": "https://anna-sta-siia.github.io/ArgentBank/",
+    "description": "Фронтенд банковского приложения на React и Redux Toolkit: безопасная аутентификация (login/logout, обработка ошибок), адаптивный кабинет пользователя с изменением никнейма и единым глобальным состоянием. Интеграция с бэкендом через документированные REST-API. Акцент на «зелёный» код: оптимизированные изображения и переиспользуемые компоненты. Спроектированы маршруты транзакций и подготовлена спецификация Swagger в формате YAML (ежемесячный список по счёту, детали, редактирование сведений без создания/удаления).",
+    "stack": ["JS", "React", "RTK", "API", "CSS", "HTML"],
+    "color": "#ffffff",
+    "imageEffect": "none",
+    "slogan": "Ваши счета — ясно и безопасно"
+  },
+  {
+    "id": "nina-carducci",
+    "title": "Nina Carducci",
+    "titleLogo": "images/logos/nina-carducci.webp",
+    "image": "images/projects/nina-carducci.webp",
+    "link": "https://anna-sta-siia.github.io/Nina-Carducci/",
+    "description": "Oптимизация SEO: аудит Lighthouse, исправления для скорости и доступности, семантическая правка HTML, облегчённые изображения (webp, корректные размеры, ленивое загрузка), метаданные для поиска и соцсетей (Open Graph/Twitter). Добавлен локальный SEO через Schema.org и подготовлен подробный отчёт «до/после».",
+    "stack": ["SEO", "HTML", "CSS"],
+    "color": "#ffffff",
+    "imageEffect": "none",
+    "slogan": "Быстрее, доступнее, заметнее"
   }
 ]
