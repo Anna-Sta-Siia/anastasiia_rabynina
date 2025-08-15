@@ -1,33 +1,34 @@
-[{
-  "id": "ohmyfood",
-  "title": "OhMyFood",
-   "titleLogo": "images/logos/ohmyfood.svg",
-  "image": "images/projects/ohmyfood.png",           
-  "link": "https://anna-sta-siia.github.io/Ohmyfood/",              
-  "description": "Site mobile-first pour OhMyFood, conçu à partir des maquettes Figma : catalogue de 4 restaurants avec menus détaillés. Les clients peuvent réserver et composer leur repas à l’avance pour gagner du temps à l’arrivée. Intégration responsive (mobile/tablette/desktop) en SASS, animations CSS fluides et attention portée à l’accessibilité.",
-  "stack": ["HTML", "SASS", "CSS Animations"],
-  "competences": "Ce projet m’a permis de renforcer mes compétences en responsive design et animations CSS...",
-  "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
-   "imageEffect": "spin",
-   "slogan":"Réservez votre prochain menu"
-},
-{
-  "id": "kasa",
-  "title": "Kasa",
-  "titleLogo": "images/logos/kasa.png",
-  "image": "images/projects/kasa.png",
-  "link": "https://anna-sta-siia.github.io/Kasa/",
-  "description": "Refonte front-end de Kasa en React (Vite) : SPA avec React Router, composants réutilisables et intégration responsive Figma. Données JSON locales en attendant l’API.",
-  "stack": ["JS", "React", "SASS"],
-  "color": "#ffffff",
-  "imageEffect": "fade",
-  "slogan":"Chez vous, partout et ailleurs"
-},
+[
+  {
+    "id": "ohmyfood",
+    "title": "OhMyFood",
+    "titleLogo": "images/logos/ohmyfood.svg",
+    "image": "images/projects/ohmyfood.webp",
+    "link": "https://anna-sta-siia.github.io/Ohmyfood/",
+    "description": "Site mobile-first pour OhMyFood, conçu à partir des maquettes Figma : catalogue de 4 restaurants avec menus détaillés. Les clients peuvent réserver et composer leur repas à l’avance pour gagner du temps à l’arrivée. Intégration responsive (mobile/tablette/desktop) en SASS, animations CSS fluides et attention portée à l’accessibilité.",
+    "stack": ["HTML", "SASS", "CSS Animations"],
+    "competences": "Ce projet m’a permis de renforcer mes compétences en responsive design et animations CSS...",
+    "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
+    "imageEffect": "spin",
+    "slogan": "Réservez votre prochain menu"
+  },
+  {
+    "id": "kasa",
+    "title": "Kasa",
+    "titleLogo": "images/logos/kasa.webp",
+    "image": "images/projects/kasa.webp",
+    "link": "https://anna-sta-siia.github.io/Kasa/",
+    "description": "Refonte front-end de Kasa en React (Vite) : SPA avec React Router, composants réutilisables et intégration responsive Figma. Données JSON locales en attendant l’API.",
+    "stack": ["JS", "React", "SASS"],
+    "color": "#ffffff",
+    "imageEffect": "fade",
+    "slogan": "Chez vous, partout et ailleurs"
+  },
   {
     "id": "sophie-bluel",
     "title": "Sophie Bluel",
-    "titleLogo": "images/logos/sophie-bluel.png",
-    "image": "images/projects/sophie-bluel.png",
+    "titleLogo": "images/logos/sophie-bluel.webp",
+    "image": "images/projects/sophie-bluel.webp",
     "link": " https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
     "description": "Création d’une page web dynamique pour le site de l’architecte d’intérieur Sophie Bluel en JavaScript, connectée à une API fournie : récupération des travaux et filtres par catégorie, page de connexion admin avec authentification par token (persisté en sessionStorage après reload et réinitialisé au retour sur la page de login), et modale accessible pour uploader de nouveaux médias avec validation/prévisualisation et suppression de travaux. Développement front-end à partir du HTML/maquettes Figma : manipulation du DOM et gestion d’événements, appels fetch asynchrones, gestion des erreurs et formulaires (message d’erreur sous le champ mot de passe).",
     "stack": ["HTML", "CSS", "JS", "API"],
@@ -36,5 +37,3 @@
     "slogan": "Design d’espace"
   }
 ]
-
-

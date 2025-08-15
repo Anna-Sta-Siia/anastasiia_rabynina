@@ -1,56 +1,64 @@
-
 .accueil {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  padding: 2rem 1rem 3rem;
+  justify-content: space-around;
+  gap: 0;
+  padding: 2rem 1rem 2rem 20rem; /* on s’en sert dans le calcul de hauteur */
   box-sizing: border-box;
   position: relative;
-  perspective: 1200px;
-  height: calc(100dvh - var(--header-h,96px) - var(--footer-h,64px));       
-}
-
-/* ===== Médaillon (portrait) ===== */
+  perspective: 1200px; /* plein écran visible sans scroll */
+  height: calc(100svh - var(--header-h, 96px) - var(--footer-h, 64px));
+  max-width: 1240px;
+  margin-inline: auto;
+  overflow: hidden; /* coupe tout débordement “1px fantôme” */ /* marge de confort vertical pour les ovales */
+  --vpad: 2rem; /* hauteur d’ovale dispo (minée par le viewport) */
+  --oval-h: min(
+    clamp(280px, 72vh, 780px),
+    calc(100svh - var(--header-h, 96px) - var(--footer-h, 64px) - (var(--vpad) * 2))
+  ); /* largeur d’un ovale (2/3 de sa hauteur) */
+  --oval-w: calc(var(--oval-h) * 2 / 3);
+} /* ===== Médaillon (portrait) ===== */
 .medallion {
-  aspect-ratio: 2/3;
+  height: var(--oval-h);
+  width: var(--oval-w);
+  flex: 0 0 var(--oval-w);
   position: relative;
   transform-style: preserve-3d;
-  z-index: 1;
-  flex: 0 0 auto;     
-  left:35%; 
-  transform-origin: left center; 
-  height: auto !important; 
-  width: clamp(280px, 34vw, 460px);
-  margin-right: -15%;         
-}
-
-/* Faces */
-.front, .back {
+  transform-origin: left center;
+  z-index: 1; /* “couture” pour éviter un filet entre les 2 ovales */
+  margin-right: -50%;
+} /* Faces */
+.front,
+.back {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   overflow: hidden;
   backface-visibility: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
-.back {transform: rotateY(180deg); }
-.front img, .back img {
-  width: 100%; height: 100%;
+.back {
+  transform: rotateY(180deg);
+}
+.front img,
+.back img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
-
 @media (max-width: 768px) {
   .accueil {
     flex-direction: column;
     align-items: center;
   }
-
-  .medallion { width: 100%; 
-  left:0;
-  transform-origin: top center;
-  margin-top: 150%;}
-
-.back { transform: rotateX(180deg); }
+  .medallion {
+    width: 100%;
+    left: 0;
+    transform-origin: top center;
+    margin-top: 150%;
+  }
+  .back {
+    transform: rotateX(180deg);
+  }
 }

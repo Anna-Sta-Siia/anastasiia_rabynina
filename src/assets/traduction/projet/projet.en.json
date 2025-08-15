@@ -2,40 +2,38 @@
   {
     "id": "ohmyfood",
     "title": "OhMyFood",
-     "titleLogo": "images/logos/ohmyfood.svg",
-  "image": "images/projects/ohmyfood.png",
+    "titleLogo": "images/logos/ohmyfood.svg",
+    "image": "images/projects/ohmyfood.webp",
     "link": "https://anna-sta-siia.github.io/Ohmyfood/",
     "description": "Mobile-first website listing gourmet restaurant menus with CSS animations.",
     "stack": ["HTML", "SASS"],
     "competences": "This project helped me improve my responsive design, CSS animations, and Figma-based integration skills.",
     "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
-     "imageEffect": "spin",
-     "slogan":"Book your next menu"
+    "imageEffect": "spin",
+    "slogan": "Book your next menu"
   },
   {
-  "id": "kasa",
-  "title": "Kasa",
-  "titleLogo": "images/logos/kasa.png",
-  "image": "images/projects/kasa.png",
-  "link": "https://anna-sta-siia.github.io/Kasa/",
-  "description": "Front-end redesign of Kasa with React (Vite): SPA using React Router, reusable components, and responsive Figma integration. Local JSON data while waiting for the API.",
-  "stack": ["JS", "React", "SASS"],
-  "color": "#ffffff",
-  "imageEffect": "fade",
-  "slogan": "Your home, everywhere and anywhere"
-},
-{
-  "id": "sophie-bluel",
-  "title": "Sophie Bluel",
-  "titleLogo": "images/logos/sophie-bluel.png",
-  "image": "images/projects/sophie-bluel.png",
-  "link": " https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
-  "description": "Building a dynamic web page for interior designer Sophie Bluel using JavaScript and a provided API: fetching projects and filtering by category, an admin login page with token-based authentication (token persisted in sessionStorage across reloads and reset when returning to the login page), and an accessible modal to upload new media with validation/preview and project deletion. Front-end built from the provided HTML/Figma mockups: DOM manipulation and event handling, asynchronous fetch requests, error handling, and forms (error message under the password field).",
-  "stack": ["HTML", "CSS", "JS", "API"],
-  "color": "#FAF9F3",
-  "imageEffect": "none",
-  "slogan": "Space design"
-}
-
-
+    "id": "kasa",
+    "title": "Kasa",
+    "titleLogo": "images/logos/kasa.webp",
+    "image": "images/projects/kasa.webp",
+    "link": "https://anna-sta-siia.github.io/Kasa/",
+    "description": "Front-end redesign of Kasa with React (Vite): SPA using React Router, reusable components, and responsive Figma integration. Local JSON data while waiting for the API.",
+    "stack": ["JS", "React", "SASS"],
+    "color": "#ffffff",
+    "imageEffect": "fade",
+    "slogan": "Your home, everywhere and anywhere"
+  },
+  {
+    "id": "sophie-bluel",
+    "title": "Sophie Bluel",
+    "titleLogo": "images/logos/sophie-bluel.webp",
+    "image": "images/projects/sophie-bluel.webp",
+    "link": " https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
+    "description": "Building a dynamic web page for interior designer Sophie Bluel using JavaScript and a provided API: fetching projects and filtering by category, an admin login page with token-based authentication (token persisted in sessionStorage across reloads and reset when returning to the login page), and an accessible modal to upload new media with validation/preview and project deletion. Front-end built from the provided HTML/Figma mockups: DOM manipulation and event handling, asynchronous fetch requests, error handling, and forms (error message under the password field).",
+    "stack": ["HTML", "CSS", "JS", "API"],
+    "color": "#FAF9F3",
+    "imageEffect": "none",
+    "slogan": "Space design"
+  }
 ]
