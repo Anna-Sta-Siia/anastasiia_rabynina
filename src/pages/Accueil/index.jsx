@@ -59,21 +59,23 @@ export default function Accueil({ phase, onFinish }) {
 
   return (
     <section className={styles.accueil}>
-      <Motion.div
-        className={`${styles.medallion} ${axisClass}`}
-        initial={initial}
-        animate={animate}
-        transition={{ duration: 1.8, ease: "easeInOut" }}
-      >
-        <div className={styles.front}>
-          <img src={medallionBack} alt={about.alt.medallionBack} />
-        </div>
-        <div className={styles.back}>
-          <img src={portrait} alt={about.alt.portrait} />
-        </div>
-      </Motion.div>
+      <div className={styles.duo}>
+        <Motion.div
+          className={`${styles.medallion} ${axisClass}`}
+          initial={initial}
+          animate={animate}
+          transition={{ duration: 1.8, ease: "easeInOut" }}
+        >
+          <div className={styles.front}>
+            <img src={medallionBack} alt={about.alt.medallionBack} />
+          </div>
+          <div className={styles.back}>
+            <img src={portrait} alt={about.alt.portrait} />
+          </div>
+        </Motion.div>
 
-      <About />
+        <About />
+      </div>
     </section>
   );
 }

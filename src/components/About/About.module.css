@@ -1,39 +1,60 @@
-.about { height:var(--oval-h); width:var(--oval-w); flex:0 0 var(--oval-w); aspect-ratio: 2 / 3; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; z-index: 0; overflow: hidden; text-align: center; container-type: inline-size; margin-left: -50%; }
-/* typo fluide bornée (évite l’effet “rond”) */
+.about {
+  position: absolute;
+  top: 0;
+  left: var(--oval-w); /* = 50% de la scène */
+  width: var(--oval-w);
+  height: var(--oval-h);
+  z-index: 1;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+}
+
 .about h2 {
+  font-size: clamp(20px, 7cqw, 28px);
   font-family: var(--logo-font);
   font-weight: 700;
-  margin:8%;
-    /* optionnel mais joli sur 2–3 lignes */
+  margin: 10% 8% 8% 8%;
   text-wrap: balance;
   hyphens: manual; /* on évite les césures automatiques dans le titre */
 }
-.about p {
-  margin: 6%;
-  line-height: 1.5;
-   hyphens: auto;
-  -webkit-hyphens: auto;     /* Safari/iOS */
-  overflow-wrap: break-word;  /* casse proprement les très longs mots/URLs */
-  word-break: normal;         /* pas de cassures “sauvages” */
+.salut {
+  font-family: var(--logo-font);
+  font-size: clamp(20px, 7cqw, 28px);
+  margin: -25px auto;
 }
- .about h2 { font-size: clamp(20px, 7cqw, 28px); }
-  .about p  { font-size: clamp(15px, 5.5cqw, 40px); }
-
+.about p {
+  margin: 4% 10%;
+  line-height: 1.5;
+  hyphens: auto;
+  -webkit-hyphens: auto; /* Safari/iOS */
+  overflow-wrap: break-word; /* casse proprement les très longs mots/URLs */
+  word-break: normal; /* pas de cassures “sauvages” */
+  font-size: clamp(15px, 5.5cqw, 20px);
+}
 
 .first::first-letter {
   font-size: 1.8em;
   font-weight: 500;
   line-height: 1;
   padding-top: 2px;
-  color: #8B0000;
-  font-family: 'Marcellus','Georgia',serif;
+  color: #8b0000;
+  font-family: "Marcellus", "Georgia", serif;
   text-shadow: 1px 1px 0 #300000;
 }
 
 /* couture invisible (si besoin) */
 @media (max-width: 768px) {
-  .about {width: 100%;
-  margin-top: -150%;}
-  .about h2 { font-size: clamp(20px, 7.6vw, 44px); }   /* ~26.25px à 375px */
-.about p  { font-size: clamp(12px, 5.2vw, 80px); } /* ~19.5px à 375px, max relevé à 20 */
+  .about {
+    width: 100%;
+    margin-top: -150%;
+  }
+  .about h2 {
+    font-size: clamp(20px, 7.6vw, 44px);
+  } /* ~26.25px à 375px */
+  .about p {
+    font-size: clamp(12px, 5.2vw, 80px);
+  } /* ~19.5px à 375px, max relevé à 20 */
 }

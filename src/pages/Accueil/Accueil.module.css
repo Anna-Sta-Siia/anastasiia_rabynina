@@ -1,33 +1,40 @@
 .accueil {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  gap: 0;
-  padding: 2rem 1rem 2rem 20rem; /* on s’en sert dans le calcul de hauteur */
-  box-sizing: border-box;
   position: relative;
-  perspective: 1200px; /* plein écran visible sans scroll */
+  /* le display peut rester flex mais il ne sert plus : */
+  display: block;
+  padding: 2rem 1rem;
   height: calc(100svh - var(--header-h, 96px) - var(--footer-h, 64px));
-  max-width: 1240px;
+  overflow: hidden;
   margin-inline: auto;
-  overflow: hidden; /* coupe tout débordement “1px fantôme” */ /* marge de confort vertical pour les ovales */
-  --vpad: 2rem; /* hauteur d’ovale dispo (minée par le viewport) */
+
+  /* tailles communes (tu as déjà ces vars ; je les rappelle) */
+  --vpad: 2rem;
   --oval-h: min(
     clamp(280px, 72vh, 780px),
     calc(100svh - var(--header-h, 96px) - var(--footer-h, 64px) - (var(--vpad) * 2))
-  ); /* largeur d’un ovale (2/3 de sa hauteur) */
+  );
   --oval-w: calc(var(--oval-h) * 2 / 3);
-} /* ===== Médaillon (portrait) ===== */
+
+  /* largeur = 2 ovales → charnière pile au milieu */
+  width: calc(2 * var(--oval-w));
+}
+
+/* === OBJETS ============================================================= */
+/* On place les DEUX ovales exactement au même x (à droite de la charnière) */
 .medallion {
-  height: var(--oval-h);
+  position: absolute;
+  top: 0;
+  left: var(--oval-w); /* = 50% de la scène */
   width: var(--oval-w);
-  flex: 0 0 var(--oval-w);
-  position: relative;
+  height: var(--oval-h);
+  z-index: 2;
   transform-style: preserve-3d;
-  transform-origin: left center;
-  z-index: 1; /* “couture” pour éviter un filet entre les 2 ovales */
-  margin-right: -50%;
-} /* Faces */
+  transform-origin: left center; /* charnière à gauche */
+  backface-visibility: hidden; /* évite les “filets” */
+  will-change: transform; /* aide l’anti-crénelage */
+}
+
+/* Faces */
 .front,
 .back {
   position: absolute;

@@ -1,22 +1,34 @@
-:root { --ctrl-size: 38px; }           /* ajuste à 36/40 si tu préfères */
+:root {
+  --ctrl-size: 38px;
+} /* ajuste à 36/40 si tu préfères */
 
 @media (min-width: 768px) {
-  :root { --ctrl-size: 40px; }         /* un poil plus grand sur desktop */
+  :root {
+    --ctrl-size: 40px;
+  } /* un poil plus grand sur desktop */
 }
 
 .header {
-  display: flex; justify-content: space-between; align-items: center;flex-direction: column;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
   background: var(--header-bg);
+  margin-bottom: 20px;
 }
-.header_up{
+.header_up {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-between;
   padding: 0 2rem;
 }
-.right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 .control {
   box-sizing: border-box;
@@ -26,29 +38,41 @@
   border-radius: 8px;
   background: var(--cream);
   color: var(--text);
-  font: 600 16px/1 var(--logo-font);   /* texte centré et lisible */
+  font: 600 16px/1 var(--logo-font); /* texte centré et lisible */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 /* Effets communs */
-.control:hover { box-shadow: 0 2px 8px rgba(0,0,0,.15); transform: scale(1.03); }
-.control:active { transform: scale(0.98); }
-.control:focus { outline: none; }                    /* on remplace le focus par :focus-visible */
-.control:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.control:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.03);
+}
+.control:active {
+  transform: scale(0.98);
+}
+.control:focus {
+  outline: none;
+} /* on remplace le focus par :focus-visible */
+.control:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
 
-.langSelect { width: var(--ctrl-size); }
+.langSelect {
+  width: var(--ctrl-size);
+}
 
-.option{
+.option {
   font-size: 20px;
   font-family: var(--logo-font);
 }
 
 .themeButton {
-  padding: 0;                 /* pas de padding: on centre l'icône dans le carré */
+  padding: 0; /* pas de padding: on centre l'icône dans le carré */
   background: var(--cream);
 }
 
@@ -58,7 +82,9 @@
   transition: transform 1s ease-in-out;
 }
 
-.themeButton:hover .icon { transform: rotate(360deg) scale(1.06) ; }
+.themeButton:hover .icon {
+  transform: rotate(360deg) scale(1.06);
+}
 
 .header_bottom {
   flex: 1 1 auto;
@@ -68,4 +94,6 @@
   gap: 0.5rem;
   width: 100%;
 }
-.hidden { display: none; }  /* ainsi la hauteur mesurée = 0 quand caché */
+.hidden {
+  display: none;
+} /* ainsi la hauteur mesurée = 0 quand caché */
