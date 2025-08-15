@@ -7,7 +7,7 @@
   --media-size: 230px;
 
   /* Aperçu (nombre de lignes visibles) */
-  --desc-lines: 4;   
+  --desc-lines: 6;   
   --desc-lh: 1.55;   /* line-height utilisé pour le calcul de hauteur */
 }
 
@@ -75,27 +75,32 @@
 .title { margin: 8px 0 6px; }
 
 /* --- MEDIA CIRCULAIRE COMMUN (OhMyFood / Kasa) --- */
+
 .mediaWrap{
   position: relative;
   width: var(--media-size);
-  height: var(--media-size);  /* plus de clamp : taille fixe */
+  aspect-ratio: 1 / 1;          /* garantit le 1:1 */
+  height: auto;                 /* laisse aspect-ratio gérer la hauteur */
   border-radius: 50%;
   overflow: hidden;
   margin: -10px auto -10px;
-
-  /* centrage facile du visuel & du slogan */
   display: grid;
   place-items: center;
 }
-
 /* L’image remplit totalement le cercle */
 .mediaWrap img{
+  display: block;               /* supprime l'espace inline */
   width: 100%;
   height: 100%;
-  object-fit: cover;       /* couvre tout le cercle */
-  border-radius: inherit;  /* hérite du 50% */
+  object-fit: cover;            /* remplit bien le cercle */
+  object-position: center;      /* centrage par défaut */
+  border-radius: 50%;
 }
 
+.card[data-project="sophie-bluel"] .mediaWrap img{
+  transform: scale(1.12);       /* léger zoom pour “manger” les marges */
+  object-position: 50% 45%;     /* ajuste si besoin (monte un poil le cadrage) */
+}
 
 @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
 .imgSpin{
@@ -139,8 +144,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    gap: 5px;
-    margin-top: 10px;
+  margin-top: 10px;
     align-items: center;
 }
 .arrowContainer{
