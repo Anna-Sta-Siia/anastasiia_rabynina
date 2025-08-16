@@ -1,0 +1,19 @@
+{
+  "skills": {
+    "title": "Compétences — en cours de polissage ✨",
+    "lead": "Cette page est en préparation.",
+    "body": "Je finalise la section Skills. En attendant, vous pouvez parcourir mes projets ou m’écrire — je réponds vite.",
+    "ctaProjects": "Voir les projets",
+    "ctaHome": "Retour à l’accueil",
+    "ctaContact": "Me contacter"
+  },
+  "cv": {
+    "title": "CV — en cours de mise en page",
+    "lead": "La version en ligne arrive très bientôt.",
+    "body": "Je peaufine mon CV. Besoin d’une version PDF ? Demandez-la, je vous l’envoie.",
+    "ctaProjects": "Voir les projets",
+    "ctaHome": "Retour à l’accueil",
+    "ctaContact": "Me contacter",
+    "ctaCV": "Demander le CV (PDF)"
+  }
+}

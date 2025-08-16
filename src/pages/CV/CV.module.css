@@ -1,6 +1,7 @@
 .CV {
   padding: 20px;
   display: flex;
+  position: relative;
 }
 .text {
   display: flex;
