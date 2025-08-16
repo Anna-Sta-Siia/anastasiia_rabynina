@@ -1,4 +1,3 @@
-// 8 pétales — inchangés
 export const CATEGORIES = [
   { id: "markup", color: "#F8BBD0" },
   { id: "styles", color: "#B39DDB" },

@@ -1,8 +1,11 @@
+// src/components/ProjetCard/index.jsx
 import { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useUI } from "../../context";
 import menuItems from "../../config/menuConfig";
 import styles from "./ProjetCard.module.css";
+import Modal from "../Modal";
+import modalCss from "../Modal/Modal.module.css";
 
 // UI (projet)
 import uiFr from "../../assets/traduction/projet/ui.fr.json";
@@ -43,8 +46,7 @@ export default function ProjetCard({ project }) {
 
   // Lien vers la page skills
   const skillsPath = useMemo(() => {
-    const item =
-      menuItems.find((i) => i.key === "skills") ?? menuItems.find((i) => i.key === "skills");
+    const item = menuItems.find((i) => i.key === "skills");
     return item?.path || "/skills";
   }, []);
 
@@ -94,8 +96,7 @@ export default function ProjetCard({ project }) {
   // Modale commune (null | 'desc' | 'tools')
   const [modalType, setModalType] = useState(null);
   const showModal = modalType !== null;
-  const closeBtnRef = useRef(null);
-  const lastOpenerRef = useRef(null); // rendre le focus au bon bouton
+  const lastOpenerRef = useRef(null); // rendre le focus au bon bouton après fermeture
 
   // Mesure générique d'overflow
   const setOverflowFromRef = useCallback((ref, setter) => {
@@ -133,19 +134,9 @@ export default function ProjetCard({ project }) {
     };
   }, [language, description, stack, setOverflowFromRef]);
 
-  // Escape pour fermer la modale
+  // Focus management : au close, on rend le focus au bouton qui a ouvert
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") setModalType(null);
-    };
-    if (showModal) window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [showModal]);
-
-  // Focus management
-  useEffect(() => {
-    if (showModal) setTimeout(() => closeBtnRef.current?.focus(), 0);
-    else lastOpenerRef.current?.focus?.();
+    if (!showModal) lastOpenerRef.current?.focus?.();
   }, [showModal]);
 
   // Outils condensés (clampables)
@@ -154,7 +145,7 @@ export default function ProjetCard({ project }) {
     [stack, filterLabels]
   );
 
-  // ID stable pour aria-labelledby / aria-describedby
+  // ID stable pour aria-describedby de la modale (contenu)
   const modalTitleId = useMemo(() => {
     const base = (id || title || "desc")
       .toString()
@@ -165,25 +156,6 @@ export default function ProjetCard({ project }) {
       .replace(/(^-|-$)/g, "");
     return `desc-title-${base}`;
   }, [id, title]);
-
-  // Piège Tab (accessibilité)
-  const trapTab = (e) => {
-    if (e.key !== "Tab") return;
-    const root = e.currentTarget;
-    const f = root.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    if (!f.length) return;
-    const first = f[0],
-      last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  };
 
   return (
     <div className={styles.card} data-project={id}>
@@ -209,7 +181,7 @@ export default function ProjetCard({ project }) {
               <img
                 src={`${import.meta.env.BASE_URL}${image}`}
                 alt={imageAlt || title}
-                className={`${styles.mediaImg ?? ""} ${imgEffectClass}`} // <- используем
+                className={`${styles.mediaImg ?? ""} ${imgEffectClass}`}
                 decoding="async"
                 loading="lazy"
               />
@@ -336,44 +308,25 @@ export default function ProjetCard({ project }) {
         </div>
       </div>
 
-      {/* ---------- MODALE ---------- */}
-      {showModal && (
-        <div
-          className={styles.modalOverlay}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={modalTitleId}
-          aria-describedby={`${modalTitleId}-desc`}
-          onClick={() => setModalType(null)}
-        >
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()} onKeyDown={trapTab}>
-            <h3 id={modalTitleId} className={styles.modalTitle}>
-              {title} — {modalType === "tools" ? ui.tools : ui.preview}
-            </h3>
-
-            {modalType === "tools" ? (
-              <ul id={`${modalTitleId}-desc`} className={styles.modalList}>
-                {stack.map((k) => (
-                  <li key={k}>{filterLabels[k] ?? k}</li>
-                ))}
-              </ul>
-            ) : (
-              <p id={`${modalTitleId}-desc`} className={styles.modalText}>
-                {description}
-              </p>
-            )}
-
-            <button
-              type="button"
-              className={styles.modalClose}
-              onClick={() => setModalType(null)}
-              ref={closeBtnRef}
-            >
-              {ui.close}
-            </button>
-          </div>
-        </div>
-      )}
+      {/* ---------- MODALE (externe) ---------- */}
+      <Modal
+        open={showModal}
+        title={`${title} — ${modalType === "tools" ? ui.tools : ui.preview}`}
+        onClose={() => setModalType(null)}
+        describedById={`${modalTitleId}-desc`}
+      >
+        {modalType === "tools" ? (
+          <ul id={`${modalTitleId}-desc`} className={modalCss.modalList}>
+            {stack.map((k) => (
+              <li key={k}>{filterLabels[k] ?? k}</li>
+            ))}
+          </ul>
+        ) : (
+          <p id={`${modalTitleId}-desc`} className={modalCss.modalText}>
+            {description}
+          </p>
+        )}
+      </Modal>
     </div>
   );
 }

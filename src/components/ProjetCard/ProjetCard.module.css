@@ -1,4 +1,4 @@
-:root{
+:root {
   /* Taille identique pour toutes les cartes/œufs */
   --egg-w: 300px;
   --egg-h: 400px;
@@ -7,23 +7,27 @@
   --media-size: 230px;
 
   /* Aperçu (nombre de lignes visibles) */
-  --desc-lines: 6;   
-  --desc-lh: 1.55;   /* line-height utilisé pour le calcul de hauteur */
+  --desc-lines: 6;
+  --desc-lh: 1.55; /* line-height utilisé pour le calcul de hauteur */
 }
 
-.card{
+.card {
   perspective: 1000px;
   width: var(--egg-w);
   height: var(--egg-h);
   user-select: none;
-  transition: transform .25s ease, filter .25s ease;
+  transition: transform 0.25s ease, filter 0.25s ease;
   /* ombre externe pour l’effet « posé » */
-  filter: drop-shadow(0 14px 22px rgba(0,0,0,.18));
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
 }
-.card:hover { transform: translateY(-2px); filter: saturate(1.02); }
+.card:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.02);
+}
 
 /* Cercle plus “objet” grâce à un anneau et un gloss */
-.front, .back {
+.front,
+.back {
   position: absolute;
   inset: 0;
   display: flex;
@@ -40,30 +44,47 @@
 .front::before,
 .back::before {
   content: "";
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  box-shadow:
-    inset 0 0 0 8px rgba(255,255,255,.08),     /* anneau doux */
-    inset 0 18px 30px rgba(255,255,255,.25),  /* gloss haut */
-    inset 0 -18px 28px rgba(0,0,0,.06);       /* vignette bas */
+  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.08),
+    /* anneau doux */ inset 0 18px 30px rgba(255, 255, 255, 0.25),
+    /* gloss haut */ inset 0 -18px 28px rgba(0, 0, 0, 0.06); /* vignette bas */
   pointer-events: none;
 }
 /* surcouche « convexe » (highlight/vignette) */
 .front::after,
-.back::after{
-  content:"";
-  position:absolute; inset:0; border-radius:50%;
-  background:
-    radial-gradient(130% 95% at 50% -10%, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 45%),
-    radial-gradient(140% 110% at 50% 120%, rgba(0,0,0,.12) 0%, rgba(0,0,0,0) 60%);
-  pointer-events:none;
+.back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+      130% 95% at 50% -10%,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0) 45%
+    ),
+    radial-gradient(140% 110% at 50% 120%, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0) 60%);
+  pointer-events: none;
 }
 /* Garde : la rotation / flip existants */
-.inner { position: relative; width: 100%; height: 100%;
-  transition: transform .8s ease; transform-style: preserve-3d; }
-.flipped { transform: rotateY(180deg); }
-.front { z-index: 2; }
-.back  { background: #fff; transform: rotateY(180deg); }
+.inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d;
+}
+.flipped {
+  transform: rotateY(180deg);
+}
+.front {
+  z-index: 2;
+}
+.back {
+  background: #fff;
+  transform: rotateY(180deg);
+}
 
 /* Base */
 .titleLogo {
@@ -72,15 +93,17 @@
   object-fit: contain;
   margin: 20px;
 }
-.title { margin: 8px 0 6px; }
+.title {
+  margin: 8px 0 6px;
+}
 
 /* --- MEDIA CIRCULAIRE COMMUN (OhMyFood / Kasa) --- */
 
-.mediaWrap{
+.mediaWrap {
   position: relative;
   width: var(--media-size);
-  aspect-ratio: 1 / 1;          /* garantit le 1:1 */
-  height: auto;                 /* laisse aspect-ratio gérer la hauteur */
+  aspect-ratio: 1 / 1; /* garantit le 1:1 */
+  height: auto; /* laisse aspect-ratio gérer la hauteur */
   border-radius: 50%;
   overflow: hidden;
   margin: -20px auto -10px;
@@ -88,44 +111,61 @@
   place-items: center;
 }
 /* L’image remplit totalement le cercle */
-.mediaWrap img{
-  display: block;               /* supprime l'espace inline */
+.mediaWrap img {
+  display: block; /* supprime l'espace inline */
   width: 100%;
   height: 100%;
-  object-fit: cover;            /* remplit bien le cercle */
-  object-position: center;      /* centrage par défaut */
+  object-fit: cover; /* remplit bien le cercle */
+  object-position: center; /* centrage par défaut */
   border-radius: 50%;
 }
 
-.card[data-project="sophie-bluel"] .mediaWrap img{
-  transform: scale(1.12);       /* léger zoom pour “manger” les marges */
-  object-position: 50% 45%;     /* ajuste si besoin (monte un poil le cadrage) */
+.card[data-project="sophie-bluel"] .mediaWrap img {
+  transform: scale(1.12); /* léger zoom pour “manger” les marges */
+  object-position: 50% 45%; /* ajuste si besoin (monte un poil le cadrage) */
 }
 
-@keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-.imgSpin{
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.imgSpin {
   animation: spin 10s linear infinite;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: contain;
-  box-shadow: none;         /* pas d’anneau blanc */
-  background: #99E2D0;     /* disque  sous l’icône */
+  box-shadow: none; /* pas d’anneau blanc */
+  background: #99e2d0; /* disque  sous l’icône */
 }
 
 @keyframes fadeSoft {
-  from { opacity: .85; transform: scale(1.00); }
-  to   { opacity: 1;   transform: scale(1.03); }
+  from {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.03);
+  }
 }
-.imgFade { animation: fadeSoft 4s ease-in-out infinite alternate;    object-position: bottom right; }
+.imgFade {
+  animation: fadeSoft 4s ease-in-out infinite alternate;
+  object-position: bottom right;
+}
 
 /* Slogan lisible et centré dans la bulle */
-.slogan{
+.slogan {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   z-index: 2;
-  padding: .6rem .9rem;
+  padding: 0.6rem 0.9rem;
   border-radius: 14px;
   text-align: center;
   font-weight: 700;
@@ -135,21 +175,27 @@
 
 /* Accessibilité */
 @media (prefers-reduced-motion: reduce) {
-  .imgSpin, .imgFade { animation: none !important; }
+  .imgSpin,
+  .imgFade {
+    animation: none !important;
+  }
 }
-@media (hover:hover) {
-  .imgSpin:hover, .imgFade:hover { animation-play-state: paused; }
+@media (hover: hover) {
+  .imgSpin:hover,
+  .imgFade:hover {
+    animation-play-state: paused;
+  }
 }
-.projectcardbottom{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  margin-top: 10px;
-    align-items: center;
-}
-.arrowContainer{
+.projectcardbottom {
   display: flex;
-  gap:5px;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+  align-items: center;
+}
+.arrowContainer {
+  display: flex;
+  gap: 5px;
 }
 .flipArrow {
   background: none;
@@ -157,22 +203,28 @@
   color: #333;
   font-size: 1.8rem;
   cursor: pointer;
-  transition: transform .3s ease;
+  transition: transform 0.3s ease;
   margin-top: -10px;
 }
-.flipArrow:hover { transform: scale(1.2); }
-.flipArrow:focus { outline: 2px solid #aaa; }
-.flipBack { transform: rotateY(180deg); }
-.descriptiontitle{
-  margin:5px;
+.flipArrow:hover {
+  transform: scale(1.2);
 }
-.description{
+.flipArrow:focus {
+  outline: 2px solid #aaa;
+}
+.flipBack {
+  transform: rotateY(180deg);
+}
+.descriptiontitle {
+  margin: 5px;
+}
+.description {
   margin: 0 20px;
   list-style: none;
   text-align: center;
 }
 /* ====== Одинаковая высота «Aperçu» + многоточие ====== */
-.descBox{
+.descBox {
   /* contrôle fin de l’aperçu */
   --lines: var(--desc-lines);
   --lh: var(--desc-lh);
@@ -186,7 +238,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--lines);
-  line-clamp: var(--lines);             /* nouveaux moteurs */
+  line-clamp: var(--lines); /* nouveaux moteurs */
   overflow: hidden;
   text-overflow: ellipsis;
 
@@ -196,73 +248,33 @@
 }
 
 /* petit fondu bas pour adoucir la coupure */
-.descBox::after{
-  content:"";
-  position:absolute; left:0; right:0; bottom:0;
+.descBox::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: calc(1em * var(--lh));
-  pointer-events:none;
+  pointer-events: none;
 }
 
 /* zone qui englobe texte + bouton, avec une hauteur mini commune */
-.previewZone{
+.previewZone {
   /* réserve la place des lignes + une ligne pour le bouton */
-  min-height: calc(var(--desc-lines) * 1em * var(--desc-lh) + 2.0rem);
+  min-height: calc(var(--desc-lines) * 1em * var(--desc-lh) + 2rem);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-
-.seeMoreBtn{
+.seeMoreBtn {
   line-height: 1.2;
   height: 1.8rem;
-  margin-top: .25rem;   /* petit écart avec le texte clampé */
+  margin-top: 0.25rem; /* petit écart avec le texte clampé */
   background: transparent;
   border: none;
   color: #1e3a8a;
   font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
-}
-
-/* ====== Модалка ====== */
-.modalOverlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  display: grid;
-  place-items: center;
-  z-index: 9999;
-}
-
-.modal{
-  background: #fff;
-  color: #222;
-  width: 100%;
-  max-height: 82vh;
-  overflow: auto;
-  border-radius: 16px;
-  padding: 20px 20px 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,.25);
-}
-
-.modalTitle{
-  margin: 0 0 10px;
-  font-size: 1.2rem;
-}
-
-.modalText{
-  margin: 0 0 16px;
-  line-height: 1.6;
-}
-
-.modalClose{
-  display: inline-block;
-  margin-left: auto;
-  background: #333;
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 10px 16px;
-  cursor: pointer;
 }
