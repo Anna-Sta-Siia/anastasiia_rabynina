@@ -7,6 +7,7 @@ import luna from "../../assets/images/luna.svg";
 import solnyshko from "../../assets/images/solnyshko.svg";
 import styles from "./Header.module.css";
 import Menu from "../Menu";
+import LangPicker from "../LangPicker";
 
 /* === UI localisée pour les tooltips === */
 import uiEN from "../../assets/traduction/header/ui.en.json";
@@ -14,7 +15,8 @@ import uiFR from "../../assets/traduction/header/ui.fr.json";
 import uiRU from "../../assets/traduction/header/ui.ru.json";
 
 const Header = forwardRef(function Header({ className = "", style }, ref) {
-  const { theme, setTheme, language, setLanguage } = useUI();
+  // setLanguage теперь не нужен — им управляет LangPicker
+  const { theme, setTheme, language } = useUI();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -22,7 +24,7 @@ const Header = forwardRef(function Header({ className = "", style }, ref) {
   const matched = menuItems.find((item) => item.path === currentPath);
   const bgColor = matched?.color || "#FFFFFF";
 
-  // Pack UI localisé (fallback EN)
+  // Пакет локализованных строк (фолбэк EN)
   const ui = { en: uiEN, fr: uiFR, ru: uiRU }[language] || uiEN;
 
   return (
@@ -32,35 +34,25 @@ const Header = forwardRef(function Header({ className = "", style }, ref) {
       style={{ backgroundColor: bgColor, ...style }}
     >
       <div className={styles.header_up}>
-        {/* Gauche : logo */}
+        {/* Слева: логотип */}
         <div className={styles.left}>
           <Link to="/" className={`${styles.logo} logo`}>
             {logoText}
           </Link>
         </div>
 
-        {/* Droite : contrôles */}
+        {/* Справа: элементы управления */}
         <div className={styles.right}>
-          {/* Sélecteur de langue */}
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            title={ui.tooltips.lang} // tooltip natif
-            aria-label={ui.tooltips.lang} // accessibilité
-            className={`${styles.control} ${styles.langSelect}`}
-          >
-            <option value="en">EN</option>
-            <option value="fr">FR</option>
-            <option value="ru">RU</option>
-          </select>
+          {/* Кастомный переключатель языка */}
+          <LangPicker />
 
-          {/* Bouton thème */}
+          {/* Переключатель темы */}
           <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            title={ui.tooltips.theme}
-            aria-label={ui.tooltips.theme}
-            className={`${styles.control} ${styles.buttonControl} ${styles.themeButton}`}
             type="button"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            title={ui.tooltips?.theme || "Toggle theme"}
+            aria-label={ui.tooltips?.theme || "Toggle theme"}
+            className={`${styles.control} ${styles.buttonControl} ${styles.themeButton}`}
           >
             <img
               src={theme === "light" ? luna : solnyshko}
@@ -71,7 +63,7 @@ const Header = forwardRef(function Header({ className = "", style }, ref) {
         </div>
       </div>
 
-      {/* Centre : le slider de pétales */}
+      {/* Центр: слайдер лепестков */}
       <div className={styles.header_bottom}>
         <Menu />
       </div>

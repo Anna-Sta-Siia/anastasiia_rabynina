@@ -1,0 +1,79 @@
+.langRoot {
+  position: relative;
+  display: inline-block;
+}
+
+.ctrl {
+  box-sizing: border-box;
+  width: var(--ctrl-size);
+  height: var(--ctrl-size);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--cream);
+  color: var(--text);
+  font: 600 16px/1 var(--logo-font);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+}
+.btn:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+.btn:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--text) 35%, transparent);
+  outline-offset: 2px;
+}
+
+.caret {
+  margin-left: 4px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* выпадающее меню */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1000;
+  margin: 0;
+  list-style: none;
+  background: color-mix(in oklab, var(--cream) 94%, white);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+  display: grid;
+  gap: 4px;
+  animation: langIn 0.12s ease;
+}
+
+@keyframes langIn {
+  from {
+    transform: translateY(-4px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+  font: 600 16px/1 var(--logo-font);
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+.item:hover,
+.item:focus {
+  background: rgba(0, 0, 0, 0.06);
+}
+.active {
+  background: rgba(0, 0, 0, 0.1);
+}

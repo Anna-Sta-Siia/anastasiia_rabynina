@@ -81,32 +81,6 @@
   transform: scale(0.98);
 }
 
-/* ---- Select langue : stable et centré ---- */
-.langSelect {
-  width: var(--ctrl-size);
-  min-width: var(--ctrl-size);
-  line-height: 1;
-  transform: none !important; /* anti-tremblement */
-  transition: box-shadow 0.15s ease;
-
-  /* Rendu propre + caret custom */
-  -webkit-appearance: none;
-  appearance: none;
-  padding-right: 18px;
-  text-align-last: center;
-  background: var(--cream)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23000' d='M1 0l4 4 4-4 1 1-5 5-5-5z'/%3E%3C/svg%3E")
-    no-repeat right 6px center / 10px 6px;
-}
-.langSelect:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.option {
-  font-size: 20px;
-  font-family: var(--logo-font);
-}
-
 /* ---- Bouton thème ---- */
 .themeButton {
   padding: 0; /* icône centrée dans le carré */

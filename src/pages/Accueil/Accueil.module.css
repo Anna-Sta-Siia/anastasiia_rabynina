@@ -58,7 +58,7 @@
     display: block;
     width: var(--oval-w);
     height: calc(2 * var(--oval-h));
-    padding: 1rem 0; /* можно подправить под вкус */
+    margin-bottom: 20px;
     overflow: hidden;
   }
 
