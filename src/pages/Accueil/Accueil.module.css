@@ -2,10 +2,10 @@
   position: relative;
   /* le display peut rester flex mais il ne sert plus : */
   display: block;
-  padding: 2rem 1rem;
+  padding: 0 1rem;
   height: calc(100svh - var(--header-h, 96px) - var(--footer-h, 64px));
   overflow: hidden;
-  margin-inline: auto;
+  margin: 20px auto 0;
   --vpad: 2rem;
   --oval-h: min(
     clamp(280px, 72vh, 780px),
@@ -59,7 +59,6 @@
     width: var(--oval-w);
     height: calc(2 * var(--oval-h));
     padding: 1rem 0; /* можно подправить под вкус */
-    margin-inline: auto;
     overflow: hidden;
   }
 

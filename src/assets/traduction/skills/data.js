@@ -21,7 +21,7 @@ export const PROJECTS = [
 
 // Compétences (level 1–5) + rattachement aux pétales + projets où c’est utilisé
 export const SKILLS = [
-  { name: "HTML", cats: ["markup"], level: 5, projects: ["ohmyfood", "sophie-bluel"] },
+  { name: "HTML", cats: ["markup"], level: 5, projects: [] },
   { name: "SASS / SCSS", cats: ["styles"], level: 5, projects: ["ohmyfood", "kasa"] },
   {
     name: "CSS",

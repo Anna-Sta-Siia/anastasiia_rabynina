@@ -41,7 +41,7 @@
     "titleLogo": "images/logos/argentbank.webp",
     "image": "images/projects/argentbank.webp",
     "link": "https://anna-sta-siia.github.io/ArgentBank/",
-    "description": "Banking web app front end built with React and Redux Toolkit: secure authentication (login/logout, error handling), a responsive user dashboard with nickname editing, and a consistent global state. Integrated with the back end through documented REST APIs. Green-code mindset with optimized images and reusable components. Designed transaction routes and delivered a Swagger specification in YAML (monthly listing per account, details, editing info without create/delete).",
+    "description": "Banking web app front end built with React and Redux Toolkit: secure authentication (login/logout, error handling), a responsive user dashboard with nickname editing, and a consistent global state. Integrated with the back end through documented REST APIs. Green-code mindset with optimized images and reusable components. Designed transaction routes and delivered a Swagger specification in YAML.",
     "stack": ["JS", "React", "RTK", "API", "CSS", "HTML"],
     "color": "#ffffff",
     "imageEffect": "none",

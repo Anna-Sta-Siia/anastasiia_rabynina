@@ -1,35 +1,38 @@
 .card {
   aspect-ratio: 2 / 3;
-  width: 20%;
+  width: 100%;
+  max-width: 180px; /* ← encore plus petit */
   border-radius: 50%;
-  padding: 30px;
+  padding: 25px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
-  transition: transform 0.25s ease, filter 0.25s ease;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.14));
+  transition: transform 0.18s ease, filter 0.18s ease;
+  gap: 10px;
 }
 .card:hover {
-  transform: translateY(-2px);
-  filter: saturate(1.02);
+  transform: translateY(-1px);
+  filter: saturate(1.03);
 }
 
 .title {
-  margin: 0.25rem 0 0.35rem;
+  margin: 0.15rem 0 0.25rem;
   font-weight: 800;
   text-align: center;
   color: inherit;
+  font-size: clamp(0.95rem, 0.85rem + 0.25vw, 1.05rem);
 }
 
 .level {
   display: flex;
-  gap: 0.35rem;
-  margin: 0.15rem 0 0.6rem;
+  gap: 0.28rem;
+  margin: 0.08rem 0 0.45rem;
 }
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #000;
   opacity: 0.28;
@@ -41,16 +44,16 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: 0.28rem;
   justify-content: center;
   padding: 0;
-  margin: 0.2rem 0 0.9rem;
+  margin: 0.12rem 0 0.5rem;
   list-style: none;
 }
 .chip {
-  padding: 0.2rem 0.6rem;
+  padding: 0.16rem 0.45rem;
   border-radius: 999px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: #222;
   background: #eee;
 }
@@ -61,7 +64,7 @@
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 0.6rem;
+  gap: 0.2rem 0.45rem;
   justify-content: center;
   flex-direction: column;
   align-items: center;
@@ -69,4 +72,17 @@
 .projectLink {
   font-weight: 700;
   color: inherit;
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+/* sur très petits écrans on garde lisible mais compact */
+@media (min-width: 375px) {
+  .dot {
+    width: 5.5px;
+    height: 5.5px;
+  }
+  .chip {
+    font-size: 0.74rem;
+  }
 }

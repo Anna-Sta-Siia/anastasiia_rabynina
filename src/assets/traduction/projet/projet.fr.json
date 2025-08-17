@@ -41,7 +41,7 @@
     "titleLogo": "images/logos/argentbank.webp",
     "image": "images/projects/argentbank.webp",
     "link": "https://anna-sta-siia.github.io/ArgentBank/",
-    "description": "Application bancaire front-end en React et Redux Toolkit : authentification sécurisée (login/logout, gestion d’erreurs), tableau de bord utilisateur responsive avec édition du pseudo et état global fiable. Intégration au back-end via API REST documentées. Approche green code : images optimisées et composants réutilisables. Conception des routes de transactions et livraison d’une spécification Swagger au format YAML (liste mensuelle par compte, détails, modification d’informations sans création/suppression).",
+    "description": "Application bancaire front-end en React et Redux Toolkit : authentification sécurisée (login/logout, gestion d’erreurs), tableau de bord utilisateur responsive avec édition du pseudo et état global fiable. Intégration au back-end via API REST documentées. Approche green code : images optimisées et composants réutilisables. Conception des routes de transactions et livraison d’une spécification Swagger au format YAML.",
     "stack": ["JS", "React", "RTK", "API", "HTML", "CSS"],
     "color": "#ffffff",
     "imageEffect": "none",
