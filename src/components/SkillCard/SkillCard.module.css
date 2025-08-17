@@ -1,51 +1,62 @@
+/* src/components/SkillCard/SkillCard.module.css */
+
+/* ─────────────────  EGG (carte)  ───────────────── */
 .card {
+  /* tailles “compactes” et réactives */
+  --egg-w: clamp(140px, 13.5vw, 160px);
+  --pad: clamp(10px, 1.6vw, 16px);
+
+  /* hauteurs internes uniformisées */
+  --row-projects-min: clamp(64px, 12vw, 120px);
+  --row-projects-max: clamp(90px, 18vw, 160px);
+
+  width: var(--egg-w);
   aspect-ratio: 2 / 3;
-  width: 20%;
   border-radius: 50%;
-  padding: 30px;
+  padding: var(--pad);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+
+  overflow: hidden; /* rien ne déborde de l’œuf */
   filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
   transition: transform 0.25s ease, filter 0.25s ease;
-  display: grid;
-  grid-template-rows:
-    var(--row-title, clamp(28px, 4vw, 40px))
-    var(--row-level, clamp(18px, 2.8vw, 26px))
-    var(--row-chips, clamp(28px, 6vw, 64px))
-    1fr; /* la zone projets prend le reste */
-  row-gap: clamp(6px, 1.2vw, 12px);
-  align-items: start;
-  justify-items: center;
-  overflow: hidden; /* rien ne déborde de l’œuf */
 }
-
 .card:hover {
   transform: translateY(-2px);
   filter: saturate(1.02);
 }
 
-/* Titre → hauteur fixe, centré */
+/* ─────────────────  TITRE  ───────────────── */
 .title {
   margin: 0;
-  font-weight: 800;
-  text-align: center;
+  padding: 15% 10% 0 10%;
   color: inherit;
-  /* occupe toute la 1re ligne de la grille */
-  align-self: end; /* posé en bas de sa "cellule" */
+  font-weight: 800;
+  font-size: clamp(13px, 1.6vw, 16px);
+  text-align: center;
+
+  /* hauteur fixe et ancrage bas pour l’alignement visuel */
+  flex: 0 0 var(--row-title);
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
-/* Points (niveau) → hauteur fixe */
+/* ─────────────────  NIVEAU (DOTS)  ───────────────── */
 .level {
+  flex: 0 0 var(--row-level);
   display: flex;
-  gap: 0.35rem;
-  /* occupe la 2e ligne de la grille */
-  align-self: center;
-  margin: 0; /* on enlève le margin vertical variable */
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 0.6vw, 6px);
+  margin: 5px 0;
 }
 .dot {
-  width: 10px;
-  height: 10px;
+  width: clamp(6px, 0.8vw, 10px);
+  height: clamp(6px, 0.8vw, 10px);
   border-radius: 50%;
   background: #000;
   opacity: 0.28;
@@ -54,73 +65,62 @@
   opacity: 1;
 }
 
-/* Chips (catégories) → même hauteur partout, wrap + centré */
+/* ─────────────────  CHIPS (catégories)  ───────────────── */
 .chips {
-  /* occupe la 3e ligne de la grille */
+  flex: 0 0 var(--row-chips);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  align-content: flex-start; /* empile vers le haut si plusieurs lignes */
   justify-content: center;
+  gap: 0.35rem;
+
   padding: 0;
-  margin: 0; /* pas de marge qui décale */
+  margin: 0;
   list-style: none;
-  min-height: var(--row-chips, clamp(28px, 6vw, 64px));
 }
 .chip {
-  padding: 0.2rem 0.6rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 999px;
-  font-size: 0.9rem;
+  font-size: clamp(11px, 1.2vw, 13px);
+  line-height: 1.1;
   color: #222;
   background: #eee;
+  white-space: nowrap;
 }
 
-/* Projets → hauteur mini identique, scroll si ça déborde */
+/* ─────────────────  PROJETS (liste)  ───────────────── */
 .projects {
-  /* occupe la 4e ligne (1fr) */
+  /* prend le reste et reste uniforme entre cartes */
+  flex: 1 1 auto;
   list-style: none;
   padding: 0;
   margin: 0;
+
   display: flex;
   flex-direction: column;
-  gap: 0.35rem; /* même espacement partout */
-  justify-content: center;
   align-items: center;
-
-  /* hauteur mini commune + comportement propre si beaucoup d’items */
-  min-height: var(--row-projects-min, clamp(90px, 16vw, 160px));
-  max-height: clamp(120px, 22vw, 220px);
-  overflow-y: auto; /* on scrolle à l’intérieur si trop long */
-  scrollbar-width: thin; /* Firefox */
+  justify-content: center;
 }
+
 .projectLink {
   font-weight: 700;
   color: inherit;
   text-align: center;
+  text-decoration: none;
   line-height: 1.15;
+  font-size: clamp(12px, 1.3vw, 14px);
 }
 
-/* facultatif : lisibilité quand ça scrolle */
-.projects::-webkit-scrollbar {
-  width: 6px;
-}
-.projects::-webkit-scrollbar-thumb {
-  background: #0000002a;
-  border-radius: 6px;
-}
-
-/* — responsive (œufs plus petits) — */
-@media (max-width: 1100px) {
+/* ─────────────────  RESPONSIVE (facultatif)  ───────────────── */
+/* si tu veux *encore* plus petit sur très grands écrans,
+   baisse simplement la borne max de --egg-w (ex: 150px) */
+@media (max-width: 900px) {
   .card {
-    width: 28%;
+    --egg-w: clamp(120px, 28vw, 160px);
   }
 }
-@media (max-width: 800px) {
+@media (max-width: 600px) {
   .card {
-    width: 44%;
-  }
-}
-@media (max-width: 520px) {
-  .card {
-    width: 90%;
+    --egg-w: clamp(120px, 42vw, 160px);
   }
 }
