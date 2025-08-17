@@ -1,31 +1,41 @@
-// src/components/SkillCard/index.jsx
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useUI } from "../../context";
 import styles from "./SkillCard.module.css";
 
 /**
  * props:
- *  - skill: { name, cats: string[], level: 1|2|3|4|5, projects: string[] }
- *  - catsColors: { [catId: string]: string }   // couleur par catégorie (pour le fond de l'œuf)
- *  - projectNames: { [projectId: string]: string } // libellé humain pour les liens projets
- *  - catsLabels?: { [catId: string]: string }  // libellé localisé des catégories (optionnel)
+ *  - skill: { name, cats: string[], level: 1..5, projects: string[] }
+ *  - catsColors: { [catId: string]: string }
+ *  - projectNames: { [projectId: string]: string }
+ *  - catsLabels?: { [catId: string]: string }
  */
 export default function SkillCard({ skill, catsColors, projectNames, catsLabels }) {
   const { language } = useUI();
 
-  // libellé “Tous les projets” selon la langue
   const ALL =
     { fr: "Tous les projets", en: "All projects", ru: "Все проекты" }[language] || "All projects";
 
   const { name, cats = [], level = 1, projects = [] } = skill;
 
-  // Couleur de fond basée sur la 1ère catégorie
-  const bg = cats.length ? catsColors[cats[0]] || "#ddd" : "#ddd";
+  /** Fond de l’œuf
+   * - 0 cat  : gris clair
+   * - 1 cat  : couleur unique
+   * - ≥2 cat : dégradé 50/50 entre les 2 premières catégories
+   */
+  const background = useMemo(() => {
+    if (!cats.length) return "#ddd";
+    const c1 = catsColors[cats[0]] || "#ddd";
+    const c2 = cats[1] ? catsColors[cats[1]] || c1 : c1;
+    if (c1 === c2) return c1;
+    // 135deg pour un joli split en diagonale; change en 90deg si tu veux un split vertical
+    return `linear-gradient(135deg, ${c1} 0 50%, ${c2} 50% 100%)`;
+  }, [cats, catsColors]);
 
   const showAll = projects.length === 0;
 
   return (
-    <article className={styles.card} style={{ background: bg }} aria-label={name}>
+    <article className={styles.card} style={{ background }} aria-label={name}>
       {/* Titre */}
       <h3 className={styles.title}>{name}</h3>
 
@@ -47,7 +57,7 @@ export default function SkillCard({ skill, catsColors, projectNames, catsLabels 
         </ul>
       )}
 
-      {/* Projets liés (ou lien “Tous les projets”) */}
+      {/* Liens projets */}
       <ul className={styles.projects}>
         {showAll ? (
           <li>
@@ -56,17 +66,21 @@ export default function SkillCard({ skill, catsColors, projectNames, catsLabels 
             </Link>
           </li>
         ) : (
-          projects.map((pid) => (
-            <li key={pid}>
-              <Link
-                className={styles.projectLink}
-                to={`/projects?only=${encodeURIComponent(pid)}`}
-                title={projectNames[pid] || pid}
-              >
-                {projectNames[pid] || pid}
-              </Link>
-            </li>
-          ))
+          projects.map((pid) => {
+            const label = projectNames[pid] || pid;
+            return (
+              <li key={pid}>
+                <Link
+                  className={styles.projectLink}
+                  to={`/projects?only=${encodeURIComponent(pid)}`}
+                  title={label}
+                  aria-label={label}
+                >
+                  {label}
+                </Link>
+              </li>
+            );
+          })
         )}
       </ul>
     </article>

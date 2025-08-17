@@ -1,4 +1,3 @@
-// src/pages/Skills/index.jsx
 import { useMemo, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageTitle from "../../components/PageTitle";
@@ -9,7 +8,7 @@ import { usePageMeta } from "../../config/hooks/usePageMeta";
 import { useUI } from "../../context";
 import styles from "./Skills.module.css";
 
-// libellés localisés des catégories (skills.*.json)
+// Libellés localisés des catégories (skills.*.json)
 import skillsFR from "../../assets/traduction/skills/skills.fr.json";
 import skillsEN from "../../assets/traduction/skills/skills.en.json";
 import skillsRU from "../../assets/traduction/skills/skills.ru.json";
@@ -18,30 +17,34 @@ export default function Skills() {
   const { label, color } = usePageMeta();
   const { language } = useUI();
 
-  // ---------- libellés localisés pour les catégories ----------
+  /* ---------------- Libellés localisés des catégories ---------------- */
   const catsLabels = useMemo(() => {
     const pack = ({ fr: skillsFR, en: skillsEN, ru: skillsRU }[language] ?? skillsEN)?.skills ?? {};
     return pack.cats ?? {}; // { markup: "HTML", styles: "STYLE", ... }
   }, [language]);
 
-  // ---------- URL sync ----------
+  /* ---------------- URL (?only=slug) ---------------- */
   const [searchParams, setSearchParams] = useSearchParams();
-  const projectOnly = (searchParams.get("only") || "").trim(); // ex: "ohmyfood"
+  const projectOnly = (searchParams.get("only") || "").trim(); // ex: "ohmyfood" | ""
 
-  // couleurs catégories & noms projets
+  /* ---------------- Couleurs et noms humains ---------------- */
   const catsColors = useMemo(() => Object.fromEntries(CATEGORIES.map((c) => [c.id, c.color])), []);
   const projectNames = useMemo(() => Object.fromEntries(PROJECTS.map((p) => [p.id, p.name])), []);
 
+  /* ---------------- Sous-ensemble piloté par ?only= ----------------
+     - Compétences transversales (projects: []) -> visibles pour tous
+     - Compétences liées au projet -> s.projects inclut projectOnly
+  ------------------------------------------------------------------- */
   const usedByProject = useMemo(() => {
     if (!projectOnly) return SKILLS;
     return SKILLS.filter((s) => {
       const ps = Array.isArray(s.projects) ? s.projects : [];
-      // [] = compétence transversale → visible pour tous les projets
       return ps.length === 0 || ps.includes(projectOnly);
     });
   }, [projectOnly]);
 
-  // Catégories à surligner quand ?only=… est présent (purement visuel)
+  /* ---------------- Catégories à surligner quand ?only= est présent 
+     (pure déco: pour pré-sélectionner visuellement des bulles) ------ */
   const initialCats = useMemo(() => {
     if (!projectOnly) return [];
     const set = new Set();
@@ -49,7 +52,7 @@ export default function Skills() {
     return [...set];
   }, [projectOnly, usedByProject]);
 
-  // état du filtre (propre à la page)
+  /* ---------------- État local des filtres ---------------- */
   const [query, setQuery] = useState({
     filters: initialCats,
     search: "",
@@ -57,18 +60,17 @@ export default function Skills() {
     mode: "or",
   });
 
-  // si on change de projet via l’URL, on resynchronise la sélection visuelle
+  // Si l’URL change (autre projet ciblé), on resynchronise juste l’aspect visuel
   useEffect(() => {
     setQuery((q) => ({ ...q, filters: initialCats }));
   }, [initialCats]);
 
-  // Liste finale
+  /* ---------------- Liste finale ---------------- */
   const filteredSkills = useMemo(() => {
     const { filters, search, sort, mode } = query;
-    // on part déjà du sous-ensemble ciblé par ?only=
-    let list = usedByProject;
+    let list = usedByProject; // on part déjà du sous-ensemble ciblé par ?only=
 
-    // 1) filtres de catégories
+    // 1) filtres catégories
     if (filters.length) {
       list = list.filter((s) => {
         const has = (c) => (s.cats || []).includes(c);
@@ -76,7 +78,7 @@ export default function Skills() {
       });
     }
 
-    // 2) recherche simple sur le nom
+    // 2) recherche par nom
     if (search.trim()) {
       const n = search.trim().toLowerCase();
       list = list.filter((s) => s.name.toLowerCase().includes(n));
@@ -89,11 +91,12 @@ export default function Skills() {
     return list;
   }, [query, usedByProject]);
 
-  // callback Filter (et reset “All”)
+  /* ---------------- Callback Filter ----------------
+     Si l’utilisateur clique sur “All” (tout vide), on enlève ?only
+  --------------------------------------------------- */
   function handleFilterChange(payload) {
     setQuery(payload);
 
-    // si l’utilisateur clique sur “All” (tout vide), on enlève ?only
     if (!payload.filters.length && !payload.search && !payload.sort && projectOnly) {
       const next = new URLSearchParams(searchParams);
       next.delete("only");
@@ -101,7 +104,7 @@ export default function Skills() {
     }
   }
 
-  // items (pills) du Filter = catégories (avec libellés localisés)
+  /* ---------------- Items de Filter = catégories (localisées) ------ */
   const filterItems = useMemo(
     () =>
       CATEGORIES.map((c) => ({
@@ -130,7 +133,7 @@ export default function Skills() {
             skill={s}
             catsColors={catsColors}
             projectNames={projectNames}
-            catsLabels={catsLabels} // pour afficher les chips traduites
+            catsLabels={catsLabels} // chips localisées
           />
         ))}
       </div>

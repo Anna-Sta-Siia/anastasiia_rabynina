@@ -7,56 +7,74 @@
   gap: 20px;
   justify-content: center;
 }
-/* Центровка пустого состояния */
+/* centre le conteneur et lui donne de la hauteur pour respirer */
 .empty {
-  flex: 1;
   display: grid;
   place-items: center;
-  padding: 48px 16px;
+  min-height: clamp(360px, 54vh, 720px);
+  padding: clamp(10px, 2vw, 24px);
 }
 
-/* Само «яичко»-заглушка */
+/* l’œuf lui-même */
 .emptyEgg {
-  aspect-ratio: 2 / 3;
-  width: clamp(180px, 22vw, 260px);
-  border-radius: 50%;
-  padding: 22px;
-  text-align: center;
-  background: radial-gradient(120% 120% at 50% 35%, #fff 0 45%, #f5f5f5 60%, #eee 100%);
+  /* forme et taille */
+  aspect-ratio: 2 / 3; /* largeur:hauteur = 2:3 (ovale "œuf") */
+  width: clamp(220px, 28vw, 340px); /* ← + large => moins "pressé" */
+  min-width: 220px; /* garde une base confortable */
+  border-radius: 999px; /* ovale propre */
+  height: auto;
+
+  /* look */
+  background: radial-gradient(120% 120% at 50% 35%, #fff 45%, #f5f5f5 60%, #eee 100%);
   box-shadow: 0 14px 22px rgba(0, 0, 0, 0.12);
+  padding: clamp(16px, 2vw, 26px);
+
+  /* contenu */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 10px;
+  justify-content: center; /* ← évite l’étirement vertical */
+  gap: clamp(8px, 1.6vw, 14px);
+
+  /* sécurité si placé dans un flex parent */
+  flex: 0 0 auto;
 }
 
 .emptyEggTitle {
-  margin: 0 10%;
-  font-size: clamp(16px, calc(1rem + 0.8vw), 24px);
+  margin: 0;
   font-weight: 800;
+  font-size: clamp(18px, 2.6vw, 28px);
+  color: var(--text, #222);
 }
 
 .emptyEggText {
   margin: 0;
-  font-size: clamp(13px, calc(0.9rem + 0.3vw), 16px);
-  color: #666;
+  max-width: 26ch;
+  line-height: 1.35;
+  font-size: clamp(14px, 1.8vw, 16px);
+  color: #555;
+  text-wrap: balance;
 }
 
 .emptyEggActions {
-  margin-top: 6px;
-}
+  display: contents;
+} /* garde le flux simple */
 
 .emptyEggBtn {
-  padding: 2%;
-  font-size: clamp(14px, calc(0.9rem + 0.2vw), 16px);
+  padding: 10px 16px;
   border-radius: 999px;
-  border: 1px solid #d0d0d0;
-  background: #fff;
+  border: 1px solid transparent;
+  background: var(--green-main, #3cab55);
+  color: #fff;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
-  margin: 0 10%;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
 }
 .emptyEggBtn:hover {
   transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+.emptyEggBtn:active {
+  transform: translateY(0);
 }

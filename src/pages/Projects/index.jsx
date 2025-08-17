@@ -31,7 +31,7 @@ const normalize = (s = "") =>
 // recherche par début de mot (séparateurs: espace, tiret, underscore)
 const startsAtWord = (title, q) => {
   const t = normalize(title);
-  const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // escape regex specials
+  const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const re = new RegExp(`(^|[\\s_-])${n}`, "i");
   return re.test(t);
 };
@@ -54,18 +54,31 @@ export default function Projects() {
   }, [language]);
 
   // Si on arrive avec ?only=slug -> forcer l’affichage d’un seul projet
-  const onlyFromUrl = searchParams.get("only") || "";
+  const onlyFromUrl = (searchParams.get("only") || "").trim();
   const [only, setOnly] = useState(onlyFromUrl);
 
-  // État "requête" courant venant du <Filter/>
+  // Suivre l'URL si elle change (navigation interne)
+  useEffect(() => {
+    setOnly(onlyFromUrl);
+  }, [onlyFromUrl]);
+
+  // Trouver la stack du projet ciblé (pour entourer les bulles)
+  const preselectedStack = useMemo(() => {
+    if (!only) return [];
+    const p = allProjects.find((x) => x.id === only);
+    return Array.isArray(p?.stack) ? p.stack : [];
+  }, [only, allProjects]);
+  const stackSig = preselectedStack.join("|");
+
+  // État de la requête courante (alimenté par le <Filter/>)
   const [query, setQuery] = useState({
     filters: [],
     search: "",
     sort: "",
-    mode: "and", // AND par défaut sur "Projects"
+    mode: "and",
   });
 
-  // Valeurs par défaut injectées dans <Filter/> + un "nonce" pour forcer le remount visuel
+  // Valeurs par défaut injectées dans <Filter/> + "nonce" pour forcer un remount visuel
   const [filterDefaults, setFilterDefaults] = useState({
     selected: [],
     search: "",
@@ -74,10 +87,18 @@ export default function Projects() {
     nonce: 0,
   });
 
-  // Sync si l’URL change (nav interne)
+  // ⚠️ Remonter le Filter uniquement quand on *arrive* avec ?only=… (ou si la stack ciblée change)
   useEffect(() => {
-    setOnly(onlyFromUrl || "");
-  }, [onlyFromUrl]);
+    if (!only) return; // <-- ne pas remonter quand on quitte le mode "only"
+    setFilterDefaults((d) => ({
+      selected: preselectedStack,
+      search: "",
+      sort: "",
+      mode: "and",
+      nonce: d.nonce + 1,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stackSig, only]);
 
   // Textes localisés pour l'état vide
   const emptyUi = useMemo(() => {
@@ -91,7 +112,8 @@ export default function Projects() {
     );
   }, [language]);
 
-  // Quand l’utilisateur agit sur la barre de filtres, on sort du mode "only"
+  // Interaction avec la barre de filtres.
+  // Au 1er clic, on sort du mode "only" *sans* remonter le Filter.
   function handleFilterChange(payload) {
     if (only) {
       const next = new URLSearchParams(searchParams);
@@ -102,7 +124,7 @@ export default function Projects() {
     setQuery(payload);
   }
 
-  // Reset des filtres + suppression de ?only + reset visuel de <Filter/>
+  // Reset (bouton dans l’état vide)
   function resetFilters() {
     const next = new URLSearchParams(searchParams);
     next.delete("only");
@@ -115,19 +137,18 @@ export default function Projects() {
       search: "",
       sort: "",
       mode: "and",
-      nonce: d.nonce + 1, // force remount du composant Filter
+      nonce: d.nonce + 1,
     }));
   }
 
   // Liste filtrée
   const filteredProjects = useMemo(() => {
-    const { filters, search, sort, mode } = query;
-
     // 1) Cas ?only=... -> on court-circuite tout
     if (only) {
       return allProjects.filter((p) => p.id === only);
     }
 
+    const { filters, search, sort, mode } = query;
     let list = allProjects;
 
     // 2) Filtres par stack
@@ -159,7 +180,7 @@ export default function Projects() {
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
 
-      {/* AND par défaut ici + reset visuel quand resetFilters() est cliqué */}
+      {/* AND par défaut. Quand on arrive avec ?only, on *n’émet pas* onChange au montage */}
       <Filter
         key={filterDefaults.nonce}
         onChange={handleFilterChange}
@@ -167,6 +188,7 @@ export default function Projects() {
         defaultSelected={filterDefaults.selected}
         defaultSearch={filterDefaults.search}
         defaultSort={filterDefaults.sort}
+        fireOnMount={!only}
       />
 
       <div className={styles.projectslist}>

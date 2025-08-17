@@ -1,38 +1,51 @@
 .card {
   aspect-ratio: 2 / 3;
-  width: 100%;
-  max-width: 180px; /* ← encore plus petit */
+  width: 20%;
   border-radius: 50%;
-  padding: 25px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.14));
-  transition: transform 0.18s ease, filter 0.18s ease;
-  gap: 10px;
-}
-.card:hover {
-  transform: translateY(-1px);
-  filter: saturate(1.03);
+  padding: 30px;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
+  transition: transform 0.25s ease, filter 0.25s ease;
+  display: grid;
+  grid-template-rows:
+    var(--row-title, clamp(28px, 4vw, 40px))
+    var(--row-level, clamp(18px, 2.8vw, 26px))
+    var(--row-chips, clamp(28px, 6vw, 64px))
+    1fr; /* la zone projets prend le reste */
+  row-gap: clamp(6px, 1.2vw, 12px);
+  align-items: start;
+  justify-items: center;
+  overflow: hidden; /* rien ne déborde de l’œuf */
 }
 
+.card:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.02);
+}
+
+/* Titre → hauteur fixe, centré */
 .title {
-  margin: 0.15rem 0 0.25rem;
+  margin: 0;
   font-weight: 800;
   text-align: center;
   color: inherit;
-  font-size: clamp(0.95rem, 0.85rem + 0.25vw, 1.05rem);
+  /* occupe toute la 1re ligne de la grille */
+  align-self: end; /* posé en bas de sa "cellule" */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
+/* Points (niveau) → hauteur fixe */
 .level {
   display: flex;
-  gap: 0.28rem;
-  margin: 0.08rem 0 0.45rem;
+  gap: 0.35rem;
+  /* occupe la 2e ligne de la grille */
+  align-self: center;
+  margin: 0; /* on enlève le margin vertical variable */
 }
 .dot {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #000;
   opacity: 0.28;
@@ -41,48 +54,73 @@
   opacity: 1;
 }
 
+/* Chips (catégories) → même hauteur partout, wrap + centré */
 .chips {
+  /* occupe la 3e ligne de la grille */
   display: flex;
   flex-wrap: wrap;
-  gap: 0.28rem;
+  gap: 0.35rem;
   justify-content: center;
   padding: 0;
-  margin: 0.12rem 0 0.5rem;
+  margin: 0; /* pas de marge qui décale */
   list-style: none;
+  min-height: var(--row-chips, clamp(28px, 6vw, 64px));
 }
 .chip {
-  padding: 0.16rem 0.45rem;
+  padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: #222;
   background: #eee;
 }
 
+/* Projets → hauteur mini identique, scroll si ça déborde */
 .projects {
+  /* occupe la 4e ligne (1fr) */
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem 0.45rem;
-  justify-content: center;
   flex-direction: column;
+  gap: 0.35rem; /* même espacement partout */
+  justify-content: center;
   align-items: center;
+
+  /* hauteur mini commune + comportement propre si beaucoup d’items */
+  min-height: var(--row-projects-min, clamp(90px, 16vw, 160px));
+  max-height: clamp(120px, 22vw, 220px);
+  overflow-y: auto; /* on scrolle à l’intérieur si trop long */
+  scrollbar-width: thin; /* Firefox */
 }
 .projectLink {
   font-weight: 700;
   color: inherit;
   text-align: center;
-  font-size: 0.92rem;
+  line-height: 1.15;
 }
 
-/* sur très petits écrans on garde lisible mais compact */
-@media (min-width: 375px) {
-  .dot {
-    width: 5.5px;
-    height: 5.5px;
+/* facultatif : lisibilité quand ça scrolle */
+.projects::-webkit-scrollbar {
+  width: 6px;
+}
+.projects::-webkit-scrollbar-thumb {
+  background: #0000002a;
+  border-radius: 6px;
+}
+
+/* — responsive (œufs plus petits) — */
+@media (max-width: 1100px) {
+  .card {
+    width: 28%;
   }
-  .chip {
-    font-size: 0.74rem;
+}
+@media (max-width: 800px) {
+  .card {
+    width: 44%;
+  }
+}
+@media (max-width: 520px) {
+  .card {
+    width: 90%;
   }
 }

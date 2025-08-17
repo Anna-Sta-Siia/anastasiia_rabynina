@@ -1,5 +1,5 @@
 // src/components/Filter/index.jsx
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useUI } from "../../context";
 import PetalFilter from "../Petal/PetalFilter";
 import styles from "./Filter.module.css";
@@ -12,15 +12,6 @@ import uiFR from "../../assets/traduction/filters/ui.fr.json";
 import uiEN from "../../assets/traduction/filters/ui.en.json";
 import uiRU from "../../assets/traduction/filters/ui.ru.json";
 
-/**
- * Props:
- * - onChange({filters, search, sort, mode})
- * - items?: [{key,color,label}]
- * - defaultSelected?: string[]
- * - defaultSearch?: string
- * - defaultSort?: ''|'az'|'za'
- * - defaultMode?: 'or'|'and'
- */
 export default function Filter({
   onChange,
   items: itemsProp,
@@ -28,6 +19,7 @@ export default function Filter({
   defaultSearch = "",
   defaultSort = "",
   defaultMode = "or",
+  fireOnMount = true,
 }) {
   const { language } = useUI();
 
@@ -47,18 +39,27 @@ export default function Filter({
   const [sort, setSort] = useState(defaultSort);
   const [mode, setMode] = useState(defaultMode);
 
-  // --- Signature stable des valeurs par défaut
   const signature = useMemo(() => {
     const sel = Array.isArray(defaultSelected) ? defaultSelected.join("|") : "";
     return `${defaultMode}::${defaultSort}::${defaultSearch}::${sel}`;
   }, [defaultSelected, defaultSearch, defaultSort, defaultMode]);
 
-  // --- Sync de l’état local UNIQUEMENT quand les defaults changent vraiment
+  // ⛑️ DEV/StrictMode: ignorer les 2 premiers passages du useEffect si fireOnMount=false
+  const skipCount = useRef(0);
+
   useEffect(() => {
     setSelected(Array.isArray(defaultSelected) ? defaultSelected : []);
     setSearch(defaultSearch || "");
     setSort(defaultSort || "");
     setMode(defaultMode || "or");
+
+    if (!fireOnMount) {
+      if (skipCount.current < 2) {
+        skipCount.current += 1;
+        return; // ne pas appeler onChange sur les 2 premiers passages
+      }
+    }
+
     onChange?.({
       filters: Array.isArray(defaultSelected) ? defaultSelected : [],
       search: defaultSearch || "",
@@ -66,7 +67,7 @@ export default function Filter({
       mode: defaultMode || "or",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature]);
+  }, [signature, fireOnMount]);
 
   function pushChange(nextSel = selected, nextSearch = search, nextSort = sort, nextMode = mode) {
     onChange?.({ filters: nextSel, search: nextSearch, sort: nextSort, mode: nextMode });
@@ -76,7 +77,6 @@ export default function Filter({
     const wasEmpty = selected.length === 0;
     const next = selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key];
 
-    // Si on retombe à vide -> on remet le mode sur defaultMode
     if (!next.length) {
       setSelected(next);
       setMode(defaultMode);
@@ -84,8 +84,6 @@ export default function Filter({
       return;
     }
 
-    // Si on partait de vide, on repart sur le defaultMode ;
-    // Alt+clic force "and" ponctuellement.
     const baseMode = wasEmpty ? defaultMode : mode;
     const nextMode = e?.altKey ? "and" : baseMode;
 
@@ -98,7 +96,6 @@ export default function Filter({
     setSelected([]);
     setSearch("");
     setSort("");
-    // Important: revenir au defaultMode (et pas "or" en dur)
     setMode(defaultMode);
     pushChange([], "", "", defaultMode);
   }
