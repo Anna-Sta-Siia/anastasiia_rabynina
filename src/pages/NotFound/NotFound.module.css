@@ -1,24 +1,76 @@
 .notfound {
+  min-height: clamp(440px, 68vh, 820px);
+  padding: clamp(18px, 3.2vw, 30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2.4vw, 22px);
   text-align: center;
-  padding: 20px;
 }
-.notfound h1 {
-  font-size: 4rem;
+
+/* Bigger egg */
+.egg {
+  width: clamp(140px, 24vw, 280px);
+  height: auto;
+  opacity: 0.95;
+  user-select: none;
+}
+
+/* Big “404” */
+.code {
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 2px;
   color: var(--green-main);
+  font-weight: 800;
+  font-size: clamp(56px, 9.5vw, 130px);
 }
-.notfound p {
-  margin: var(--spacing) 0;
-  font-size: 1.2rem;
-}
-.homeLink {
-  display: inline-block;
-  margin-top: var(--spacing);
-  padding: var(--spacing-sm) var(--spacing);
-  background: var(--green-main);
-  color: white;
-  border-radius: 4px;
+
+/* Shared pill style (message + button) */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 1.4vw, 14px) clamp(16px, 2.2vw, 22px);
+  border-radius: 999px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
   text-decoration: none;
+  max-width: 90vw;
+  width: fit-content;
+  box-sizing: border-box;
+}
+
+/* Non-interactive message pill */
+.text {
+  background: var(--green-main);
+  color: #fff;
+  cursor: default;
+  font-size: clamp(14px, 1.7vw, 18px);
+}
+
+/* Interactive link pill */
+.homeLink {
+  background: var(--green-main);
+  color: #fff;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
+  font-size: clamp(14px, 1.6vw, 16px);
 }
 .homeLink:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+.homeLink:active {
+  transform: translateY(0);
+}
+.homeLink:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .homeLink {
+    transition: none;
+  }
 }
