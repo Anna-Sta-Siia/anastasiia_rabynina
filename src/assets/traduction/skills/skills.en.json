@@ -3,14 +3,14 @@
     "title": "Skills",
     "hint": "Click = OR filter; Alt+Click = AND.",
     "cats": {
-      "markup": "Markup",
-      "styles": "Styling & SASS",
-      "js": "JavaScript",
-      "react": "React",
-      "state": "State & Forms",
-      "api": "API & Auth",
-      "a11y": "A11y & i18n & SEO",
-      "tooling": "Tooling & Deploy"
+      "markup": "MARKUP",
+      "styles": "STYLE",
+      "js": "JS",
+      "react": "REACT",
+      "state": "STATE",
+      "api": "API",
+      "a11y": "SEO",
+      "tooling": "TOOLS"
     }
   }
 }

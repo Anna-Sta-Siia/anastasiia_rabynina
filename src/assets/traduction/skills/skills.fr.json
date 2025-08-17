@@ -3,14 +3,14 @@
     "title": "Compétences",
     "hint": "Clic = filtre OU ; Alt+Clic = ET.",
     "cats": {
-      "markup": "HTML & Sémantique",
-      "styles": "Styles & SASS",
-      "js": "JavaScript",
-      "react": "React",
-      "state": "État & Formulaires",
-      "api": "API & Authentification",
-      "a11y": "Accessibilité & i18n & SEO",
-      "tooling": "Outils & Déploiement"
+      "markup": "HTML",
+      "styles": "STYLE",
+      "js": "JS",
+      "react": "REACT",
+      "state": "STATE",
+      "api": "API",
+      "a11y": "SEO",
+      "tooling": "OUTILS"
     }
   }
 }

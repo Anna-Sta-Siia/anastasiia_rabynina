@@ -1,0 +1,72 @@
+.card {
+  aspect-ratio: 2 / 3;
+  width: 20%;
+  border-radius: 50%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.02);
+}
+
+.title {
+  margin: 0.25rem 0 0.35rem;
+  font-weight: 800;
+  text-align: center;
+  color: inherit;
+}
+
+.level {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0.15rem 0 0.6rem;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #000;
+  opacity: 0.28;
+}
+.full {
+  opacity: 1;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+  padding: 0;
+  margin: 0.2rem 0 0.9rem;
+  list-style: none;
+}
+.chip {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: #222;
+  background: #eee;
+}
+
+.projects {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.projectLink {
+  font-weight: 700;
+  color: inherit;
+}

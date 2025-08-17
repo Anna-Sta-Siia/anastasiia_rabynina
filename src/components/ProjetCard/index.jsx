@@ -278,8 +278,9 @@ export default function ProjetCard({ project }) {
 
           <div className={styles.projectcardbottom}>
             <div className={styles.skillsCta}>
+              {/* on passe l’id du projet pour filtrer la page Skills */}
               <Link
-                to={skillsPath}
+                to={`${skillsPath}?only=${encodeURIComponent(id)}`}
                 className={styles.skillsLink}
                 onClick={(e) => e.stopPropagation()}
                 aria-label={ui.seeSkills}

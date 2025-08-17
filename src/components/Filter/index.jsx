@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useUI } from "../../context";
 import PetalFilter from "../Petal/PetalFilter";
 import styles from "./Filter.module.css";
@@ -11,17 +11,24 @@ import uiFR from "../../assets/traduction/filters/ui.fr.json";
 import uiEN from "../../assets/traduction/filters/ui.en.json";
 import uiRU from "../../assets/traduction/filters/ui.ru.json";
 
+/**
+ * Props:
+ * - onChange({filters, search, sort, mode})
+ * - items?: [{key,color,label}]
+ * - defaultSelected?: string[]
+ * - defaultSearch?: string
+ * - defaultSort?: ''|'az'|'za'
+ * - defaultMode?: 'or'|'and'
+ */
 export default function Filter({
   onChange,
-  items: itemsProp, // <- NOUVEAU (optionnel)
+  items: itemsProp,
+  defaultSelected = [],
+  defaultSearch = "",
+  defaultSort = "",
   defaultMode = "or",
 }) {
   const { language } = useUI();
-
-  const [selected, setSelected] = useState([]);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("");
-  const [mode, setMode] = useState(defaultMode); // 'or' | 'and'
 
   const labelsMap = useMemo(
     () => ({ fr: labelsFR, en: labelsEN, ru: labelsRU }[language] || labelsEN),
@@ -29,12 +36,36 @@ export default function Filter({
   );
   const ui = useMemo(() => ({ fr: uiFR, en: uiEN, ru: uiRU }[language] || uiEN), [language]);
 
-  // Si on nous passe itemsProp, on les prend tels quels (label déjà prêt).
-  // Sinon, on continue d'utiliser baseFilters + labelsMap.
   const items = useMemo(() => {
     if (itemsProp?.length) return itemsProp;
     return baseFilters.map((f) => ({ ...f, label: labelsMap[f.key] ?? f.key }));
   }, [itemsProp, labelsMap]);
+
+  const [selected, setSelected] = useState(defaultSelected);
+  const [search, setSearch] = useState(defaultSearch);
+  const [sort, setSort] = useState(defaultSort);
+  const [mode, setMode] = useState(defaultMode);
+
+  // --- Signature stable des valeurs par défaut
+  const signature = useMemo(() => {
+    const sel = Array.isArray(defaultSelected) ? defaultSelected.join("|") : "";
+    return `${defaultMode}::${defaultSort}::${defaultSearch}::${sel}`;
+  }, [defaultSelected, defaultSearch, defaultSort, defaultMode]);
+
+  // --- Sync de l’état local UNIQUEMENT quand les defaults changent vraiment
+  useEffect(() => {
+    setSelected(Array.isArray(defaultSelected) ? defaultSelected : []);
+    setSearch(defaultSearch || "");
+    setSort(defaultSort || "");
+    setMode(defaultMode || "or");
+    onChange?.({
+      filters: Array.isArray(defaultSelected) ? defaultSelected : [],
+      search: defaultSearch || "",
+      sort: defaultSort || "",
+      mode: defaultMode || "or",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature]);
 
   function pushChange(nextSel = selected, nextSearch = search, nextSort = sort, nextMode = mode) {
     onChange?.({ filters: nextSel, search: nextSearch, sort: nextSort, mode: nextMode });
@@ -42,10 +73,9 @@ export default function Filter({
 
   function toggle(key, e) {
     const next = selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key];
+    const nextMode = e?.altKey ? "and" : mode;
 
     setSelected(next);
-
-    const nextMode = e?.altKey ? "and" : mode; // Alt = AND
     if (!next.length) {
       setMode("or");
       pushChange([], search, sort, "or");

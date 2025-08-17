@@ -27,7 +27,7 @@ export const SKILLS = [
     name: "CSS",
     cats: ["styles"],
     level: 5,
-    projects: ["kasa", "mon-projet", "sophie-bluel", "argentbank"],
+    projects: ["mon-projet", "sophie-bluel", "argentbank"],
   },
 
   {
