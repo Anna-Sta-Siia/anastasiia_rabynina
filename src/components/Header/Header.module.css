@@ -4,10 +4,11 @@
 
 @media (min-width: 768px) {
   :root {
-    --ctrl-size: 40px;
-  } /* un poil plus grand sur desktop */
+    --ctrl-size: 40px; /* un poil plus grand sur desktop */
+  }
 }
 
+/* ---- Layout header ---- */
 .header {
   display: flex;
   justify-content: space-between;
@@ -15,20 +16,28 @@
   flex-direction: column;
   background: var(--header-bg);
 }
+
 .header_up {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   padding: 0 2rem;
 }
+
+/* Les contrôles restent sur une seule ligne, sans wrap -> pas de "tremblement" */
 .right {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+.right > * {
+  flex: 0 0 auto; /* empêche le rétrécissement */
 }
 
+/* ---- Contrôles génériques ---- */
 .control {
   box-sizing: border-box;
   width: var(--ctrl-size);
@@ -42,27 +51,55 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   -webkit-tap-highlight-color: transparent;
+
+  /* Pas de transform ici (le select ne doit jamais scaler) */
+  transition: box-shadow 0.15s ease, background 0.15s ease;
 }
-/* Effets communs */
+
 .control:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transform: scale(1.03);
 }
-.control:active {
-  transform: scale(0.98);
-}
+
 .control:focus {
   outline: none;
-} /* on remplace le focus par :focus-visible */
+}
 .control:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 2px;
 }
 
+/* Effets de survol/clique UNIQUEMENT pour les boutons */
+.buttonControl {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.buttonControl:hover {
+  transform: scale(1.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.buttonControl:active {
+  transform: scale(0.98);
+}
+
+/* ---- Select langue : stable et centré ---- */
 .langSelect {
   width: var(--ctrl-size);
+  min-width: var(--ctrl-size);
+  line-height: 1;
+  transform: none !important; /* anti-tremblement */
+  transition: box-shadow 0.15s ease;
+
+  /* Rendu propre + caret custom */
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 18px;
+  text-align-last: center;
+  background: var(--cream)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23000' d='M1 0l4 4 4-4 1 1-5 5-5-5z'/%3E%3C/svg%3E")
+    no-repeat right 6px center / 10px 6px;
+}
+.langSelect:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .option {
@@ -70,8 +107,9 @@
   font-family: var(--logo-font);
 }
 
+/* ---- Bouton thème ---- */
 .themeButton {
-  padding: 0; /* pas de padding: on centre l'icône dans le carré */
+  padding: 0; /* icône centrée dans le carré */
   background: var(--cream);
 }
 
@@ -85,6 +123,7 @@
   transform: rotate(360deg) scale(1.06);
 }
 
+/* ---- Zone du menu central ---- */
 .header_bottom {
   flex: 1 1 auto;
   display: flex;
@@ -93,6 +132,7 @@
   gap: 0.5rem;
   width: 100%;
 }
+
 .hidden {
-  display: none;
-} /* ainsi la hauteur mesurée = 0 quand caché */
+  display: none; /* ainsi la hauteur mesurée = 0 quand caché */
+}
