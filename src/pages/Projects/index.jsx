@@ -1,6 +1,7 @@
 // src/pages/Projects/index.jsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+
 import styles from "./Projects.module.css";
 import Filter from "../../components/Filter";
 import ProjetCard from "../../components/ProjetCard";
@@ -12,7 +13,7 @@ import projectsFr from "../../assets/traduction/projet/projet.fr.json";
 import projectsEn from "../../assets/traduction/projet/projet.en.json";
 import projectsRu from "../../assets/traduction/projet/projet.ru.json";
 
-/* ===== Helpers stables ===== */
+/* ---------- Helpers ---------- */
 const normalize = (s = "") =>
   s
     .toString()
@@ -21,10 +22,10 @@ const normalize = (s = "") =>
     .toLowerCase()
     .trim();
 
-// début de mot (séparateurs: espace, tiret, underscore)
+// recherche par début de mot (séparateurs: espace, tiret, underscore)
 const startsAtWord = (title, q) => {
   const t = normalize(title);
-  const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // escape regex
+  const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // escape regex specials
   const re = new RegExp(`(^|[\\s-_])${n}`, "i");
   return re.test(t);
 };
@@ -34,7 +35,7 @@ export default function Projects() {
   const { language } = useUI();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Jeu de données par langue
+  // Dataset par langue
   const allProjects = useMemo(() => {
     switch (language) {
       case "en":
@@ -46,87 +47,82 @@ export default function Projects() {
     }
   }, [language]);
 
-  // Valeur de l’URL (source de vérité pour une arrivée depuis Skills)
+  // Si on arrive avec ?only=slug -> forcer l’affichage d’un seul projet
   const onlyFromUrl = searchParams.get("only") || "";
 
-  // Sélection à afficher quand on arrive avec ?only=slug
-  const prefillFromOnly = useMemo(() => {
-    if (!onlyFromUrl) return [];
-    const p = allProjects.find((x) => x.id === onlyFromUrl);
-    return p?.stack ?? [];
-  }, [onlyFromUrl, allProjects]);
-
-  // Mode "only" actif tant que l’utilisateur n’a rien touché
-  const [only, setOnly] = useState(onlyFromUrl);
-
-  // Defaults "gelés" que l’on passe à <Filter /> pour éviter toute ré-init intempestive
-  const [defaults, setDefaults] = useState({
-    selected: prefillFromOnly,
-    mode: "and",
-  });
-
-  // Si l’URL change vers un NOUVEAU ?only=..., on met à jour le gel ; si on enlève ?only, on NE touche PAS aux defaults.
-  useEffect(() => {
-    if (onlyFromUrl) {
-      setDefaults({ selected: prefillFromOnly, mode: "and" });
-      setOnly(onlyFromUrl);
-    }
-  }, [onlyFromUrl, prefillFromOnly]);
-
-  // État UI courant (filtres/recherche/tri) – indépendamment de "only"
+  // État UI
   const [query, setQuery] = useState({
     filters: [],
     search: "",
     sort: "",
-    mode: "and",
+    mode: "and", // AND par défaut sur "Projects"
   });
+  const [only, setOnly] = useState(onlyFromUrl);
 
-  // On ignore le 1er onChange automatique envoyé par <Filter> à l'initialisation
-  const bootRef = useRef(false);
-  const defaultsSignature = useMemo(
-    () =>
-      JSON.stringify({
-        filters: defaults.selected,
-        search: "",
-        sort: "",
-        mode: defaults.mode,
-      }),
-    [defaults]
-  );
+  // Sync si l’URL change (nav interne)
+  useEffect(() => {
+    setOnly(onlyFromUrl || "");
+  }, [onlyFromUrl]);
 
+  // Quand l’utilisateur agit sur la barre de filtres, on sort du mode "only"
   function handleFilterChange(payload) {
-    // 1) Ping automatique de Filter après montage → on l’ignore
-    if (!bootRef.current && JSON.stringify(payload) === defaultsSignature) {
-      bootRef.current = true;
-      setQuery(payload); // optionnel, pour rester en phase
-      return;
-    }
-
-    // 2) Première vraie interaction utilisateur : on quitte le mode "only"
     if (only) {
       setOnly("");
       const next = new URLSearchParams(searchParams);
       next.delete("only");
       setSearchParams(next, { replace: true });
-      // IMPORTANT : on NE modifie pas "defaults" ici → Filter garde la même sélection visible
     }
-
-    // 3) Met à jour l’état de filtre courant
     setQuery(payload);
+  }
+
+  // Texte localisé pour l'état vide
+  const emptyUi = useMemo(
+    () =>
+      ({
+        en: {
+          title: "No project yet",
+          hint: "There’s no project that combines these tools (for now).",
+          showAll: "Show all projects",
+        },
+        fr: {
+          title: "Aucun projet pour le moment",
+          hint: "Aucun projet ne combine encore ces outils.",
+          showAll: "Voir tous les projets",
+        },
+        ru: {
+          title: "Пока ничего нет",
+          hint: "Проекта, сочетающего эти инструменты, пока не существует.",
+          showAll: "Показать все проекты",
+        },
+      }[language] || {
+        title: "No project yet",
+        hint: "There’s no project that combines these tools (for now).",
+        showAll: "Show all projects",
+      }),
+    [language]
+  );
+
+  // Reset des filtres + suppression de ?only
+  function resetFilters() {
+    setOnly("");
+    const next = new URLSearchParams(searchParams);
+    next.delete("only");
+    setSearchParams(next, { replace: true });
+    setQuery({ filters: [], search: "", sort: "", mode: "and" });
   }
 
   // Liste filtrée
   const filteredProjects = useMemo(() => {
     const { filters, search, sort, mode } = query;
 
-    // Mode "only" : on *force* un seul projet et on ignore tout le reste
+    // 1) Cas ?only=... -> on court-circuite tout
     if (only) {
       return allProjects.filter((p) => p.id === only);
     }
 
     let list = allProjects;
 
-    // Filtres par stack
+    // 2) Filtres par stack
     if (filters.length) {
       list =
         mode === "and"
@@ -134,33 +130,46 @@ export default function Projects() {
           : list.filter((p) => filters.some((f) => p.stack.includes(f)));
     }
 
-    // Recherche titre (début de mot)
+    // 3) Recherche (début de mot)
     if (search.trim()) {
       list = list.filter((p) => startsAtWord(p.title, search));
     }
 
-    // Tri
-    if (sort === "az") list = [...list].sort((a, b) => a.title.localeCompare(b.title, language));
-    if (sort === "za") list = [...list].sort((a, b) => b.title.localeCompare(a.title, language));
+    // 4) Tri
+    if (sort === "az") {
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title, language));
+    } else if (sort === "za") {
+      list = [...list].sort((a, b) => b.title.localeCompare(a.title, language));
+    }
 
     return list;
-  }, [allProjects, language, only, query]);
+  }, [allProjects, query, language, only]);
+
+  const hasResults = filteredProjects.length > 0;
 
   return (
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
 
-      {/* On fige les defaults tant que l’utilisateur n’a pas réellement cliqué */}
-      <Filter
-        onChange={handleFilterChange}
-        defaultSelected={defaults.selected}
-        defaultMode={defaults.mode}
-      />
+      {/* AND par défaut ici */}
+      <Filter onChange={handleFilterChange} defaultMode="and" />
 
       <div className={styles.projectslist}>
-        {filteredProjects.map((project) => (
-          <ProjetCard key={project.id} project={project} />
-        ))}
+        {hasResults ? (
+          filteredProjects.map((project) => <ProjetCard key={project.id} project={project} />)
+        ) : (
+          <div className={styles.empty}>
+            <article className={styles.emptyEgg} aria-live="polite">
+              <h3 className={styles.emptyEggTitle}>{emptyUi.title}</h3>
+              <p className={styles.emptyEggText}>{emptyUi.hint}</p>
+              <div className={styles.emptyEggActions}>
+                <button type="button" className={styles.emptyEggBtn} onClick={resetFilters}>
+                  {emptyUi.showAll}
+                </button>
+              </div>
+            </article>
+          </div>
+        )}
       </div>
     </section>
   );
