@@ -7,5 +7,10 @@
   "flipBack": "Retourner la carte",
   "seeSkills": "Voir mes compétences",
   "seeMore": "Voir plus",
-  "close":"Fermer"
+  "close": "Fermer",
+  "empty": {
+    "title": "Aucun projet pour le moment",
+    "hint": "Aucun projet ne combine encore ces outils.",
+    "showAll": "Voir tous les projets"
+  }
 }

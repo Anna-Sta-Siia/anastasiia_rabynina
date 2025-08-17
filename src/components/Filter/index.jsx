@@ -1,3 +1,4 @@
+// src/components/Filter/index.jsx
 import { useState, useMemo, useEffect } from "react";
 import { useUI } from "../../context";
 import PetalFilter from "../Petal/PetalFilter";
@@ -72,25 +73,34 @@ export default function Filter({
   }
 
   function toggle(key, e) {
+    const wasEmpty = selected.length === 0;
     const next = selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key];
-    const nextMode = e?.altKey ? "and" : mode;
+
+    // Si on retombe à vide -> on remet le mode sur defaultMode
+    if (!next.length) {
+      setSelected(next);
+      setMode(defaultMode);
+      pushChange([], search, sort, defaultMode);
+      return;
+    }
+
+    // Si on partait de vide, on repart sur le defaultMode ;
+    // Alt+clic force "and" ponctuellement.
+    const baseMode = wasEmpty ? defaultMode : mode;
+    const nextMode = e?.altKey ? "and" : baseMode;
 
     setSelected(next);
-    if (!next.length) {
-      setMode("or");
-      pushChange([], search, sort, "or");
-    } else {
-      setMode(nextMode);
-      pushChange(next, search, sort, nextMode);
-    }
+    setMode(nextMode);
+    pushChange(next, search, sort, nextMode);
   }
 
   function clearAll() {
     setSelected([]);
     setSearch("");
     setSort("");
-    setMode("or");
-    pushChange([], "", "", "or");
+    // Important: revenir au defaultMode (et pas "or" en dur)
+    setMode(defaultMode);
+    pushChange([], "", "", defaultMode);
   }
 
   return (

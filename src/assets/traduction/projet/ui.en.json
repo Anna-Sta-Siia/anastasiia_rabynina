@@ -7,5 +7,10 @@
   "flipBack": "Flip back",
   "seeSkills": "See my skills",
   "seeMore": "See more",
-  "close": "Close"
+  "close": "Close",
+  "empty": {
+    "title": "No project yet",
+    "hint": "There’s no project that combines these tools (for now).",
+    "showAll": "Show all projects"
+  }
 }

@@ -9,9 +9,15 @@ import PageTitle from "../../components/PageTitle";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
 import { useUI } from "../../context";
 
+// Données projets par langue
 import projectsFr from "../../assets/traduction/projet/projet.fr.json";
 import projectsEn from "../../assets/traduction/projet/projet.en.json";
 import projectsRu from "../../assets/traduction/projet/projet.ru.json";
+
+// UI (textes) par langue
+import uiFr from "../../assets/traduction/projet/ui.fr.json";
+import uiEn from "../../assets/traduction/projet/ui.en.json";
+import uiRu from "../../assets/traduction/projet/ui.ru.json";
 
 /* ---------- Helpers ---------- */
 const normalize = (s = "") =>
@@ -26,7 +32,7 @@ const normalize = (s = "") =>
 const startsAtWord = (title, q) => {
   const t = normalize(title);
   const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // escape regex specials
-  const re = new RegExp(`(^|[\\s-_])${n}`, "i");
+  const re = new RegExp(`(^|[\\s_-])${n}`, "i");
   return re.test(t);
 };
 
@@ -49,66 +55,68 @@ export default function Projects() {
 
   // Si on arrive avec ?only=slug -> forcer l’affichage d’un seul projet
   const onlyFromUrl = searchParams.get("only") || "";
+  const [only, setOnly] = useState(onlyFromUrl);
 
-  // État UI
+  // État "requête" courant venant du <Filter/>
   const [query, setQuery] = useState({
     filters: [],
     search: "",
     sort: "",
     mode: "and", // AND par défaut sur "Projects"
   });
-  const [only, setOnly] = useState(onlyFromUrl);
+
+  // Valeurs par défaut injectées dans <Filter/> + un "nonce" pour forcer le remount visuel
+  const [filterDefaults, setFilterDefaults] = useState({
+    selected: [],
+    search: "",
+    sort: "",
+    mode: "and",
+    nonce: 0,
+  });
 
   // Sync si l’URL change (nav interne)
   useEffect(() => {
     setOnly(onlyFromUrl || "");
   }, [onlyFromUrl]);
 
+  // Textes localisés pour l'état vide
+  const emptyUi = useMemo(() => {
+    const pack = { fr: uiFr, en: uiEn, ru: uiRu }[language] || uiEn;
+    return (
+      pack?.empty || {
+        title: "No project yet",
+        hint: "There’s no project that combines these tools (for now).",
+        showAll: "Show all projects",
+      }
+    );
+  }, [language]);
+
   // Quand l’utilisateur agit sur la barre de filtres, on sort du mode "only"
   function handleFilterChange(payload) {
     if (only) {
-      setOnly("");
       const next = new URLSearchParams(searchParams);
       next.delete("only");
       setSearchParams(next, { replace: true });
+      setOnly("");
     }
     setQuery(payload);
   }
 
-  // Texte localisé pour l'état vide
-  const emptyUi = useMemo(
-    () =>
-      ({
-        en: {
-          title: "No project yet",
-          hint: "There’s no project that combines these tools (for now).",
-          showAll: "Show all projects",
-        },
-        fr: {
-          title: "Aucun projet pour le moment",
-          hint: "Aucun projet ne combine encore ces outils.",
-          showAll: "Voir tous les projets",
-        },
-        ru: {
-          title: "Пока ничего нет",
-          hint: "Проекта, сочетающего эти инструменты, пока не существует.",
-          showAll: "Показать все проекты",
-        },
-      }[language] || {
-        title: "No project yet",
-        hint: "There’s no project that combines these tools (for now).",
-        showAll: "Show all projects",
-      }),
-    [language]
-  );
-
-  // Reset des filtres + suppression de ?only
+  // Reset des filtres + suppression de ?only + reset visuel de <Filter/>
   function resetFilters() {
-    setOnly("");
     const next = new URLSearchParams(searchParams);
     next.delete("only");
     setSearchParams(next, { replace: true });
+
+    setOnly("");
     setQuery({ filters: [], search: "", sort: "", mode: "and" });
+    setFilterDefaults((d) => ({
+      selected: [],
+      search: "",
+      sort: "",
+      mode: "and",
+      nonce: d.nonce + 1, // force remount du composant Filter
+    }));
   }
 
   // Liste filtrée
@@ -151,8 +159,15 @@ export default function Projects() {
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
 
-      {/* AND par défaut ici */}
-      <Filter onChange={handleFilterChange} defaultMode="and" />
+      {/* AND par défaut ici + reset visuel quand resetFilters() est cliqué */}
+      <Filter
+        key={filterDefaults.nonce}
+        onChange={handleFilterChange}
+        defaultMode={filterDefaults.mode}
+        defaultSelected={filterDefaults.selected}
+        defaultSearch={filterDefaults.search}
+        defaultSort={filterDefaults.sort}
+      />
 
       <div className={styles.projectslist}>
         {hasResults ? (
