@@ -1,3 +1,5 @@
+// WipMessage.jsx
+import { Link } from "react-router-dom";
 import styles from "./WipMessage.module.css";
 
 /**
@@ -5,8 +7,6 @@ import styles from "./WipMessage.module.css";
  *  - texts: { title, lead, body, ctaProjects?, ctaHome?, ctaContact?, ctaCV? }
  *  - links?: { projects?: string, home?: string, contact?: string, cv?: string }
  *  - blur?: boolean (default: true)
- *
- * Place-le DANS la section à couvrir. Assure-toi que le parent a position:relative.
  */
 export default function WipMessage({
   texts,
@@ -32,24 +32,24 @@ export default function WipMessage({
 
         <div className={styles.actions}>
           {texts.ctaProjects && (
-            <a className={styles.btn} href={links.projects}>
+            <Link className={styles.btn} to={links.projects}>
               {texts.ctaProjects}
-            </a>
+            </Link>
           )}
           {texts.ctaHome && (
-            <a className={styles.btn} href={links.home}>
+            <Link className={styles.btn} to={links.home}>
               {texts.ctaHome}
-            </a>
+            </Link>
           )}
           {texts.ctaContact && (
-            <a className={styles.btn} href={links.contact}>
+            <Link className={styles.btn} to={links.contact}>
               {texts.ctaContact}
-            </a>
+            </Link>
           )}
           {texts.ctaCV && (
-            <a className={styles.btn} href={links.cv}>
+            <Link className={styles.btn} to={links.cv}>
               {texts.ctaCV}
-            </a>
+            </Link>
           )}
         </div>
       </div>
