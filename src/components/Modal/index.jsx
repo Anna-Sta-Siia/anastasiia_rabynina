@@ -2,26 +2,47 @@
 import { useEffect, useRef, useId, useCallback } from "react";
 import styles from "./Modal.module.css";
 
-export default function Modal({ open, title, onClose, children, describedById }) {
+export default function Modal({
+  open,
+  title,
+  onClose,
+  children,
+  describedById,
+  initialFocus = "close", // "close" | "element" | "none"
+  initialFocusRef = null, // ref d'un élément à focus
+}) {
   const closeRef = useRef(null);
   const titleId = useId();
+  const onCloseRef = useRef(onClose);
 
-  // Les hooks sont appelés tout le temps.
+  // garder la dernière version d'onClose sans relancer l'effet
   useEffect(() => {
-    if (!open) return; // ne fait rien si la modale est fermée
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
-    const onKey = (e) => e.key === "Escape" && onClose?.();
+  useEffect(() => {
+    if (!open) return;
+
+    const onKey = (e) => e.key === "Escape" && onCloseRef.current?.();
     window.addEventListener("keydown", onKey);
 
-    const t = setTimeout(() => closeRef.current?.focus(), 0);
+    // ➜ focus initial, une seule fois à l’ouverture
+    const t = setTimeout(() => {
+      if (initialFocus === "element" && initialFocusRef?.current) {
+        initialFocusRef.current.focus();
+      } else if (initialFocus === "close") {
+        closeRef.current?.focus();
+      }
+      // "none" -> on ne force rien
+    }, 0);
 
     return () => {
       window.removeEventListener("keydown", onKey);
       clearTimeout(t);
     };
-  }, [open, onClose]);
+  }, [open, initialFocus, initialFocusRef]);
 
-  // Petit piège Tab pour rester dans la modale
+  // Piège Tab pour rester dans la modale
   const trapTab = useCallback((e) => {
     if (e.key !== "Tab") return;
     const root = e.currentTarget;
@@ -49,14 +70,14 @@ export default function Modal({ open, title, onClose, children, describedById })
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={describedById}
-      onClick={onClose}
+      onClick={() => onCloseRef.current?.()}
     >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()} onKeyDown={trapTab}>
         <h3 id={titleId} className={styles.modalTitle}>
           {title}
         </h3>
         {children}
-        <button className={styles.modalClose} onClick={onClose} ref={closeRef}>
+        <button className={styles.modalClose} onClick={() => onCloseRef.current?.()} ref={closeRef}>
           Close
         </button>
       </div>

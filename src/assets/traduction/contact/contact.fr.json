@@ -6,6 +6,17 @@
   "messageLabel": "Message",
   "companyLabel": "Société",
   "companyPlaceholder": "Société (laissez vide)",
+  "editInModal": "Éditer dans une fenêtre",
+  "clear": "Effacer",
+  "save": "Enregistrer",
+  "close": "Fermer",
+  "subjectLabel": "Sujet",
+  "subjectPlaceholder": "Choisir…",
+  "subjectOptions": {
+    "clientProject": "Proposition de travail (client)",
+    "jobOffer": "Proposition d’embauche",
+    "other": "Divers"
+  },
   "messagePlaceholder": "Votre message…",
   "send": "Envoyer",
   "sending": "Envoi…",
@@ -17,6 +28,8 @@
     "emailRequired": "L’e-mail est requis.",
     "emailInvalid": "Format d’e-mail invalide.",
     "messageRequired": "Le message est requis.",
-    "messageMin": "Au moins 10 caractères."
+    "messageMin": "Au moins 10 caractères.",
+    "subjectRequired": "Le sujet est obligatoire.",
+    "messageMax": "Maximum 1200 caractères."
   }
 }

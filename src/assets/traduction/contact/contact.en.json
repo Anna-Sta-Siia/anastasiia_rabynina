@@ -7,6 +7,17 @@
   "messagePlaceholder": "Your message…",
   "companyLabel": "Company",
   "companyPlaceholder": "Company (leave empty)",
+  "editInModal": "Edit in modal",
+  "clear": "Clear",
+  "save": "Save",
+  "close": "Close",
+  "subjectLabel": "Subject",
+  "subjectPlaceholder": "Choose…",
+  "subjectOptions": {
+    "clientProject": "Client work proposal",
+    "jobOffer": "Job offer",
+    "other": "Other"
+  },
   "send": "Send",
   "sending": "Sending…",
   "sent": "Thanks! Your message was sent.",
@@ -17,6 +28,8 @@
     "emailRequired": "Email is required.",
     "emailInvalid": "Invalid email format.",
     "messageRequired": "Message is required.",
-    "messageMin": "At least 10 characters."
+    "messageMin": "At least 10 characters.",
+    "subjectRequired": "Subject is required.",
+    "messageMax": "Maximum 1200 characters."
   }
 }

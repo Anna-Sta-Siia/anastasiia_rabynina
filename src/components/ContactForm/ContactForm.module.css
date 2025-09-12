@@ -1,8 +1,4 @@
-/* ─────────────────────────────
-   ContactForm.module.css
-   Œuf convex + champs arrondis + états neutre/ok + overlay succès
-   ───────────────────────────── */
-
+/* Base œuf */
 .egg {
   /* couleurs de contrôle */
   --neutral: #b0bec5; /* gris par défaut pour bordures/bouton */
@@ -13,10 +9,8 @@
   width: var(--egg-w);
   aspect-ratio: 5 / 6; /* plus plat que 2/3 */
   border-radius: 50% / 46%;
-  padding: clamp(16px, 3vw, 24px);
-  margin: clamp(10px, 2vh, 20px) auto 0;
 
-  /* --accent est passée en inline style depuis le parent */
+  /* --accent passée en inline style depuis le parent */
   background: radial-gradient(
       120% 120% at 30% 25%,
       rgba(255, 255, 255, 0.75),
@@ -60,14 +54,15 @@ label {
 
 /* CHAMPS ARRONDIS + confort */
 .form input,
-.form textarea {
+.form textarea,
+.form select {
   width: 80%;
   box-sizing: border-box;
   -webkit-appearance: none;
   appearance: none;
   padding: 10px 12px;
   border-radius: 18px;
-  border: 1px solid var(--neutral); /* gris par défaut */
+  border: 1px solid var(--neutral);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
   font: inherit;
@@ -102,16 +97,20 @@ label {
 /* Zone de message */
 textarea {
   min-height: clamp(120px, 20vh, 220px);
-  resize: vertical;
+  max-height: clamp(220px, 38vh, 420px);
+  overflow: auto;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
-.submitconteneur {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+/* Messages d'erreur */
+.error {
+  color: #d33;
+  font-size: 0.9rem;
+  min-height: 1.1em; /* réserve une ligne même sans message */
 }
 
-/* Bouton – fallback neutre (sans color-mix) */
+/* Bouton convex */
 .convexBtn {
   justify-self: center;
   margin-top: 4px;
@@ -132,8 +131,8 @@ textarea {
   transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease, background 0.2s ease;
 }
 
-/* Quand le formulaire est valide -> vert (fallback) */
-.convexBtn.valid {
+/* état "valide" via data-attribute (pas de règle vide -> pas d’ESLint) */
+.convexBtn[data-valid="true"] {
   background: radial-gradient(
       120% 150% at 30% 20%,
       rgba(255, 255, 255, 0.9),
@@ -154,7 +153,7 @@ textarea {
   cursor: not-allowed;
 }
 
-/* Amélioration si color-mix est dispo */
+/* Amélioration si color-mix dispo */
 @supports (color: color-mix(in oklab, white, black)) {
   .convexBtn {
     background: radial-gradient(
@@ -168,7 +167,7 @@ textarea {
         color-mix(in oklab, var(--neutral) 55%, #ddd 45%)
       );
   }
-  .convexBtn.valid {
+  .convexBtn[data-valid="true"] {
     background: radial-gradient(
         120% 150% at 30% 20%,
         rgba(255, 255, 255, 0.9),
@@ -204,29 +203,27 @@ textarea {
   background: #fff7e6;
 }
 
-/* Overlay de succès plein écran (affichée après envoi) */
+/* Overlay de succès plein écran */
 .overlay {
-  position: fixed; /* couvre toute la page */
+  position: fixed;
   inset: 0;
   z-index: 9999;
   display: grid;
   place-items: center;
-  background: rgba(46, 125, 50, 0.88); /* vert profond semi-opaque */
+  background: rgba(46, 125, 50, 0.88);
   backdrop-filter: blur(2px);
   animation: overlayFadeIn 0.18s ease-out both;
 }
-
 .overlayCard {
   padding: 16px 22px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95); /* carte claire */
-  color: #2e2e2e; /* texte gris */
+  background: rgba(255, 255, 255, 0.95);
+  color: #2e2e2e;
   font-weight: 700;
   font-size: clamp(1rem, 2.4vw, 1.25rem);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   animation: overlayPop 0.22s ease-out both;
 }
-
 @keyframes overlayFadeIn {
   from {
     opacity: 0;
@@ -251,8 +248,221 @@ textarea {
   }
 }
 
-/* Variante optionnelle “compact” à ajouter si besoin */
+/* Variante optionnelle “compact” si besoin ailleurs */
 .compact {
   --egg-w: clamp(300px, 56vw, 420px);
   aspect-ratio: 1 / 1.2;
+}
+
+/* =========================
+   Wizard — 1 œuf à la fois
+   ========================= */
+.wizard {
+  position: relative;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+.rail {
+  position: relative;
+  width: min(700px, 92vw);
+  height: clamp(520px, 66vh, 720px);
+  margin-inline: auto;
+}
+
+/* taille de l'œuf dans le wizard (override) */
+.wizardEgg {
+  --egg-w: clamp(260px, 70vw, 380px);
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.25s ease, transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+/* Un seul œuf visible */
+.center {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.97);
+}
+
+/* Flèches / nav */
+.navRow {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 14px;
+}
+.back,
+.next {
+  border: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  font-size: 26px;
+  line-height: 1;
+  background: radial-gradient(
+      120% 150% at 30% 20%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(180deg, #cfd8dc, #e4edf1);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.2s ease;
+}
+.back:hover,
+.next:hover {
+  transform: translateY(-1px);
+}
+.back:disabled,
+.next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Résumé œuf 3 */
+.summary {
+  text-align: center;
+  opacity: 0.85;
+}
+.summary p {
+  margin: 4px 0;
+}
+.preview {
+  max-width: 32ch;
+  margin-inline: auto;
+  font-style: italic;
+  opacity: 0.8;
+  overflow-wrap: anywhere; /* casse les très longs mots/urls */
+  white-space: normal;
+}
+/* ---- Псевдо-поле для сообщения (кликабельное) ---- */
+.editorField {
+  width: 80%;
+  min-height: 140px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--neutral);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
+  outline: none;
+  cursor: text;
+  line-height: 1.4;
+  /* Fallback générique */
+  overflow: hidden;
+  line-clamp: var(--lines); /* propriété standard */
+  max-height: calc(var(--lines) * 1.4em); /* secours si line-clamp ignoré */
+  --lines: 6;
+  @supports (-webkit-line-clamp: 1) or (line-clamp: 1) {
+    .editorField {
+      display: -webkit-box; /* pris par WebKit/Blink */
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--lines);
+      line-clamp: var(--lines); /* pris par moteurs qui l’implémentent */
+      max-height: none;
+    }
+  }
+}
+
+.editorField:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--neutral) 35%, #fff 65%);
+}
+.placeholder {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* строка под полем: линк + счетчик */
+.helperRow {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+.helperSpacer {
+  flex: 1 1;
+}
+.linkBtn {
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+.counter {
+  opacity: 0.7;
+}
+
+/* ---- Контент модалки-редактора ---- */
+.editorText {
+  width: 100%;
+  height: min(48vh, 520px);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #ccd6dd;
+  background: #fff;
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.editorText:focus-visible {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.modalBar {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.modalActions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: #e9eef2;
+}
+.btnPrimary {
+  color: #122;
+  background: radial-gradient(
+      120% 150% at 30% 20%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(180deg, var(--ok), #b8e0c0);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* приятный скролл в модалке */
+.editorText::-webkit-scrollbar {
+  width: 10px;
+}
+.editorText::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--accent, #b0bec5) 55%, #777 45%);
+  border-radius: 8px;
 }

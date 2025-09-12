@@ -33,7 +33,7 @@
   -webkit-hyphens: auto; /* Safari/iOS */
   overflow-wrap: break-word; /* casse proprement les très longs mots/URLs */
   word-break: normal; /* pas de cassures “sauvages” */
-  font-size: clamp(2px, 6cqw, 20px);
+  font-size: clamp(2px, 5.7cqw, 20px);
 }
 
 .first::first-letter {
@@ -53,5 +53,8 @@
     width: var(--oval-w);
     height: var(--oval-h);
     z-index: 1;
+  }
+  .about p {
+    margin: 4% 8%;
   }
 }

@@ -6,6 +6,17 @@
   "messageLabel": "Сообщение",
   "companyLabel": "Компания",
   "companyPlaceholder": "Компания (оставьте пустым)",
+  "editInModal": "Редактировать в окне",
+  "clear": "Очистить",
+  "save": "Сохранить",
+  "close": "Закрыть",
+  "subjectLabel": "Тема",
+  "subjectPlaceholder": "Выберите…",
+  "subjectOptions": {
+    "clientProject": "Предложение работы от клиента",
+    "jobOffer": "Предложение о найме",
+    "other": "Другое"
+  },
   "messagePlaceholder": "Ваше сообщение…",
   "send": "Отправить",
   "sending": "Отправка…",
@@ -17,6 +28,8 @@
     "emailRequired": "Введите email.",
     "emailInvalid": "Неверный формат email.",
     "messageRequired": "Введите сообщение.",
-    "messageMin": "Минимум 10 символов."
+    "messageMin": "Минимум 10 символов.",
+    "subjectRequired": "Тема обязательна.",
+    "messageMax": "Максимум 1200 символов."
   }
 }
