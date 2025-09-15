@@ -7,12 +7,29 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node
 node_modules
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# --- Envs FRONTEND (Vite) ---
+# Ignorer tous les envs locaux
+.env
+.env.local
+.env.*.local
+.env.development
+
+# NE PAS ignorer celui-ci : on le garde versionné pour la prod
+!.env.production
+
+# --- Envs BACKEND (Express) ---
+# Toujours privés / jamais versionnés
+contact-api/.env
+contact-api/.env.local
+contact-api/.env.*.local
+
+# Éditeurs
 .vscode/*
 !.vscode/extensions.json
 .idea

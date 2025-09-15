@@ -5,7 +5,7 @@
   --ok: #2e7d32; /* vert quand valide */
 
   /* largeur bornée et ratio compact */
-  --egg-w: clamp(300px, 62vw, 460px);
+  --egg-w: clamp(300px, 62vw, 380px);
   width: var(--egg-w);
   aspect-ratio: 5 / 6; /* plus plat que 2/3 */
   border-radius: 50% / 46%;
@@ -32,7 +32,6 @@
   max-width: min(520px, calc(var(--egg-w) - clamp(36px, 6vw, 72px)));
   display: flex;
   flex-direction: column;
-  padding: 0 30px;
 }
 
 /* Groupe champ + label + erreur */
@@ -41,6 +40,7 @@
   flex-direction: column;
   gap: 8px;
   align-items: center;
+  margin-bottom: 22px;
 }
 
 /* Labels lisibles */
@@ -105,11 +105,16 @@ textarea {
 
 /* Messages d'erreur */
 .error {
+  display: block;
+  min-height: 1.4rem; /* réserve 1 ligne (augmente si 2 lignes possibles) */
+  margin-top: 6px;
   color: #d33;
-  font-size: 0.9rem;
-  min-height: 1.1em; /* réserve une ligne même sans message */
+  transition: opacity 0.15s ease;
+  opacity: 0;
 }
-
+.error:not(:empty) {
+  opacity: 1;
+}
 /* Bouton convex */
 .convexBtn {
   justify-self: center;
@@ -325,8 +330,21 @@ textarea {
 .next:hover {
   transform: translateY(-1px);
 }
-.back:disabled,
-.next:disabled {
+/* états des flèches */
+.next[disabled],
+.next[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: auto; /* le bouton reste focusable mais non cliquable */
+}
+
+.next[disabled]:active,
+.next[data-disabled]:active {
+  box-shadow: none;
+}
+
+.back[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -364,17 +382,20 @@ textarea {
   line-clamp: var(--lines); /* propriété standard */
   max-height: calc(var(--lines) * 1.4em); /* secours si line-clamp ignoré */
   --lines: 6;
-  @supports (-webkit-line-clamp: 1) or (line-clamp: 1) {
-    .editorField {
-      display: -webkit-box; /* pris par WebKit/Blink */
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: var(--lines);
-      line-clamp: var(--lines); /* pris par moteurs qui l’implémentent */
-      max-height: none;
-    }
+}
+@supports (-webkit-line-clamp: 1) {
+  .editorField {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--lines);
+    max-height: none;
   }
 }
-
+@supports (line-clamp: 1) {
+  .editorField {
+    line-clamp: var(--lines);
+  }
+}
 .editorField:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--neutral) 35%, #fff 65%);
 }
@@ -465,4 +486,10 @@ textarea {
 .editorText::-webkit-scrollbar-thumb {
   background: color-mix(in oklab, var(--accent, #b0bec5) 55%, #777 45%);
   border-radius: 8px;
+}
+/* petit message rouge sous le bouton Save quand < 10 caractères */
+.inlineError {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #c62828;
 }
