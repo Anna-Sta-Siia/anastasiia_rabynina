@@ -521,9 +521,7 @@ textarea {
 /* Hint row under the pseudo-field */
 .helperRow {
   text-align: center;
-  font-size: 0.9rem;
   width: 90%;
-  text-decoration: none;
   padding: 5px 0;
 }
 .helperSpacer {
@@ -532,7 +530,7 @@ textarea {
 .linkBtn {
   background: none;
   border: 0;
-  text-decoration: underline;
+  font-size: clamp(12px, 7cqw, 20px);
   cursor: pointer;
   padding: 0;
 }

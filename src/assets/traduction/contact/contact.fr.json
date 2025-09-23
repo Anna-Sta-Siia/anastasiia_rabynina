@@ -29,7 +29,7 @@
   "save": "Enregistrer",
   "close": "Fermer",
 
-  "recapFor": "On récapitule, {firstName} :",
+  "recapFor": "On récapitule, {firstName}",
   "recapTitle": "Récapitulatif",
 
   "confirmBody": "Merci de confirmer l’envoi de ce message.",

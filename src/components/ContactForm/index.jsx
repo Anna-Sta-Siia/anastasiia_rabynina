@@ -79,7 +79,7 @@ const tFallback = {
   },
   messageLabel: "Message",
   messagePlaceholder: "Your message…",
-  recapFor: "Let's recap, {firstName}:",
+  recapFor: "Let's recap, {firstName}",
   recapTitle: "Summary",
   confirmBody: "Please confirm you want to send this message.",
   confirmSend: "Send",

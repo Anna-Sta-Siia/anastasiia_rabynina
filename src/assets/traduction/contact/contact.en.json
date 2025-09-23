@@ -29,12 +29,12 @@
   "save": "Save",
   "close": "Close",
 
-  "recapFor": "Let's recap, {firstName}:",
+  "recapFor": "Let's recap, {firstName}",
   "recapTitle": "Summary",
 
   "confirmBody": "Please confirm you want to send this message.",
   "confirmSend": "Send",
-  "cancel": "Cancel",
+  "confirmCancel": "Cancel",
   "sending": "Sending…",
   "sent": "Thanks! Your message was sent.",
   "sentWithName": "Thanks, {fullName}! Your message was sent.",
