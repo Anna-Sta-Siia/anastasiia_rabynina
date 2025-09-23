@@ -1,15 +1,15 @@
 {
-  "nameLabel": "Nom",
-  "namePlaceholder": "Votre nom",
+  "nameLabel": "Prénom",
+  "namePlaceholder": "Votre prénom",
+  "lastNameLabel": "Nom",
+  "lastNamePlaceholder": "Votre nom (laissez vide)",
+
   "emailLabel": "E-mail",
   "emailPlaceholder": "Votre e-mail",
-  "messageLabel": "Message",
+
   "companyLabel": "Société",
   "companyPlaceholder": "Société (laissez vide)",
-  "editInModal": "Éditer dans une fenêtre",
-  "clear": "Effacer",
-  "save": "Enregistrer",
-  "close": "Fermer",
+
   "subjectLabel": "Sujet",
   "subjectPlaceholder": "Choisir…",
   "subjectOptions": {
@@ -17,19 +17,39 @@
     "jobOffer": "Proposition d’embauche",
     "other": "Divers"
   },
+  "subjectCustomTitle": "Sujet personnalisé",
+  "subjectCustomPlaceholder": "Saisissez votre sujet…",
+  "editSubjectInModal": "Modifier le sujet",
+
+  "messageLabel": "Message",
   "messagePlaceholder": "Votre message…",
-  "send": "Envoyer",
-  "sending": "Envoi…",
+
+  "editInModal": "Éditer dans une fenêtre",
+  "clear": "Effacer",
+  "save": "Enregistrer",
+  "close": "Fermer",
+
+  "recapFor": "On récapitule, {firstName} :",
+  "recapTitle": "Récapitulatif",
+
+  "confirmBody": "Merci de confirmer l’envoi de ce message.",
+  "confirmSend": "Envoyer",
+  "confirmCancel": "Annuler",
   "sent": "Merci ! Votre message a été envoyé.",
+  "sentWithName": "Merci, {fullName} ! Votre message a été envoyé.",
+
   "errors": {
-    "nameRequired": "Le nom est requis.",
+    "nameRequired": "Le prénom est requis.",
     "nameMin": "Au moins 2 caractères.",
-    "namePattern": "Lettres, espaces, tirets/apostrophes uniquement.",
+    "patternCommon": "Lettres, espaces, - et ' seulement.",
+
     "emailRequired": "L’e-mail est requis.",
     "emailInvalid": "Format d’e-mail invalide.",
+
+    "subjectRequired": "Le sujet est obligatoire.",
+
     "messageRequired": "Le message est requis.",
     "messageMin": "Au moins 10 caractères.",
-    "subjectRequired": "Le sujet est obligatoire.",
     "messageMax": "Maximum 1200 caractères."
   }
 }

@@ -1,16 +1,15 @@
 {
-  "nameLabel": "Name",
-  "namePlaceholder": "Your name",
+  "nameLabel": "First name",
+  "namePlaceholder": "Your first name",
+  "lastNameLabel": "Last name",
+  "lastNamePlaceholder": "Your last name (optional)",
+
   "emailLabel": "Email",
   "emailPlaceholder": "Your email",
-  "messageLabel": "Message",
-  "messagePlaceholder": "Your message…",
+
   "companyLabel": "Company",
-  "companyPlaceholder": "Company (leave empty)",
-  "editInModal": "Edit in modal",
-  "clear": "Clear",
-  "save": "Save",
-  "close": "Close",
+  "companyPlaceholder": "Company (optional)",
+
   "subjectLabel": "Subject",
   "subjectPlaceholder": "Choose…",
   "subjectOptions": {
@@ -18,18 +17,40 @@
     "jobOffer": "Job offer",
     "other": "Other"
   },
-  "send": "Send",
+  "subjectCustomTitle": "Custom subject",
+  "subjectCustomPlaceholder": "Type your subject…",
+  "editSubjectInModal": "Edit subject",
+
+  "messageLabel": "Message",
+  "messagePlaceholder": "Your message…",
+
+  "editInModal": "Edit in modal",
+  "clear": "Clear",
+  "save": "Save",
+  "close": "Close",
+
+  "recapFor": "Let's recap, {firstName}:",
+  "recapTitle": "Summary",
+
+  "confirmBody": "Please confirm you want to send this message.",
+  "confirmSend": "Send",
+  "cancel": "Cancel",
   "sending": "Sending…",
   "sent": "Thanks! Your message was sent.",
+  "sentWithName": "Thanks, {fullName}! Your message was sent.",
+
   "errors": {
-    "nameRequired": "Name is required.",
+    "nameRequired": "First name is required.",
     "nameMin": "At least 2 characters.",
-    "namePattern": "Letters, spaces and dashes only.",
+    "patternCommon": "Only letters, spaces, - and '.",
+
     "emailRequired": "Email is required.",
     "emailInvalid": "Invalid email format.",
+
+    "subjectRequired": "Subject is required.",
+
     "messageRequired": "Message is required.",
     "messageMin": "At least 10 characters.",
-    "subjectRequired": "Subject is required.",
     "messageMax": "Maximum 1200 characters."
   }
 }

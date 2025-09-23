@@ -1,17 +1,8 @@
 .contact {
-  margin-bottom: 20px;
-  min-height: calc(100dvh - var(--header-h, 64px));
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-/* Un petit souffle en bas sur desktop pour éviter que l’œuf touche le footer */
-@media (min-width: 768px) {
-  .contact {
-    padding-bottom: max(8vh, 48px);
-  }
 }
 
 /* (Optionnel) Animation d’arrivée douce pour le composant ContactForm :

@@ -1,16 +1,52 @@
-/* Base œuf */
+/* =========================
+   Shell (one egg + 4 views)
+   ========================= */
+/* Honeypot anti-bot */
+.honey {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Pour debug seulement (si debugHoneypot=true) */
+.honeyDebug {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px dashed #f39c12;
+  background: #fff7e6;
+}
+
+/* page section around the egg */
+.eggWrap {
+  overflow-anchor: none;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+}
+.eggWrap {
+  --egg-w: clamp(300px, 28vw, 320px);
+}
+/* The egg itself */
 .egg {
-  /* couleurs de contrôle */
-  --neutral: #b0bec5; /* gris par défaut pour bordures/bouton */
-  --ok: #2e7d32; /* vert quand valide */
-
-  /* largeur bornée et ratio compact */
-  --egg-w: clamp(300px, 62vw, 380px);
+  /* control colors */
+  --neutral: #b0bec5;
+  --ok: #2e7d32;
   width: var(--egg-w);
-  aspect-ratio: 5 / 6; /* plus plat que 2/3 */
+  height: calc(var(--egg-w) * 6 / 5);
+  aspect-ratio: auto;
+  contain: size layout paint;
   border-radius: 50% / 46%;
-
-  /* --accent passée en inline style depuis le parent */
+  overflow-anchor: none;
+  /* shiny background */
   background: radial-gradient(
       120% 120% at 30% 25%,
       rgba(255, 255, 255, 0.75),
@@ -23,36 +59,209 @@
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: flex-start;
+  padding-top: clamp(10px, 2.4vh, 18px);
+  padding-bottom: 18px;
 }
 
-.form {
-  width: 100%;
-  max-width: min(520px, calc(var(--egg-w) - clamp(36px, 6vw, 72px)));
+/* La barre prend exactement la largeur de l’œuf et reste centrée */
+.progress {
+  width: var(--egg-w); /* même largeur que l’œuf */
+  margin: 12px auto 0; /* sous l’œuf */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+/* piste “verre” + répères à 25/50/75 % */
+.progressTrack {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background:
+    /* repères d'étapes (4 vues) */ linear-gradient(
+      to right,
+      transparent 24.5%,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25.5%
+    ),
+    linear-gradient(to right, transparent 49.5%, rgba(0, 0, 0, 0.1) 50%, transparent 50.5%),
+    linear-gradient(to right, transparent 74.5%, rgba(0, 0, 0, 0.1) 75%, transparent 75.5%),
+    /* fond “verre” doux */ linear-gradient(180deg, #f9fbfc, #e9eef2);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* remplissage coloré + stripes animées + “pointeur” rond */
+.progressFill {
+  position: relative;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--barHue, 160) 48% 42%),
+    hsl(var(--barHue, 160) 62% 70%)
+  );
+  transition: width 0.35s ease;
+  overflow: hidden;
+}
+
+/* petites diagonales lumineuses */
+.progressFill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.28) 0 6px,
+    rgba(255, 255, 255, 0) 6px 12px
+  );
+  background-size: 200% 100%;
+  animation: progressStripes 1.1s linear infinite;
+  mix-blend-mode: soft-light;
+}
+
+/* “pointeur” rond au bout du remplissage */
+.progressFill::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid hsl(var(--barHue, 160) 35% 30%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
+}
+
+/* étiquette % en pilule */
+.progressLabel {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  padding: 2px 8px;
+  min-width: 3ch;
+  text-align: right;
+  color: #243;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  backdrop-filter: blur(3px);
+}
+
+/* version “succès” automatique si tu ajoutes data-complete sur le conteneur */
+.eggWrap[data-complete="true"] .progressFill {
+  background: linear-gradient(180deg, var(--ok, #2e7d32), #b8e0c0);
+}
+.eggWrap[data-complete="true"] .progressFill::before {
+  opacity: 0.35;
+}
+.summary {
+  width: 65%;
+  margin: 12px 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  font-size: clamp(0.95rem, 2.2vw, 1rem);
 }
 
-/* Groupe champ + label + erreur */
+/* chaque <p> devient une ligne "label | valeur" */
+.summary p {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  column-gap: 8px;
+  margin: 6px 0;
+}
+.summary p > strong {
+  white-space: nowrap;
+  text-align: right;
+}
+.ellip {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* la préview du message : coupe proprement */
+.preview {
+  max-width: 100%;
+  margin: 0;
+  font-style: italic;
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* 2 lignes max */
+}
+
+/* accessibilité : moins d’animation si l’utilisateur le demande */
+@media (prefers-reduced-motion: reduce) {
+  .progressFill {
+    transition: width 0.001s linear;
+  }
+  .progressFill::before {
+    animation: none;
+  }
+}
+
+/* animation stripes */
+@keyframes progressStripes {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 100%;
+  }
+}
+
+/* ---------- Form layout (per view) ---------- */
+
+.form {
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-anchor: none;
+}
+
+/* a “view” is one step of the wizard; all steps reuse the same egg */
+.view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto; /* <- important */
+  min-height: 0;
+}
+
+/* Group: label + control + error */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   align-items: center;
-  margin-bottom: 22px;
+  overflow-anchor: none; /* empêche Chrome de re-ancorer */
+  width: 90%;
 }
 
-/* Labels lisibles */
+/* Labels */
 label {
   font-weight: 600;
   letter-spacing: 0.2px;
   line-height: 1.2;
   display: block;
-  margin-left: 2px;
+  margin-bottom: 6px;
 }
 
-/* CHAMPS ARRONDIS + confort */
+/* Inputs / Selects (rounded + comfy) */
 .form input,
 .form textarea,
 .form select {
@@ -67,7 +276,7 @@ label {
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
   font: inherit;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
 .form input::placeholder,
@@ -75,50 +284,114 @@ label {
   opacity: 0.7;
 }
 
-/* Focus accessible */
+/* accessible focus (no “shake” transforms) */
 .form input:focus,
 .form textarea:focus {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--neutral) 35%, #fff 65%);
 }
 
-/* Erreur (RHF met aria-invalid="true") */
+/* Error (RHF sets aria-invalid=true) */
 .form input[aria-invalid="true"],
-.form textarea[aria-invalid="true"] {
+.form textarea[aria-invalid="true"],
+.form select[aria-invalid="true"] {
   border-color: #d33;
 }
 
-/* OK si rempli ET pas d’erreur */
+/* OK when filled and no error */
 .form input[aria-invalid="false"]:not(:placeholder-shown),
 .form textarea[aria-invalid="false"]:not(:placeholder-shown) {
   border-color: var(--ok);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 25%, #fff 75%);
 }
 
-/* Zone de message */
+/* Textarea defaults (editor modal has its own styles below) */
 textarea {
-  min-height: clamp(120px, 20vh, 220px);
-  max-height: clamp(220px, 38vh, 420px);
+  min-height: clamp(120px, 50vh, 150px);
+  max-height: clamp(150px, 50vh, 500px);
   overflow: auto;
-  word-break: break-word;
-  white-space: pre-wrap;
 }
 
-/* Messages d'erreur */
+/* Error rows: reserve space always => no jump */
 .error {
-  display: block;
-  min-height: 1.4rem; /* réserve 1 ligne (augmente si 2 lignes possibles) */
-  margin-top: 6px;
+  --err-lines: 2;
+  line-height: 1.25;
+  min-height: calc(var(--err-lines) * 1.25em);
+  max-height: calc(var(--err-lines) * 1.25em);
+  overflow: hidden; /* cut overflow if a translation is longer */
+  text-align: center;
   color: #d33;
+  opacity: 0; /* becomes visible when there is text */
   transition: opacity 0.15s ease;
-  opacity: 0;
 }
+
 .error:not(:empty) {
   opacity: 1;
 }
-/* Bouton convex */
+
+/* If a field only needs 1 line, set it on the container */
+.field[data-err-lines="1"] .error {
+  --err-lines: 1;
+}
+.field[data-err-lines="2"] .error {
+  --err-lines: 2;
+} /* explicit */
+@media (max-width: 360px) {
+  .field[data-err-lines="2"] .error {
+    --err-lines: 3;
+  }
+}
+/* ---------- Wizard navigation buttons ---------- */
+.navRow {
+  position: absolute;
+  top: 80%;
+  padding-top: 12px;
+  display: flex;
+  gap: 20px;
+}
+
+.back,
+.next {
+  border: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  font-size: 26px;
+  line-height: 1;
+  background: radial-gradient(
+      120% 150% at 30% 20%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(180deg, #cfd8dc, #e4edf1);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.2s ease;
+}
+.back:hover,
+.next:hover {
+  transform: translateY(-1px);
+}
+
+.next[disabled],
+.next[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: auto; /* still focusable */
+}
+.next[disabled]:active,
+.next[data-disabled]:active {
+  box-shadow: none;
+}
+
+.back[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Submit button ---------- */
 .convexBtn {
-  justify-self: center;
-  margin-top: 4px;
   padding: 12px 24px;
   border: 0;
   border-radius: 999px;
@@ -135,8 +408,6 @@ textarea {
   font-weight: 700;
   transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease, background 0.2s ease;
 }
-
-/* état "valide" via data-attribute (pas de règle vide -> pas d’ESLint) */
 .convexBtn[data-valid="true"] {
   background: radial-gradient(
       120% 150% at 30% 20%,
@@ -145,7 +416,6 @@ textarea {
     ),
     linear-gradient(180deg, var(--ok), #b8e0c0);
 }
-
 .convexBtn:hover {
   transform: translateY(-1px);
 }
@@ -158,7 +428,7 @@ textarea {
   cursor: not-allowed;
 }
 
-/* Amélioration si color-mix dispo */
+/* “nicer” gradients when color-mix is supported */
 @supports (color: color-mix(in oklab, white, black)) {
   .convexBtn {
     background: radial-gradient(
@@ -186,29 +456,175 @@ textarea {
   }
 }
 
-/* Champ honeypot anti-bot (invisible) */
-.honey {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  opacity: 0;
-  pointer-events: none;
+/* ---------- Message pseudo-field (opens modal) ---------- */
+/* Libellé visuel (facultatif pour style) */
+.fieldLabel {
+  font-weight: 600;
+  margin: 6px 0;
 }
 
-/* (Option) honeypot visible pour debug */
-.honeyDebug {
-  position: static;
-  opacity: 1;
-  pointer-events: auto;
-  width: 100%;
-  margin-top: 8px;
-  padding: 10px 14px;
+/* Pseudo-champ Message : hauteur fixe par nb de lignes */
+.editorField {
+  width: 80%;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--neutral);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
+  outline: none;
+  cursor: text;
+  line-height: 1.4;
+  white-space: pre-wrap; /* respecte les retours à la ligne */
+  word-break: break-word;
+  overflow: hidden; /* ne pas grandir */
+  /* ----- hauteur figée par nb de lignes ----- */
+  --lines: 4; /* valeur par défaut */
+  min-height: calc(var(--lines) * 1.4em);
+  max-height: calc(var(--lines) * 1.4em);
+}
+
+/* Clamp propre (si supporté) */
+@supports (-webkit-line-clamp: 1) or (line-clamp: 1) {
+  .editorField {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--lines);
+    line-clamp: var(--lines);
+  }
+}
+
+/* Adapter le nb de lignes selon la largeur (œuf plus grand → + de lignes) */
+@media (min-width: 420px) {
+  .editorField {
+    --lines: 5;
+  }
+}
+@media (min-width: 560px) {
+  .editorField {
+    --lines: 6;
+  }
+}
+
+.placeholder {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.editorField:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--neutral) 35%, #fff 65%);
+}
+.placeholder {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Hint row under the pseudo-field */
+.helperRow {
+  text-align: center;
+  font-size: 0.9rem;
+  width: 90%;
+  text-decoration: none;
+  padding: 5px 0;
+}
+.helperSpacer {
+  flex: 1 1;
+}
+.linkBtn {
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+.counter {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+  padding: 5px 0;
+  padding-inline: 0;
+  white-space: nowrap; /* never wrap */
+}
+/* ---------- Modal editor ---------- */
+.modalEditor {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  max-width: 72ch;
+}
+
+.editorText {
+  padding: 0 10px;
+  height: auto;
+  padding: 12px 14px;
   border-radius: 12px;
-  border: 1px dashed #f39c12;
-  background: #fff7e6;
+  border: 1px solid #ccd6dd;
+  background: #fff;
+  outline: none;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.editorText:focus-visible {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
-/* Overlay de succès plein écran */
+.modalBar {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  min-height: 44px; /* réserve verticale */
+  flex-direction: column;
+}
+.modalActions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: #e9eef2;
+}
+.btnPrimary {
+  color: #122;
+  background: radial-gradient(
+      120% 150% at 30% 20%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(180deg, var(--ok), #b8e0c0);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Nice scrollbar in modal */
+.editorText::-webkit-scrollbar {
+  width: 10px;
+}
+.editorText::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--accent, #b0bec5) 55%, #777 45%);
+  border-radius: 8px;
+}
+
+/* inline error under Save when < 10 chars */
+.inlineError {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #c62828;
+  min-height: 1.2rem; /* réserve la ligne */
+  display: inline-flex;
+  align-items: center;
+}
+.invisible {
+  visibility: hidden;
+} /* garde la place, cache le texte */
+/* ---------- Success overlay ---------- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -245,251 +661,46 @@ textarea {
     transform: translateY(0) scale(1);
   }
 }
-
-/* Responsive fin : encore plus contenu sur très grands écrans */
-@media (min-width: 1200px) {
-  .egg {
-    --egg-w: clamp(320px, 50vw, 440px);
-  }
-}
-
-/* Variante optionnelle “compact” si besoin ailleurs */
-.compact {
-  --egg-w: clamp(300px, 56vw, 420px);
-  aspect-ratio: 1 / 1.2;
-}
-
-/* =========================
-   Wizard — 1 œuf à la fois
-   ========================= */
-.wizard {
-  position: relative;
-  width: 100%;
-  display: grid;
-  place-items: center;
-}
-.rail {
-  position: relative;
-  width: min(700px, 92vw);
-  height: clamp(520px, 66vh, 720px);
-  margin-inline: auto;
-}
-
-/* taille de l'œuf dans le wizard (override) */
-.wizardEgg {
-  --egg-w: clamp(260px, 70vw, 380px);
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.25s ease, transform 0.3s ease;
-  will-change: opacity, transform;
-}
-
-/* Un seul œuf visible */
-.center {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translate(-50%, -50%) scale(0.97);
-}
-
-/* Flèches / nav */
-.navRow {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 14px;
-}
-.back,
-.next {
-  border: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  font-size: 26px;
-  line-height: 1;
-  background: radial-gradient(
-      120% 150% at 30% 20%,
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0)
-    ),
-    linear-gradient(180deg, #cfd8dc, #e4edf1);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
-  transition: transform 0.12s ease, opacity 0.2s ease;
-}
-.back:hover,
-.next:hover {
-  transform: translateY(-1px);
-}
-/* états des flèches */
-.next[disabled],
-.next[data-disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-  pointer-events: auto; /* le bouton reste focusable mais non cliquable */
-}
-
-.next[disabled]:active,
-.next[data-disabled]:active {
-  box-shadow: none;
-}
-
-.back[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Résumé œuf 3 */
-.summary {
-  text-align: center;
-  opacity: 0.85;
-}
-.summary p {
-  margin: 4px 0;
-}
-.preview {
-  max-width: 32ch;
-  margin-inline: auto;
-  font-style: italic;
-  opacity: 0.8;
-  overflow-wrap: anywhere; /* casse les très longs mots/urls */
-  white-space: normal;
-}
-/* ---- Псевдо-поле для сообщения (кликабельное) ---- */
-.editorField {
-  width: 80%;
-  min-height: 140px;
-  padding: 12px 14px;
-  border-radius: 18px;
-  border: 1px solid var(--neutral);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
-  outline: none;
-  cursor: text;
-  line-height: 1.4;
-  /* Fallback générique */
-  overflow: hidden;
-  line-clamp: var(--lines); /* propriété standard */
-  max-height: calc(var(--lines) * 1.4em); /* secours si line-clamp ignoré */
-  --lines: 6;
-}
-@supports (-webkit-line-clamp: 1) {
-  .editorField {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: var(--lines);
-    max-height: none;
-  }
-}
-@supports (line-clamp: 1) {
-  .editorField {
-    line-clamp: var(--lines);
-  }
-}
-.editorField:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--neutral) 35%, #fff 65%);
-}
-.placeholder {
-  opacity: 0.6;
-  font-style: italic;
-}
-
-/* строка под полем: линк + счетчик */
-.helperRow {
-  width: 80%;
-  display: flex;
-  align-items: center;
-  margin-top: 6px;
-  font-size: 0.9rem;
-}
-.helperSpacer {
-  flex: 1 1;
-}
-.linkBtn {
-  background: none;
-  border: 0;
-  text-decoration: underline;
-  cursor: pointer;
+/* texte accessible, visuellement masqué */
+.srOnly {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
   padding: 0;
-}
-.counter {
-  opacity: 0.7;
-}
-
-/* ---- Контент модалки-редактора ---- */
-.editorText {
-  width: 100%;
-  height: min(48vh, 520px);
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid #ccd6dd;
-  background: #fff;
-  resize: none;
-  outline: none;
-  line-height: 1.5;
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.editorText:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-}
-
-.modalBar {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.modalActions {
-  margin-left: auto;
-  display: flex;
-  gap: 10px;
-}
-.btn {
   border: 0;
-  border-radius: 999px;
-  padding: 10px 16px;
-  cursor: pointer;
-  background: #e9eef2;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
 }
-.btnPrimary {
-  color: #122;
-  background: radial-gradient(
-      120% 150% at 30% 20%,
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0)
-    ),
-    linear-gradient(180deg, var(--ok), #b8e0c0);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
-}
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.recapTitle {
+  text-align: center;
+  margin: 10px 0;
+  font-weight: 600;
+  line-height: 1.25;
+  width: 65%;
 }
 
-/* приятный скролл в модалке */
-.editorText::-webkit-scrollbar {
-  width: 10px;
+.recapTitle > span {
+  display: block; /* force la 2e ligne */
 }
-.editorText::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--accent, #b0bec5) 55%, #777 45%);
-  border-radius: 8px;
+
+.recapName {
+  /* optionnel: style différent pour le prénom */
+  font-weight: 700;
+  /* si tu crains les très longs prénoms : */
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
-/* petit message rouge sous le bouton Save quand < 10 caractères */
-.inlineError {
-  margin-top: 8px;
-  font-size: 0.95rem;
-  color: #c62828;
+
+/* Sur petits écrans, autoriser le retour à la ligne plutôt que la troncature */
+@media (max-width: 420px) {
+  .recapName {
+    white-space: normal; /* le prénom peut passer à la ligne */
+    word-break: break-word;
+  }
 }
