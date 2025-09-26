@@ -86,3 +86,66 @@ html::-webkit-scrollbar-thumb {
 html::-webkit-scrollbar-thumb:hover {
   background: #9d6b32;
 }
+/*7. variables pour personnaliser facilement */
+:root {
+  --tip-maxw: 34ch;
+  --tip-offset: 6px; /* écart avec le texte */
+  --tip-bg: #b47b38; /* fond “or” */
+  --tip-fg: #fff;
+  --tip-pad: 6px 10px;
+  --tip-br: 12px;
+  --tip-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  --tip-border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* le span raccourci qui porte l’aperçu + tooltip */
+.hasTooltip {
+  position: relative;
+  cursor: help;
+  outline: none;
+}
+
+/* bulle multi-lignes */
+.hasTooltip::after {
+  content: attr(data-full); /* ← injecte le texte complet */
+  position: absolute;
+  left: 0; /* ancrée sous la valeur */
+  top: calc(100% + 8px);
+  white-space: normal; /* multi-lignes */
+  line-height: 1.4;
+  background: var(--tip-bg);
+  color: var(--tip-fg);
+  padding: var(--tip-pad);
+  border-radius: var(--tip-br);
+  box-shadow: var(--tip-shadow);
+  border: var(--tip-border);
+  z-index: 30;
+
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+/* petit caret optionnel */
+.hasTooltip::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 100%;
+  border: 6px solid transparent;
+  border-bottom-color: var(--tip-bg);
+  transform: translateY(2px);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+/* affichage au survol ou au focus clavier */
+.hasTooltip:hover::after,
+.hasTooltip:focus::after,
+.hasTooltip:hover::before,
+.hasTooltip:focus::before {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}

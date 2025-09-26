@@ -1,5 +1,5 @@
 // src/components/ContactForm/index.jsx
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback, useId } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../Modal";
 import styles from "./ContactForm.module.css";
@@ -11,14 +11,62 @@ const MAX_MSG = 1200;
 const MIN_MSG = 10;
 const STEPS = 4;
 
-/** coupe au milieu : "abcdefgh…wxyz" */
-function truncMiddle(s = "", n = 24) {
-  const arr = Array.from(s);
-  if (arr.length <= n) return s;
-  const head = Math.ceil((n - 1) / 2);
-  const tail = Math.floor((n - 1) / 2);
-  return arr.slice(0, head).join("") + "…" + arr.slice(-tail).join("");
+// FIN — coupe au mot si possible, sinon dans le mot (grapheme-safe)
+function truncEnd(input = "", max = 26, slack = 3) {
+  const s = String(input).trim();
+  const segs =
+    typeof Intl !== "undefined" && Intl.Segmenter
+      ? Array.from(
+          new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s),
+          (x) => x.segment
+        )
+      : Array.from(s);
+  if (segs.length <= max) return s;
+
+  let cutIdx = max;
+  const slice = segs.slice(0, max).join("");
+  const backToSpace = slice.lastIndexOf(" ");
+  if (backToSpace !== -1 && max - backToSpace <= slack) cutIdx = backToSpace;
+
+  let cut = segs.slice(0, cutIdx).join("");
+  cut = cut.replace(/[\s.,;:–—-]+$/u, "");
+  return cut + "…";
 }
+
+// MILIEU — garde début+fin, tente de se caler sur des espaces proches
+function truncMiddle(input = "", max = 24, slack = 3) {
+  const s = String(input);
+  const segs =
+    typeof Intl !== "undefined" && Intl.Segmenter
+      ? Array.from(
+          new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s),
+          (x) => x.segment
+        )
+      : Array.from(s);
+  if (segs.length <= max) return s;
+
+  const head = Math.ceil((max - 1) / 2);
+  const tail = Math.floor((max - 1) / 2);
+
+  const headStr = segs.slice(0, head).join("");
+  const hSpace = headStr.lastIndexOf(" ");
+  const headCut = hSpace !== -1 && head - hSpace <= slack ? hSpace : head;
+
+  const tailStr = segs.slice(-tail).join("");
+  const tSpace = tailStr.indexOf(" ");
+  const tailCut = tSpace !== -1 && tSpace <= slack ? tail - tSpace : tail;
+
+  const left = segs
+    .slice(0, headCut)
+    .join("")
+    .replace(/[\s.,;:–—-]+$/u, "");
+  const right = segs
+    .slice(-tailCut)
+    .join("")
+    .replace(/^[\s.,;:–—-]+/u, "");
+  return left + "…" + right;
+}
+
 /** First name for recap/toast:
  * - If user typed several names, keep the *first* token (split on spaces/dashes).
  * - If that single name > 15 chars, cut to 15 and add an ellipsis.
@@ -137,7 +185,11 @@ export default function ContactForm({
     reset,
     watch,
   } = useForm({ mode: "onChange" });
-
+  const idTipName = useId();
+  const idTipEmail = useId();
+  const idTipSubj = useId();
+  const idTipCompany = useId();
+  const idTipMsg = useId();
   // Étapes (1 → 4)
   const [step, setStep] = useState(1);
 
@@ -281,6 +333,15 @@ export default function ContactForm({
   // Progression
   const progress = useMemo(() => progressFromStep(step, STEPS), [step]);
   const progressPct = progress.pct;
+  const fullName = `${wName || "—"} ${wLastName || ""}`.trim();
+  const subjectFull = subjectDisplay(wSubject, wSubjectCustom, t);
+
+  //Summary
+  const nameShort = useMemo(() => truncEnd(fullName, 12, 3), [fullName]);
+  const emailShort = useMemo(() => truncMiddle(wEmail || "—", 12, 3), [wEmail]);
+  const subjectShort = useMemo(() => truncEnd(subjectFull, 12, 3), [subjectFull]);
+  const companyShort = useMemo(() => truncEnd(wCompany || "—", 12, 3), [wCompany]);
+  const msgShort = useMemo(() => truncEnd(wMessage || "—", 12, 3), [wMessage]);
 
   // Étapes : validations
   // 1) name + lastName
@@ -650,49 +711,70 @@ export default function ContactForm({
                     </p>
                   );
                 })()}
-                <div className={styles.summary}>
+                <div className={styles.summary} lang="fr">
                   <p>
                     <strong>{t.nameLabel}:</strong>{" "}
-                    <span
-                      className={styles.ellip}
-                      title={`${wName || "—"} ${wLastName || ""}`.trim()}
-                    >
-                      {truncMiddle(`${wName || "—"} ${wLastName || ""}`.trim(), 28)}
+                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipName}>
+                      <span className={styles.value} title={fullName}>
+                        {nameShort}
+                      </span>
+                      <span id={idTipName} role="tooltip" className={styles.tip}>
+                        {fullName}
+                      </span>
                     </span>
                   </p>
+
                   <p>
                     <strong>{t.emailLabel}:</strong>{" "}
-                    <span className={styles.ellip} title={wEmail || "—"}>
-                      {truncMiddle(wEmail || "—", 26)}
+                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipEmail}>
+                      <span className={styles.value} title={wEmail || "—"}>
+                        {emailShort}
+                      </span>
+                      <span id={idTipEmail} role="tooltip" className={styles.tip}>
+                        {wEmail || "—"}
+                      </span>
                     </span>
                   </p>
+
                   <p>
                     <strong>{t.subjectLabel}:</strong>{" "}
-                    <span
-                      className={styles.ellip}
-                      title={subjectDisplay(wSubject, wSubjectCustom, t)}
-                    >
-                      {subjectDisplay(wSubject, wSubjectCustom, t)}
+                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipSubj}>
+                      <span className={styles.value} title={subjectFull}>
+                        {subjectShort}
+                      </span>
+                      <span id={idTipSubj} role="tooltip" className={styles.tip}>
+                        {subjectFull}
+                      </span>
                     </span>
                   </p>
+
                   {showCompany && !!wCompany && (
                     <p>
                       <strong>{t.companyLabel}:</strong>{" "}
-                      <span className={styles.ellip} title={wCompany}>
-                        {truncMiddle(wCompany, 22)}
+                      <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipCompany}>
+                        <span className={styles.value} title={wCompany}>
+                          {companyShort}
+                        </span>
+                        <span id={idTipCompany} role="tooltip" className={styles.tip}>
+                          {wCompany}
+                        </span>
                       </span>
                     </p>
                   )}
+
                   <p>
                     <strong>{t.messageLabel}:</strong>{" "}
-                    <span className={styles.preview} title={wMessage || ""}>
-                      {Array.from(wMessage || "")
-                        .slice(0, 60)
-                        .join("")}
-                      {(wMessage || "").length > 60 ? "…" : ""}
+                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipMsg}>
+                      <span className={styles.value} title={wMessage || "—"}>
+                        {msgShort}
+                      </span>
+                      <span id={idTipMsg} role="tooltip" className={styles.tip}>
+                        {wMessage || "—"}
+                      </span>
                     </span>
                   </p>
                 </div>
+
                 <div className={styles.flexGrow} />
                 <div className={styles.navRow}>
                   <button

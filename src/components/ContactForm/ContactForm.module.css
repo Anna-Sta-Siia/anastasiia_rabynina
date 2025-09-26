@@ -161,47 +161,41 @@
 .eggWrap[data-complete="true"] .progressFill::before {
   opacity: 0.35;
 }
+
 .summary {
-  width: 65%;
-  margin: 12px 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  font-size: clamp(0.95rem, 2.2vw, 1rem);
+  align-items: start;
+  gap: 10px;
+  margin: 10px 0;
+  width: 65%;
 }
 
 /* chaque <p> devient une ligne "label | valeur" */
 .summary p {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: start;
-  column-gap: 8px;
-  margin: 6px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  overflow: visible;
 }
 .summary p > strong {
   white-space: nowrap;
   text-align: right;
+  flex: 0 0 auto;
 }
-.ellip {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-
 /* la préview du message : coupe proprement */
 .preview {
   max-width: 100%;
   margin: 0;
   font-style: italic;
   opacity: 0.85;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2; /* 2 lignes max */
 }
-
+.summary p .value {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
 /* accessibilité : moins d’animation si l’utilisateur le demande */
 @media (prefers-reduced-motion: reduce) {
   .progressFill {
@@ -674,10 +668,10 @@ textarea {
 }
 .recapTitle {
   text-align: center;
-  margin: 10px 0;
   font-weight: 600;
   line-height: 1.25;
   width: 65%;
+  margin-top: 10px;
 }
 
 .recapTitle > span {
@@ -685,10 +679,7 @@ textarea {
 }
 
 .recapName {
-  /* optionnel: style différent pour le prénom */
   font-weight: 700;
-  /* si tu crains les très longs prénoms : */
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -700,5 +691,112 @@ textarea {
   .recapName {
     white-space: normal; /* le prénom peut passer à la ligne */
     word-break: break-word;
+  }
+}
+/* ===== Tooltip (hover + focus-visible) ===== */
+
+/* conteneur */
+.tipWrap {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* bulle — AU-DESSUS par défaut */
+.tip {
+  position: absolute;
+  right: 0;
+  left: auto;
+  bottom: calc(100% + var(--tip-offset)); /* au-dessus */
+  top: auto;
+  background: var(--tip-bg);
+  color: var(--tip-fg);
+  padding: var(--tip-pad);
+  border-radius: var(--tip-br);
+  box-shadow: var(--tip-shadow);
+  border: var(--tip-border);
+  white-space: normal;
+  line-height: 1.35;
+  word-break: break-word;
+  max-width: min(var(--tip-maxw), calc(var(--recap-w, 80vw) - 12px));
+  z-index: 5;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* affichage : souris (hover) */
+.tipWrap:hover .tip {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* affichage : clavier (focus-visible uniquement) */
+.tipWrap:focus-visible .tip {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* si l’élément a le focus MAIS pas focus-visible (clic souris) -> on cache */
+@supports selector(:focus-visible) {
+  .tipWrap:focus:not(:focus-visible) .tip {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* ===== Flèche (mêmes triggers que la bulle) ===== */
+
+/* flèche AU-DESSUS (par défaut) */
+.tipWrap::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  bottom: 100%;
+  border: 6px solid transparent;
+  border-bottom-color: var(--tip-bg); /* triangle vers le bas */
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+/* montrer la flèche exactement quand la bulle est visible */
+.tipWrap:hover::after,
+.tipWrap:focus-visible::after {
+  opacity: 1;
+}
+
+@supports selector(:focus-visible) {
+  .tipWrap:focus:not(:focus-visible)::after {
+    opacity: 0;
+  }
+}
+
+/* ===== Variante: afficher EN DESSOUS si besoin ===== */
+.tipWrap[data-pos="below"] .tip {
+  top: calc(100% + var(--tip-offset));
+  bottom: auto;
+  transform: translateY(4px);
+}
+.tipWrap[data-pos="below"]::after {
+  top: 100%;
+  bottom: auto;
+  border-bottom-color: transparent;
+  border-top-color: var(--tip-bg);
+}
+
+/* (option) désactiver complètement le tooltip sur écrans sans hover (mobiles) */
+@media (hover: none) {
+  .tip {
+    display: none !important;
+  }
+  .tipWrap::after {
+    display: none !important;
   }
 }
