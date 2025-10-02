@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useMemo, useCallback, useId } from "react"
 import { useForm } from "react-hook-form";
 import Modal from "../Modal";
 import styles from "./ContactForm.module.css";
+import { makeContentGuards } from "../../guards";
 
 // =====================
 // Constantes & helpers
@@ -144,11 +145,12 @@ const tFallback = {
   errors: {
     nameRequired: "Name is required.",
     nameMin: "At least 2 characters.",
-    namePattern: "Only letters, spaces, - and '.",
+    patternCommon: "Only letters, spaces, - and '.",
+    lastNameMax: "Maximum 60 characters.",
     emailRequired: "Email is required.",
     emailInvalid: "Invalid email format.",
     subjectRequired: "Subject is required.",
-    subjectCustomRequired: "Please provide a subject.",
+    subjectCustomMax: "120 caractères max.",
     messageRequired: "Message is required.",
     messageMin: "At least 10 characters.",
     messageMax: "Maximum 1200 characters.",
@@ -300,11 +302,15 @@ export default function ContactForm({
     }
   }, [subjectOpen]);
 
-  // mémoriser le step précédent (pour pouvoir ré-autoriser l’auto open du subject en entrant sur 3)
   const prevStepRef = useRef(step);
   useEffect(() => {
     const prev = prevStepRef.current;
-    if (prev !== step && step === 3) setSubjectDismissed(false);
+
+    // On vient de QUITTER la vue 3 pour revenir en 2 → on ré-arme
+    if (prev === 3 && step === 2) {
+      setSubjectDismissed(false);
+    }
+
     prevStepRef.current = step;
   }, [step]);
 
@@ -329,7 +335,7 @@ export default function ContactForm({
       openSubject();
     }
   }, [step, wSubject, subjectOpen, subjectDismissed, getValues, openSubject]);
-
+  const guards = useMemo(() => makeContentGuards({ lang: "fr" }), []);
   // Progression
   const progress = useMemo(() => progressFromStep(step, STEPS), [step]);
   const progressPct = progress.pct;
@@ -401,7 +407,7 @@ export default function ContactForm({
         fullName: fullNameStr,
         email: data.email,
         company: data.company || "",
-        subject: data.subject === "other" ? data.subjectCustom || "other" : data.subject,
+        subject: data.subject === "other" ? data.subjectCustom?.trim() || "other" : data.subject,
         message: data.message,
       };
 
@@ -482,8 +488,8 @@ export default function ContactForm({
                     {...register("name", {
                       required: t.errors.nameRequired,
                       minLength: { value: 2, message: t.errors.nameMin },
-                      setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
-                      validate: (v) => /^[\p{L}\s'’-]+$/u.test(v) || t.errors.patternCommon,
+                      setValueAs: guards._raw.normalize,
+                      validate: { ...guards.forNameRequired(t) }, // ← messages i18n
                     })}
                   />
                   <div className={styles.error} role="alert" aria-live="polite">
@@ -503,8 +509,12 @@ export default function ContactForm({
                     autoComplete="family-name"
                     aria-invalid={errors.lastName ? "true" : "false"}
                     {...register("lastName", {
-                      setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
-                      validate: (v) => !v || /^[\p{L}\s'’-]+$/u.test(v) || t.errors.patternCommon,
+                      setValueAs: guards._raw.normalize, // mono-ligne
+                      validate: { ...guards.forLastNameOptional(t) }, // règles optionnelles
+                      maxLength: {
+                        value: 60,
+                        message: t.errors?.lastNameMax || "60 caractères max.",
+                      },
                     })}
                   />
                   <div className={styles.error} role="alert" aria-live="polite">
@@ -519,7 +529,10 @@ export default function ContactForm({
                       id="company"
                       placeholder={t.companyPlaceholder}
                       autoComplete="organization"
-                      {...register("company")}
+                      {...register("company", {
+                        setValueAs: guards._raw.normalize,
+                        validate: { ...guards.forCompany(t) },
+                      })}
                     />
                     <div className={styles.error} aria-hidden="true" />
                   </div>
@@ -556,6 +569,7 @@ export default function ContactForm({
                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                         message: t.errors.emailInvalid,
                       },
+                      validate: { ...guards.forEmail },
                     })}
                   />
                   <div className={styles.error} role="alert" aria-live="polite">
@@ -600,7 +614,16 @@ export default function ContactForm({
                           : "")}
                     </option>
                   </select>
-                  <input type="hidden" {...register("subjectCustom")} />
+                  <input
+                    type="hidden"
+                    {...register("subjectCustom", {
+                      validate: { ...guards.forSubject(t) },
+                      maxLength: {
+                        value: 120,
+                        message: t.errors?.subjectCustomMax || "120 caractères max.",
+                      },
+                    })}
+                  />
 
                   <div className={styles.error} role="alert" aria-live="polite">
                     {(showSubjectErr && errors.subject?.message) ||
@@ -649,6 +672,7 @@ export default function ContactForm({
                       minLength: { value: MIN_MSG, message: t.errors.messageMin },
                       maxLength: { value: MAX_MSG, message: t.errors.messageMax },
                       setValueAs: (v) => (typeof v === "string" ? v : ""),
+                      validate: { ...guards.forMessage(t) },
                     })}
                   />
 
@@ -677,7 +701,10 @@ export default function ContactForm({
                   <button
                     type="button"
                     className={styles.back}
-                    onClick={() => setStep(2)}
+                    onClick={() => {
+                      setSubjectDismissed(false);
+                      setStep(2);
+                    }}
                     aria-label={t.back}
                     title={t.back}
                   >
@@ -715,7 +742,7 @@ export default function ContactForm({
                   <p>
                     <strong>{t.nameLabel}:</strong>{" "}
                     <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipName}>
-                      <span className={styles.value} title={fullName}>
+                      <span className={styles.value} aria-label={fullName}>
                         {nameShort}
                       </span>
                       <span id={idTipName} role="tooltip" className={styles.tip}>
@@ -727,7 +754,7 @@ export default function ContactForm({
                   <p>
                     <strong>{t.emailLabel}:</strong>{" "}
                     <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipEmail}>
-                      <span className={styles.value} title={wEmail || "—"}>
+                      <span className={styles.value} aria-label={wEmail || "—"}>
                         {emailShort}
                       </span>
                       <span id={idTipEmail} role="tooltip" className={styles.tip}>
@@ -739,7 +766,7 @@ export default function ContactForm({
                   <p>
                     <strong>{t.subjectLabel}:</strong>{" "}
                     <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipSubj}>
-                      <span className={styles.value} title={subjectFull}>
+                      <span className={styles.value} aria-label={subjectFull}>
                         {subjectShort}
                       </span>
                       <span id={idTipSubj} role="tooltip" className={styles.tip}>
@@ -752,7 +779,7 @@ export default function ContactForm({
                     <p>
                       <strong>{t.companyLabel}:</strong>{" "}
                       <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipCompany}>
-                        <span className={styles.value} title={wCompany}>
+                        <span className={styles.value} aria-label={wCompany}>
                           {companyShort}
                         </span>
                         <span id={idTipCompany} role="tooltip" className={styles.tip}>
@@ -761,11 +788,10 @@ export default function ContactForm({
                       </span>
                     </p>
                   )}
-
                   <p>
                     <strong>{t.messageLabel}:</strong>{" "}
                     <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipMsg}>
-                      <span className={styles.value} title={wMessage || "—"}>
+                      <span className={styles.value} aria-label={wMessage || "—"}>
                         {msgShort}
                       </span>
                       <span id={idTipMsg} role="tooltip" className={styles.tip}>

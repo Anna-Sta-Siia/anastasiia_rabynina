@@ -88,7 +88,7 @@ html::-webkit-scrollbar-thumb:hover {
 }
 /*7. variables pour personnaliser facilement */
 :root {
-  --tip-maxw: 34ch;
+  --tip-maxw: 24ch;
   --tip-offset: 6px; /* écart avec le texte */
   --tip-bg: #b47b38; /* fond “or” */
   --tip-fg: #fff;

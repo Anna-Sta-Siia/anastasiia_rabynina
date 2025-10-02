@@ -708,6 +708,8 @@ textarea {
   right: 0;
   left: auto;
   bottom: calc(100% + var(--tip-offset)); /* au-dessus */
+  width: max-content; /* ← rétrécit pour les mots courts */
+  max-width: min(var(--tip-maxw), 80vw); /* ← ne dépasse jamais l’écran */
   top: auto;
   background: var(--tip-bg);
   color: var(--tip-fg);
@@ -716,9 +718,10 @@ textarea {
   box-shadow: var(--tip-shadow);
   border: var(--tip-border);
   white-space: normal;
+  overflow-wrap: break-word; /* переносить длинные слова */
+  word-break: normal; /* НЕ рубить каждую букву */
+  hyphens: auto; /* переносы по слогам, если язык задан */
   line-height: 1.35;
-  word-break: break-word;
-  max-width: min(var(--tip-maxw), calc(var(--recap-w, 80vw) - 12px));
   z-index: 5;
   opacity: 0;
   transform: translateY(-4px);
@@ -726,31 +729,54 @@ textarea {
   transition: opacity 0.18s ease, transform 0.18s ease;
   writing-mode: horizontal-tb;
   text-orientation: mixed;
-  word-break: normal;
-  overflow-wrap: break-word;
+  max-height: 120px;
+  overflow-x: clip; /* évite un scroll horizontal */
+  overflow-y: auto; /* scroll SEULEMENT si débordement en Y */
+  scrollbar-width: none; /* Firefox : cachée par défaut */
+  scrollbar-color: white;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* affichage : souris (hover) */
-.tipWrap:hover .tip {
+/* visible si on survole le déclencheur OU la bulle elle-même */
+.tipWrap:hover .tip,
+.tipWrap:focus-visible .tip,
+.tip:hover,
+.tip:focus {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
-
-/* affichage : clavier (focus-visible uniquement) */
-.tipWrap:focus-visible .tip {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+/* показываем полосу только когда действительно над буллой */
+.tip:hover,
+.tip:focus {
+  scrollbar-width: thin; /* Firefox */
 }
 
-/* si l’élément a le focus MAIS pas focus-visible (clic souris) -> on cache */
+/* WebKit (Chrome/Safari/Edge) : cachée par défaut, visible au survol */
+.tipWrap .tip::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.tipWrap .tip:hover::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.tipWrap .tip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+}
+.tipWrap .tip::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* avant : cachait la bulle dès qu'il y avait un focus par clic */
 @supports selector(:focus-visible) {
-  .tipWrap:focus:not(:focus-visible) .tip {
+  .tipWrap:focus:not(:focus-visible):not(:hover) .tip,
+  .tipWrap:focus:not(:focus-visible):not(:hover)::after {
     opacity: 0;
     pointer-events: none;
   }
 }
+/* ↑ on ajoute :not(:hover) pour que le hover gagne la priorité */
 
 /* ===== Flèche (mêmes triggers que la bulle) ===== */
 
@@ -771,7 +797,15 @@ textarea {
 .tipWrap:focus-visible::after {
   opacity: 1;
 }
-
+/* zone invisible qui prolonge la bulle vers le bas pour garder le hover */
+.tip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--tip-offset);
+  bottom: calc(-1 * var(--tip-offset));
+}
 @supports selector(:focus-visible) {
   .tipWrap:focus:not(:focus-visible)::after {
     opacity: 0;

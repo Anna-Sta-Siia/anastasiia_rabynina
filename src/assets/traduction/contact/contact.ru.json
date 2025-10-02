@@ -43,14 +43,21 @@
     "nameRequired": "Имя обязательно.",
     "nameMin": "Не менее 2 символов.",
     "patternCommon": "Только буквы, пробелы, - и '.",
+    "lastNameMax": "Максимум 60 символов.",
 
     "emailRequired": "E-mail обязателен.",
     "emailInvalid": "Неверный формат e-mail.",
+    "profanityEmail": "Недопустимый адрес.",
 
     "subjectRequired": "Тема обязательна.",
+    "subjectCustomMax": "Не более 120 символов.",
 
     "messageRequired": "Сообщение обязательно.",
     "messageMin": "Не менее 10 символов.",
-    "messageMax": "Максимум 1200 символов."
+    "messageMax": "Максимум 1200 символов.",
+
+    "noUrl": "Без ссылок/HTML.",
+    "profanity": "Нецензурная лексика.",
+    "gibberish": "Похоже на бессмысленный набор."
   }
 }

@@ -42,14 +42,21 @@
     "nameRequired": "Le prénom est requis.",
     "nameMin": "Au moins 2 caractères.",
     "patternCommon": "Lettres, espaces, - et ' seulement.",
+    "lastNameMax": "60 caractères maximum.",
 
     "emailRequired": "L’e-mail est requis.",
     "emailInvalid": "Format d’e-mail invalide.",
+    "profanityEmail": "Adresse inacceptable.",
 
     "subjectRequired": "Le sujet est obligatoire.",
+    "subjectCustomMax": "Maximum 120 characters.",
 
     "messageRequired": "Le message est requis.",
     "messageMin": "Au moins 10 caractères.",
-    "messageMax": "Maximum 1200 caractères."
+    "messageMax": "Maximum 1200 caractères.",
+
+    "noUrl": "Pas de liens/HTML ici.",
+    "profanity": "Langage inapproprié.",
+    "gibberish": "Le texte ressemble à un gribouillage."
   }
 }
