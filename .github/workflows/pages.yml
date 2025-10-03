@@ -34,6 +34,11 @@ jobs:
       - name: Build
         run: npm run build
 
+        - name: Show dist tree
+        run: |
+          echo "=== DIST CONTENT ==="
+          ls -R dist
+
       # Fallback SPA (pour react-router) : 404.html = index.html
       - name: SPA fallback
         run: cp dist/index.html dist/404.html
