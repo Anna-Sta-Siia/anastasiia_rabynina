@@ -5,7 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# GitHub Pages a besoin de ces permissions
 permissions:
   contents: read
   pages: write
@@ -31,19 +30,34 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Build
+      - name: Build (Vite + postbuild)
         run: npm run build
 
-        - name: Show dist tree
+      # Affiche l'arborescence de dist/ (debug)
+      - name: Show dist tree
         run: |
-          echo "=== DIST CONTENT ==="
-          ls -R dist
+          echo "=== DIST CONTENT (before ensure) ==="
+          ls -R dist || true
 
-      # Fallback SPA (pour react-router) : 404.html = index.html
+      # Sécurise: si Vite a produit fr.html/en.html/ru.html, on les range en dossiers
+      - name: Ensure fr/en/ru folders
+        run: |
+          mkdir -p dist/fr dist/en dist/ru
+          [ -f dist/fr.html ] && mv dist/fr.html dist/fr/index.html || true
+          [ -f dist/en.html ] && mv dist/en.html dist/en/index.html || true
+          [ -f dist/ru.html ] && mv dist/ru.html dist/ru/index.html || true
+
+      # Re-affiche pour vérifier
+      - name: Show dist tree (after ensure)
+        run: |
+          echo "=== DIST CONTENT (after ensure) ==="
+          ls -R dist || true
+
+      # Fallback SPA/Pages : 404 = index (utile pour routes inconnues)
       - name: SPA fallback
         run: cp dist/index.html dist/404.html
 
-      - name: Upload artifact
+      - name: Upload artifact (dist)
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
@@ -55,6 +69,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
