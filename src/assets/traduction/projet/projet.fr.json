@@ -64,7 +64,7 @@
     "title": "Anastasia R.",
     "titleLogo": "images/logos/anastasia-rabynina.webp",
     "image": "images/projects/anastasia-rabynina.webp",
-    "link": "https://anna-sta-siia.github.io/mon_projet/",
+    "link": "https://anna-sta-siia.github.io/anastasiia_rabynina/",
     "description": "Portfolio personnel en React (Vite) et SASS : page d’accueil animée (médaillon), cartes « œufs » pour les projets, filtres en pétales, page Compétences liée aux projets, i18n (FR/RU/EN), accessibilité soignée et bonnes pratiques de performance Lighthouse. Formulaire de contact avec validations (react-hook-form) et UX fluide.",
     "stack": ["JS", "React", "CSS", "HTML", "SEO"],
     "color": "#F8BBD0",
