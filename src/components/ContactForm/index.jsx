@@ -187,7 +187,8 @@ export default function ContactForm({
     reset,
     watch,
   } = useForm({ mode: "onChange" });
-  const idTipName = useId();
+  const idTipFirst = useId();
+  const idTipLast = useId();
   const idTipEmail = useId();
   const idTipSubj = useId();
   const idTipCompany = useId();
@@ -339,15 +340,15 @@ export default function ContactForm({
   // Progression
   const progress = useMemo(() => progressFromStep(step, STEPS), [step]);
   const progressPct = progress.pct;
-  const fullName = `${wName || "—"} ${wLastName || ""}`.trim();
   const subjectFull = subjectDisplay(wSubject, wSubjectCustom, t);
 
   //Summary
-  const nameShort = useMemo(() => truncEnd(fullName, 12, 3), [fullName]);
-  const emailShort = useMemo(() => truncMiddle(wEmail || "—", 12, 3), [wEmail]);
-  const subjectShort = useMemo(() => truncEnd(subjectFull, 12, 3), [subjectFull]);
-  const companyShort = useMemo(() => truncEnd(wCompany || "—", 12, 3), [wCompany]);
-  const msgShort = useMemo(() => truncEnd(wMessage || "—", 12, 3), [wMessage]);
+  const firstNameShort = useMemo(() => truncEnd(wName, 19, 3), [wName]);
+  const lastNameShort = useMemo(() => truncEnd(wLastName, 19, 3), [wLastName]);
+  const emailShort = useMemo(() => truncMiddle(wEmail || "—", 19, 3), [wEmail]);
+  const subjectShort = useMemo(() => truncEnd(subjectFull, 19, 3), [subjectFull]);
+  const companyShort = useMemo(() => truncEnd(wCompany || "—", 19, 3), [wCompany]);
+  const msgShort = useMemo(() => truncEnd(wMessage || "—", 16, 3), [wMessage]);
 
   // Étapes : validations
   // 1) name + lastName
@@ -471,7 +472,7 @@ export default function ContactForm({
               autoComplete="off"
               {...register("hp")}
             />
-            {/* ===== Step 1: first + last + (company) ===== */}
+            {/* ===== Step 1: firstname + lastname + (company) ===== */}
             {step === 1 && (
               <div className={styles.view} key="step1">
                 <div
@@ -661,21 +662,21 @@ export default function ContactForm({
               <div className={styles.view} key="step3">
                 <div className={styles.field} data-invalid={!!errors.message && showMsgErr}>
                   <label htmlFor="message">{t.messageLabel}</label>
-
-                  <textarea
-                    id="message"
-                    placeholder={t.messagePlaceholder}
-                    aria-invalid={errors.message ? "true" : "false"}
-                    maxLength={MAX_MSG}
-                    {...register("message", {
-                      required: t.errors.messageRequired,
-                      minLength: { value: MIN_MSG, message: t.errors.messageMin },
-                      maxLength: { value: MAX_MSG, message: t.errors.messageMax },
-                      setValueAs: (v) => (typeof v === "string" ? v : ""),
-                      validate: { ...guards.forMessage(t) },
-                    })}
-                  />
-
+                  <div className={styles.textarea_shell}>
+                    <textarea
+                      id="message"
+                      placeholder={t.messagePlaceholder}
+                      aria-invalid={errors.message ? "true" : "false"}
+                      maxLength={MAX_MSG}
+                      {...register("message", {
+                        required: t.errors.messageRequired,
+                        minLength: { value: MIN_MSG, message: t.errors.messageMin },
+                        maxLength: { value: MAX_MSG, message: t.errors.messageMax },
+                        setValueAs: (v) => (typeof v === "string" ? v : ""),
+                        validate: { ...guards.forMessage(t) },
+                      })}
+                    />
+                  </div>
                   {/* Счётчик сразу под textarea */}
                   <div className={styles.counterRow} aria-hidden="true">
                     <span className={styles.counter}>
@@ -740,13 +741,25 @@ export default function ContactForm({
                 })()}
                 <div className={styles.summary} lang="fr">
                   <p>
-                    <strong>{t.nameLabel}:</strong>{" "}
-                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipName}>
-                      <span className={styles.value} aria-label={fullName}>
-                        {nameShort}
+                    <strong>{t.firstNameLabel || "Prénom"}:</strong>{" "}
+                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipFirst}>
+                      <span className={styles.value} aria-label={wName || "—"}>
+                        {wName || "—"}
                       </span>
-                      <span id={idTipName} role="tooltip" className={styles.tip}>
-                        {fullName}
+                      <span id={idTipFirst} role="tooltip" className={styles.tip}>
+                        {firstNameShort}
+                      </span>
+                    </span>
+                  </p>
+
+                  <p>
+                    <strong>{t.lastNameLabel || "Nom"}:</strong>{" "}
+                    <span className={styles.tipWrap} tabIndex={0} aria-describedby={idTipLast}>
+                      <span className={styles.value} aria-label={wLastName || "—"}>
+                        {wLastName || "—"}
+                      </span>
+                      <span id={idTipLast} role="tooltip" className={styles.tip}>
+                        {lastNameShort}
                       </span>
                     </span>
                   </p>

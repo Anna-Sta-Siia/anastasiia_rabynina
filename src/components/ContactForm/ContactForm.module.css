@@ -167,8 +167,8 @@
   flex-direction: column;
   align-items: start;
   gap: 10px;
-  margin: 10px 0;
-  width: 65%;
+  margin: 14px 6px;
+  width: 80%;
 }
 
 /* chaque <p> devient une ligne "label | valeur" */
@@ -271,6 +271,7 @@ label {
   font: inherit;
   outline: none;
   transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  resize: none;
 }
 
 .form input::placeholder,
@@ -303,6 +304,14 @@ textarea {
   min-height: clamp(120px, 50vh, 150px);
   max-height: clamp(150px, 50vh, 500px);
   overflow: auto;
+}
+.textarea_shell {
+  width: 80%;
+  border-radius: 18px;
+  border: 1px solid var(--neutral);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
 /* Error rows: reserve space always => no jump */
@@ -546,7 +555,7 @@ textarea {
 .editorText {
   padding: 0 10px;
   height: auto;
-  padding: 12px 14px;
+  padding: 12px 14px 0 14px;
   border-radius: 12px;
   border: 1px solid #ccd6dd;
   background: #fff;
@@ -555,6 +564,7 @@ textarea {
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
+  resize: none;
 }
 .editorText:focus-visible {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
@@ -745,11 +755,6 @@ textarea {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
-}
-/* показываем полосу только когда действительно над буллой */
-.tip:hover,
-.tip:focus {
-  scrollbar-width: thin; /* Firefox */
 }
 
 /* WebKit (Chrome/Safari/Edge) : cachée par défaut, visible au survol */

@@ -26,7 +26,11 @@ export function UIProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
-    document.body.dataset.theme = theme;
+
+    const isDark = theme === "dark";
+
+    document.documentElement.classList.toggle("dark", isDark);
+    document.body.classList.toggle("dark", isDark);
   }, [theme]);
 
   useEffect(() => {
@@ -35,20 +39,17 @@ export function UIProvider({ children }) {
   }, [language]);
 
   const changeLanguage = (nextLang) => {
-    setLanguage(nextLang);
+    // 1) on mémorise, mais on n'affiche pas encore
     localStorage.setItem("language", nextLang);
 
-    const base = IS_GHPAGES ? REPO : "/"; // ✅ utilisé
+    // 2) calcule l'URL cible
+    const base = IS_GHPAGES ? REPO : "/";
     const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    // garde ce qui suit /<lang>/
     const rest = location.pathname.replace(new RegExp(`^${esc(base)}(?:fr|en|ru)/`), "/");
-
     const target = `${base}${nextLang}/${rest.slice(1)}${location.search}${location.hash}`;
 
-    if (!sameUrl(location.href, target)) {
-      location.replace(target);
-    }
+    // 3) navigation sans boucle (et sans flash)
+    if (!sameUrl(location.href, target)) location.replace(target);
   };
   const value = useMemo(
     () => ({ theme, setTheme, language, setLanguage, changeLanguage }),

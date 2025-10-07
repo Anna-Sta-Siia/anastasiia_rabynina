@@ -15,7 +15,7 @@ const T = {
 };
 
 export default function LangPicker() {
-  const { language, setLanguage, changeLanguage } = useUI();
+  const { language, changeLanguage } = useUI();
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const btnRef = useRef(null);
@@ -93,9 +93,9 @@ export default function LangPicker() {
               aria-selected={l.code === language}
               className={`${styles.item} ${l.code === language ? styles.active : ""}`}
               onClick={() => {
-                setLanguage(l.code);
                 setOpen(false);
-                requestAnimationFrame(() => changeLanguage(l.code));
+                // PAS de setLanguage ici → pas de flash
+                changeLanguage(l.code); // redirection (rechargement court)
               }}
             >
               {l.label}

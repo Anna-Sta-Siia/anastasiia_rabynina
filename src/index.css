@@ -63,30 +63,57 @@ Link {
   text-decoration: none;
   font-weight: 600;
 }
+/* 7.Les scrollbars */
 
 /* --- Firefox --- */
 html {
-  scrollbar-width: thin; /* auto | thin | none */
-  scrollbar-color: #b47b38 #f7eddc; /* thumb | track */
+  scrollbar-width: thin;
+  scrollbar-color: #b47b38 #f7eddc;
+}
+/* Pour Firefox  */
+textarea#message {
+  scrollbar-width: thin; /* plus fine */
+  scrollbar-color: #b47b38 transparent; /* pouce + fond */
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background: none;
+  width: 95%;
+  margin-top: 5px;
 }
 
-/* --- WebKit (Chrome, Edge, Safari) --- */
-html::-webkit-scrollbar {
-  width: 10px;
+/* Pour Chrome/Edge/Safari */
+textarea#message::-webkit-scrollbar {
+  width: 12px; /* largeur de la barre */
 }
-html::-webkit-scrollbar-track {
-  background: #f7eddc;
-  border-radius: 8px;
+
+textarea#message::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px; /* coins arrondis */
 }
-html::-webkit-scrollbar-thumb {
-  background: #b47b38;
-  border-radius: 8px;
-  border: 2px solid #f7eddc;
+
+textarea#message::-webkit-scrollbar-thumb {
+  background: #b47b38; /* couleur du pouce */
+  border-radius: 999px; /* pouce arrondi */
+  border: 3px solid transparent; /* petit “gap” doux */
+  background-clip: padding-box;
 }
-html::-webkit-scrollbar-thumb:hover {
-  background: #9d6b32;
+
+/* “Pousser” légèrement les flèches (haut/bas) */
+textarea#message::-webkit-scrollbar-button:single-button {
+  height: 10px; /* espace au-dessus et en dessous */
+  background: transparent;
 }
-/*7. variables pour personnaliser facilement */
+/* largeur + thumb arrondi (déjà chez toi) */
+textarea#message::-webkit-scrollbar {
+  width: 12px;
+}
+textarea#message::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+
+/*8. Tooltips */
 :root {
   --tip-maxw: 24ch;
   --tip-offset: 6px; /* écart avec le texte */
