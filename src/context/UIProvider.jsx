@@ -1,33 +1,59 @@
-// UIProvider.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { UIContext } from "./UIContext";
+import { IS_GHPAGES, REPO } from "../utils/env.js";
 
-// Déduit la langue initiale: URL > flag HTML > localStorage > 'en'
+function sameUrl(a, b) {
+  const na = new URL(a, location.origin);
+  const nb = new URL(b, location.origin);
+  return na.pathname === nb.pathname && na.search === nb.search && na.hash === nb.hash;
+}
+
 function getInitialLang() {
-  const m = location.pathname.match(/^\/(fr|en|ru)(?:\/|$)/);
-  if (m) return m[1];
-  if (window.INIT_LANG) return window.INIT_LANG; // défini dans fr.html/en.html/ru.html
-  return localStorage.getItem("language") || "en";
+  const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (IS_GHPAGES) {
+    const m = location.pathname.match(new RegExp(`^${esc(REPO)}(fr|en|ru)/`));
+    if (m) return m[1];
+  } else {
+    const m = location.pathname.match(/^\/(fr|en|ru)\//);
+    if (m) return m[1];
+  }
+  return localStorage.getItem("language") || "fr";
 }
 
 export function UIProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
   const [language, setLanguage] = useState(getInitialLang);
 
-  // Thème
   useEffect(() => {
     localStorage.setItem("theme", theme);
-    document.body.dataset.theme = theme; // évite d’écraser d’autres classes
+    document.body.dataset.theme = theme;
   }, [theme]);
 
-  // Langue
   useEffect(() => {
     localStorage.setItem("language", language);
     document.documentElement.setAttribute("lang", language);
-    // Décommente si un jour tu as des langues RTL :
-    // document.documentElement.setAttribute('dir', ['ar','he','fa','ur'].includes(language) ? 'rtl' : 'ltr');
   }, [language]);
 
-  const value = { theme, setTheme, language, setLanguage };
+  const changeLanguage = (nextLang) => {
+    setLanguage(nextLang);
+    localStorage.setItem("language", nextLang);
+
+    const base = IS_GHPAGES ? REPO : "/"; // ✅ utilisé
+    const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    // garde ce qui suit /<lang>/
+    const rest = location.pathname.replace(new RegExp(`^${esc(base)}(?:fr|en|ru)/`), "/");
+
+    const target = `${base}${nextLang}/${rest.slice(1)}${location.search}${location.hash}`;
+
+    if (!sameUrl(location.href, target)) {
+      location.replace(target);
+    }
+  };
+  const value = useMemo(
+    () => ({ theme, setTheme, language, setLanguage, changeLanguage }),
+    [theme, language]
+  );
+
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 }

@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// App.jsx
+import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 import MatryoshkaLoader from "./components/MatryoshkaLoader";
 import Layout from "./components/Layout";
-
 import Accueil from "./pages/Accueil";
 import Projects from "./pages/Projects";
 import Skills from "./pages/Skills";
@@ -18,11 +18,7 @@ export default function App() {
 
   const handleMatryoshkaEnd = () => {
     setTimeout(() => {
-      if (hasPlayedOnce) {
-        setPhase("app");
-      } else {
-        setPhase("medallion");
-      }
+      setPhase(hasPlayedOnce ? "app" : "medallion");
     }, 500);
   };
 
@@ -32,16 +28,12 @@ export default function App() {
   };
 
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <>
       {phase === "matryoshka" && <MatryoshkaLoader onComplete={handleMatryoshkaEnd} />}
 
       <AnimatePresence>
         {phase !== "matryoshka" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2 }}
-          >
+          <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}>
             <Routes>
               <Route path="/" element={<Layout phase={phase} />}>
                 <Route index element={<Accueil phase={phase} onFinish={handleMedallionEnd} />} />
@@ -52,9 +44,9 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </BrowserRouter>
+    </>
   );
 }

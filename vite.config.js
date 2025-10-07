@@ -2,26 +2,45 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
-
-// équivalent ESM de __dirname
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import history from "connect-history-api-fallback";
 
 export default defineConfig(({ mode }) => ({
-  plugins: [svgr(), react()],
-  // En prod (GH Pages project) le site vit sous /anastasiia_rabynina/
-  // En dev on reste à la racine /
-  base: mode === "production" ? "/anastasiia_rabynina/" : "/",
+  plugins: [
+    {
+      name: "i18n-spa-fallback",
+      configureServer(server) {
+        const fallback = history({
+          rewrites: [
+            { from: /^\/fr(\/.*)?$/, to: "/fr.html" },
+            { from: /^\/en(\/.*)?$/, to: "/en.html" },
+            { from: /^\/ru(\/.*)?$/, to: "/ru.html" },
+          ],
+          // important : ne pas retomber sur index.html pour tout
+          index: false,
+          disableDotRule: true,
+          htmlAcceptHeaders: ["text/html", "application/xhtml+xml"],
+        });
 
+        server.middlewares.use((req, res, next) => {
+          const u = req.url || "";
+          // laissez passer les fichiers Vite et le code source
+          if (u.startsWith("/@vite") || u.startsWith("/@react-refresh") || u.startsWith("/src/")) {
+            return next();
+          }
+          return fallback(req, res, next);
+        });
+      },
+    },
+    svgr(),
+    react(),
+  ],
+  base: mode === "production" ? "/anastasiia_rabynina/" : "/",
   build: {
     rollupOptions: {
-      // ⚠️ multi-entrées : index (redir), + fr/en/ru
       input: {
-        index: resolve(__dirname, "index.html"), // redirection vers /fr/
-        fr: resolve(__dirname, "fr.html"),
-        en: resolve(__dirname, "en.html"),
-        ru: resolve(__dirname, "ru.html"),
+        fr: "fr.html",
+        en: "en.html",
+        ru: "ru.html",
       },
     },
   },

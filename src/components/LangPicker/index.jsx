@@ -15,7 +15,7 @@ const T = {
 };
 
 export default function LangPicker() {
-  const { language, setLanguage } = useUI();
+  const { language, setLanguage, changeLanguage } = useUI();
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const btnRef = useRef(null);
@@ -28,42 +28,19 @@ export default function LangPicker() {
   );
 
   useEffect(() => {
-    function onDocClick(e) {
+    const onDocClick = (e) => {
       if (!rootRef.current) return;
       if (!rootRef.current.contains(e.target)) setOpen(false);
-    }
+    };
     document.addEventListener("pointerdown", onDocClick);
     return () => document.removeEventListener("pointerdown", onDocClick);
   }, []);
 
   useEffect(() => {
     if (open && listRef.current) {
-      const el = listRef.current.querySelector(`[data-idx="${currentIndex}"]`);
-      el?.focus();
+      listRef.current.querySelector(`[data-idx="${currentIndex}"]`)?.focus();
     }
   }, [open, currentIndex]);
-
-  function onKeyDown(e) {
-    if (!open) return;
-    const items = Array.from(listRef.current.querySelectorAll("[role=option]"));
-    const idx = items.findIndex((n) => n === document.activeElement);
-
-    if (e.key === "Escape") {
-      setOpen(false);
-      btnRef.current?.focus();
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      const next = items[Math.min(items.length - 1, idx + 1)] || items[0];
-      next.focus();
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      const prev = items[Math.max(0, idx - 1)] || items[items.length - 1];
-      prev.focus();
-    } else if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      document.activeElement?.click();
-    }
-  }
 
   return (
     <div className={styles.langRoot} ref={rootRef}>
@@ -88,7 +65,24 @@ export default function LangPicker() {
           role="listbox"
           className={styles.menu}
           aria-label={i18n.change}
-          onKeyDown={onKeyDown}
+          onKeyDown={(e) => {
+            if (!open) return;
+            const items = Array.from(listRef.current.querySelectorAll("[role=option]"));
+            const idx = items.findIndex((n) => n === document.activeElement);
+            if (e.key === "Escape") {
+              setOpen(false);
+              btnRef.current?.focus();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              (items[Math.min(items.length - 1, idx + 1)] || items[0]).focus();
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              (items[Math.max(0, idx - 1)] || items[items.length - 1]).focus();
+            } else if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              document.activeElement?.click();
+            }
+          }}
         >
           {LANGS.map((l, i) => (
             <li
@@ -101,7 +95,7 @@ export default function LangPicker() {
               onClick={() => {
                 setLanguage(l.code);
                 setOpen(false);
-                btnRef.current?.focus();
+                requestAnimationFrame(() => changeLanguage(l.code));
               }}
             >
               {l.label}
