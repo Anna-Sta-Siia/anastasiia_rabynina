@@ -1,5 +1,7 @@
+// src/context/UIProvider.jsx
 import { useState, useEffect, useMemo } from "react";
 import { UIContext } from "./UIContext";
+import { makeContentGuards } from "../guards";
 import { IS_GHPAGES, REPO } from "../utils/env.js";
 
 function sameUrl(a, b) {
@@ -24,36 +26,35 @@ export function UIProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
   const [language, setLanguage] = useState(getInitialLang);
 
+  // thème
   useEffect(() => {
     localStorage.setItem("theme", theme);
-
     const isDark = theme === "dark";
-
     document.documentElement.classList.toggle("dark", isDark);
     document.body.classList.toggle("dark", isDark);
   }, [theme]);
 
+  // langue (attribut <html lang>)
   useEffect(() => {
     localStorage.setItem("language", language);
     document.documentElement.setAttribute("lang", language);
   }, [language]);
 
-  const changeLanguage = (nextLang) => {
-    // 1) on mémorise, mais on n'affiche pas encore
-    localStorage.setItem("language", nextLang);
+  // ✅ fabriquer les guards ici, à partir de la langue
+  const guards = useMemo(() => makeContentGuards({ lang: language }), [language]);
 
-    // 2) calcule l'URL cible
+  const changeLanguage = (nextLang) => {
+    localStorage.setItem("language", nextLang);
     const base = IS_GHPAGES ? REPO : "/";
     const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const rest = location.pathname.replace(new RegExp(`^${esc(base)}(?:fr|en|ru)/`), "/");
     const target = `${base}${nextLang}/${rest.slice(1)}${location.search}${location.hash}`;
-
-    // 3) navigation sans boucle (et sans flash)
     if (!sameUrl(location.href, target)) location.replace(target);
   };
+
   const value = useMemo(
-    () => ({ theme, setTheme, language, setLanguage, changeLanguage }),
-    [theme, language]
+    () => ({ theme, setTheme, language, setLanguage, changeLanguage, guards }),
+    [theme, language, guards]
   );
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;

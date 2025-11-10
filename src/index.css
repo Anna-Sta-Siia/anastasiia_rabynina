@@ -115,11 +115,12 @@ textarea#message::-webkit-scrollbar-track {
 
 /*8. Tooltips */
 :root {
-  --tip-maxw: 24ch;
+  --tip-maxch: 16ch;
+  --tip-lines: 5;
   --tip-offset: 6px; /* écart avec le texte */
   --tip-bg: #b47b38; /* fond “or” */
   --tip-fg: #fff;
-  --tip-pad: 6px 10px;
+  --tip-pad: 6px;
   --tip-br: 12px;
   --tip-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
   --tip-border: 1px solid rgba(255, 255, 255, 0.12);

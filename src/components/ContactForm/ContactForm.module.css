@@ -165,16 +165,12 @@
 .summary {
   display: flex;
   flex-direction: column;
-  align-items: start;
   gap: 10px;
-  margin: 14px 6px;
-  width: 80%;
 }
 
 /* chaque <p> devient une ligne "label | valeur" */
 .summary p {
   display: flex;
-  align-items: baseline;
   gap: 4px;
   overflow: visible;
 }
@@ -235,6 +231,7 @@
   align-items: center;
   flex: 1 1 auto; /* <- important */
   min-height: 0;
+  gap: 12px;
 }
 
 /* Group: label + control + error */
@@ -318,13 +315,14 @@ textarea {
 .error {
   --err-lines: 2;
   line-height: 1.25;
-  min-height: calc(var(--err-lines) * 1.25em);
-  max-height: calc(var(--err-lines) * 1.25em);
+  min-block-size: calc(var(--err-lines) * 1lh + 0.2lh);
+  max-block-size: calc(var(--err-lines) * 1lh + 0.2lh);
   overflow: hidden; /* cut overflow if a translation is longer */
   text-align: center;
   color: #d33;
   opacity: 0; /* becomes visible when there is text */
   transition: opacity 0.15s ease;
+  margin-top: 4px;
 }
 
 .error:not(:empty) {
@@ -343,6 +341,7 @@ textarea {
     --err-lines: 3;
   }
 }
+
 /* ---------- Wizard navigation buttons ---------- */
 .navRow {
   position: absolute;
@@ -495,7 +494,11 @@ textarea {
     line-clamp: var(--lines);
   }
 }
-
+@supports (-webkit-line-clamp: 1) {
+  .tip[data-overflow="true"] .tipText::after {
+    content: none !important;
+  }
+}
 /* Adapter le nb de lignes selon la largeur (œuf plus grand → + de lignes) */
 @media (min-width: 420px) {
   .editorField {
@@ -526,6 +529,7 @@ textarea {
   text-align: center;
   width: 90%;
   padding: 5px 0;
+  margin-top: 6px;
 }
 .helperSpacer {
   flex: 1 1;
@@ -544,12 +548,13 @@ textarea {
   padding: 5px 0;
   padding-inline: 0;
   white-space: nowrap; /* never wrap */
+  align-self: flex-start;
 }
 /* ---------- Modal editor ---------- */
 .modalEditor {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  max-width: 72ch;
+  display: flex;
+  flex-direction: column;
+  inline-size: clamp(90px, 60vw, 200px); /* фиксируем коридор */
 }
 
 .editorText {
@@ -571,9 +576,10 @@ textarea {
 }
 
 .modalBar {
-  margin-top: 10px;
   display: flex;
+  width: 100%;
   align-items: center;
+  justify-content: flex-start;
   min-height: 44px; /* réserve verticale */
   flex-direction: column;
 }
@@ -703,139 +709,6 @@ textarea {
     word-break: break-word;
   }
 }
-/* ===== Tooltip (hover + focus-visible) ===== */
-
-/* conteneur */
-.tipWrap {
-  position: relative;
-  display: inline-block;
-  vertical-align: top;
-}
-
-/* bulle — AU-DESSUS par défaut */
-.tip {
-  position: absolute;
-  right: 0;
-  left: auto;
-  bottom: calc(100% + var(--tip-offset)); /* au-dessus */
-  width: max-content; /* ← rétrécit pour les mots courts */
-  max-width: min(var(--tip-maxw), 80vw); /* ← ne dépasse jamais l’écran */
-  top: auto;
-  background: var(--tip-bg);
-  color: var(--tip-fg);
-  padding: var(--tip-pad);
-  border-radius: var(--tip-br);
-  box-shadow: var(--tip-shadow);
-  border: var(--tip-border);
-  white-space: normal;
-  overflow-wrap: break-word; /* переносить длинные слова */
-  word-break: normal; /* НЕ рубить каждую букву */
-  hyphens: auto; /* переносы по слогам, если язык задан */
-  line-height: 1.35;
-  z-index: 5;
-  opacity: 0;
-  transform: translateY(-4px);
-  pointer-events: none;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  writing-mode: horizontal-tb;
-  text-orientation: mixed;
-  max-height: 120px;
-  overflow-x: clip; /* évite un scroll horizontal */
-  overflow-y: auto; /* scroll SEULEMENT si débordement en Y */
-  scrollbar-width: none; /* Firefox : cachée par défaut */
-  scrollbar-color: white;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* visible si on survole le déclencheur OU la bulle elle-même */
-.tipWrap:hover .tip,
-.tipWrap:focus-visible .tip,
-.tip:hover,
-.tip:focus {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* WebKit (Chrome/Safari/Edge) : cachée par défaut, visible au survol */
-.tipWrap .tip::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-.tipWrap .tip:hover::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.tipWrap .tip::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 8px;
-}
-.tipWrap .tip::-webkit-scrollbar-track {
-  background: transparent;
-}
-/* avant : cachait la bulle dès qu'il y avait un focus par clic */
-@supports selector(:focus-visible) {
-  .tipWrap:focus:not(:focus-visible):not(:hover) .tip,
-  .tipWrap:focus:not(:focus-visible):not(:hover)::after {
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-/* ↑ on ajoute :not(:hover) pour que le hover gagne la priorité */
-
-/* ===== Flèche (mêmes triggers que la bulle) ===== */
-
-/* flèche AU-DESSUS (par défaut) */
-.tipWrap::after {
-  content: "";
-  position: absolute;
-  right: 10px;
-  bottom: 100%;
-  border: 6px solid transparent;
-  border-bottom-color: var(--tip-bg); /* triangle vers le bas */
-  opacity: 0;
-  transition: opacity 0.18s ease;
-}
-
-/* montrer la flèche exactement quand la bulle est visible */
-.tipWrap:hover::after,
-.tipWrap:focus-visible::after {
-  opacity: 1;
-}
-/* zone invisible qui prolonge la bulle vers le bas pour garder le hover */
-.tip::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: var(--tip-offset);
-  bottom: calc(-1 * var(--tip-offset));
-}
-@supports selector(:focus-visible) {
-  .tipWrap:focus:not(:focus-visible)::after {
-    opacity: 0;
-  }
-}
-
-/* ===== Variante: afficher EN DESSOUS si besoin ===== */
-.tipWrap[data-pos="below"] .tip {
-  top: calc(100% + var(--tip-offset));
-  bottom: auto;
-  transform: translateY(4px);
-}
-.tipWrap[data-pos="below"]::after {
-  top: 100%;
-  bottom: auto;
-  border-bottom-color: transparent;
-  border-top-color: var(--tip-bg);
-}
-
-/* (option) désactiver complètement le tooltip sur écrans sans hover (mobiles) */
-@media (hover: none) {
-  .tip {
-    display: none !important;
-  }
-  .tipWrap::after {
-    display: none !important;
-  }
+.summaryRow {
+  margin: 0.25rem 0;
 }

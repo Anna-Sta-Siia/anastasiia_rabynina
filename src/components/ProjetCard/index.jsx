@@ -1,7 +1,9 @@
 // src/components/ProjetCard/index.jsx
-import { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useUI } from "../../context";
+import { useOverflow } from "../../hooks/useOverflow";
+import { useReturnFocus } from "../../hooks/useReturnFocus";
 import menuItems from "../../config/menuConfig";
 import styles from "./ProjetCard.module.css";
 import Modal from "../Modal";
@@ -20,7 +22,7 @@ import labelsRu from "../../assets/traduction/filters/filters.ru.json";
 export default function ProjetCard({ project }) {
   const { language } = useUI();
 
-  // UI localisée
+  /* ========== UI localisée ========== */
   const ui = useMemo(() => {
     switch (language) {
       case "en":
@@ -32,7 +34,6 @@ export default function ProjetCard({ project }) {
     }
   }, [language]);
 
-  // Dictionnaire de libellés pour les stacks
   const filterLabels = useMemo(() => {
     switch (language) {
       case "en":
@@ -44,12 +45,13 @@ export default function ProjetCard({ project }) {
     }
   }, [language]);
 
-  // Lien vers la page skills
+  /* ========== Lien Skills ========== */
   const skillsPath = useMemo(() => {
     const item = menuItems.find((i) => i.key === "skills");
     return item?.path || "/skills";
   }, []);
 
+  /* ========== Données projet ========== */
   const {
     id,
     title,
@@ -65,7 +67,7 @@ export default function ProjetCard({ project }) {
     slogan,
   } = project;
 
-  // Effet visuel image
+  /* ========== Effet visuel image ========== */
   const imgEffectClass = useMemo(() => {
     switch (imageEffect) {
       case "spin":
@@ -80,64 +82,25 @@ export default function ProjetCard({ project }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   /* ===========================
-     CLAMP + MODALE
+     CLAMP + MODALE (hooks)
      =========================== */
 
   // --- APERÇU ---
   const descRef = useRef(null);
   const descOpenerRef = useRef(null);
-  const [isOverflow, setIsOverflow] = useState(false);
+  const descOverflow = useOverflow(descRef, [language, description]); // true si ça déborde
 
   // --- OUTILS ---
   const toolsRef = useRef(null);
   const toolsOpenerRef = useRef(null);
-  const [toolsOverflow, setToolsOverflow] = useState(false);
+  const toolsOverflow = useOverflow(toolsRef, [language, stack]);
 
   // Modale commune (null | 'desc' | 'tools')
   const [modalType, setModalType] = useState(null);
   const showModal = modalType !== null;
-  const lastOpenerRef = useRef(null); // rendre le focus au bon bouton après fermeture
 
-  // Mesure générique d'overflow
-  const setOverflowFromRef = useCallback((ref, setter) => {
-    const el = ref.current;
-    if (!el) return;
-    setter(el.scrollHeight > el.clientHeight + 1);
-  }, []);
-
-  // Mesures après layout + resize + ResizeObserver
-  useLayoutEffect(() => {
-    setOverflowFromRef(descRef, setIsOverflow);
-    setOverflowFromRef(toolsRef, setToolsOverflow);
-
-    const onResize = () => {
-      setOverflowFromRef(descRef, setIsOverflow);
-      setOverflowFromRef(toolsRef, setToolsOverflow);
-    };
-    window.addEventListener("resize", onResize);
-
-    let ro1, ro2;
-    if (window.ResizeObserver) {
-      if (descRef.current) {
-        ro1 = new ResizeObserver(() => setOverflowFromRef(descRef, setIsOverflow));
-        ro1.observe(descRef.current);
-      }
-      if (toolsRef.current) {
-        ro2 = new ResizeObserver(() => setOverflowFromRef(toolsRef, setToolsOverflow));
-        ro2.observe(toolsRef.current);
-      }
-    }
-    return () => {
-      window.removeEventListener("resize", onResize);
-      ro1?.disconnect();
-      ro2?.disconnect();
-    };
-  }, [language, description, stack, setOverflowFromRef]);
-
-  // Focus management : au close, on rend le focus au bouton qui a ouvert
-  useEffect(() => {
-    if (!showModal) lastOpenerRef.current?.focus?.();
-  }, [showModal]);
+  // Rendre le focus au bon bouton après fermeture
+  const lastOpenerRef = useReturnFocus(showModal);
 
   // Outils condensés (clampables)
   const toolsHuman = useMemo(
@@ -229,7 +192,8 @@ export default function ProjetCard({ project }) {
             <div className={styles.descBox} ref={descRef} aria-live="polite">
               {description}
             </div>
-            {isOverflow && (
+
+            {descOverflow && (
               <button
                 type="button"
                 className={styles.seeMoreBtn}
@@ -256,6 +220,7 @@ export default function ProjetCard({ project }) {
                 <div className={styles.toolsBox} ref={toolsRef} aria-live="polite">
                   {toolsHuman}
                 </div>
+
                 {toolsOverflow && (
                   <button
                     type="button"

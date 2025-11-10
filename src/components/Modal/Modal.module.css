@@ -13,13 +13,14 @@
 .modal {
   background: #fff;
   color: #222;
-  max-height: 82vh;
   overflow: auto;
   border-radius: 16px;
   padding: 20px 20px 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
   animation: modalPop 0.18s ease-out both;
-  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* Titre, texte & listes (réutilisable) */
@@ -47,7 +48,7 @@
   border-radius: 999px;
   padding: 10px 16px;
   cursor: pointer;
-  margin-top: 10px;
+  width: 35%;
 }
 .modalClose:focus-visible {
   outline: 2px solid rgba(0, 0, 0, 0.35);

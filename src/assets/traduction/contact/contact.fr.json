@@ -2,13 +2,13 @@
   "nameLabel": "Prénom",
   "namePlaceholder": "Votre prénom",
   "lastNameLabel": "Nom",
-  "lastNamePlaceholder": "Votre nom (laissez vide)",
+  "lastNamePlaceholder": "Votre nom (optionnel)",
 
   "emailLabel": "E-mail",
   "emailPlaceholder": "Votre e-mail",
 
   "companyLabel": "Société",
-  "companyPlaceholder": "Société (laissez vide)",
+  "companyPlaceholder": "Société (optionnel)",
 
   "subjectLabel": "Sujet",
   "subjectPlaceholder": "Choisir…",

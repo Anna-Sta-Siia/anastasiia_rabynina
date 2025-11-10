@@ -3,13 +3,16 @@ import { makeProfanityChecker } from "./profanity";
 import { makeGibberishChecker } from "./gibberish";
 import { looksLikeUrlOrHtml } from "./utils";
 
-// Regex nom/prénom international : lettres + séparateurs simples entre groupes
-export const NAME_RE = /^[\p{L}]+(?:[ '\-’][\p{L}]+)*$/u;
+/**
+ * Nom/prénom international : lettres Unicode + séparateurs simples entre groupes
+ * (ex : Anne-Sophie, O'Connor, Мария Анна)
+ */
+export const NAME_RE = /^(?!.*[ '\-’]{2})(?!.*[ '\-’]$)[\p{L}]+(?:[ '\-’][\p{L}]+)*$/u;
 
-// Normalise un input texte (trim + collapse espaces)
+/** Normalise un input texte (trim + collapse espaces) — Unicode-safe */
 export const normalize = (v) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim() : v);
 
-// Enveloppe des validateurs pour qu’ils ne s’appliquent que si une valeur est présente
+/** Applique des règles seulement si une valeur est présente (pour champs optionnels) */
 function optionalize(rules) {
   const wrapped = {};
   for (const [k, fn] of Object.entries(rules)) {
@@ -18,17 +21,42 @@ function optionalize(rules) {
   return wrapped;
 }
 
+/**
+ * Heuristique légère : texte majoritairement en cyrillique ?
+ * Sert à éviter les faux positifs “gibberish” quand on tape en russe.
+ */
+const CYR = /\p{sc=Cyrillic}/u;
+const LETTER = /\p{L}/u;
+const isMostlyCyrillic = (s = "") => {
+  const chars = Array.from(s);
+  const letters = chars.filter((c) => LETTER.test(c)).length;
+  const cyr = chars.filter((c) => CYR.test(c)).length;
+  return letters > 0 && cyr / letters >= 0.4; // seuil raisonnable
+};
+
+/**
+ * Fabrique tous les “guards” (validateurs) selon la langue active.
+ * @param {Object} opts
+ * @param {"fr"|"en"|"ru"} opts.lang
+ * @param {string[]} opts.whitelist mots autorisés malgré la détection de grossièretés
+ * @param {string[]} opts.extraBadWords mots à ajouter au lexique des grossièretés
+ */
 export function makeContentGuards({ lang = "fr", whitelist = [], extraBadWords = [] } = {}) {
   const hasProfanity = makeProfanityChecker({ lang, whitelist, extra: extraBadWords });
-  const isGibberish = makeGibberishChecker();
+  const isGibberish = makeGibberishChecker(); // langue-agnostique → on met une soupape cyrillique
 
-  // fabrique de règles pour les noms, avec messages i18n
+  // Règles pour les noms, avec messages i18n
   const nameRules = (t) => ({
     pattern: (v) =>
       NAME_RE.test(v) || (t?.errors?.patternCommon ?? "Only letters, spaces, - and '."),
     noUrl: (v) => !looksLikeUrlOrHtml(v) || (t?.errors?.noUrl ?? "No links/HTML here."),
     noProfanity: (v) => !hasProfanity(v) || (t?.errors?.profanity ?? "Inappropriate language."),
-    noGibberish: (v) => !isGibberish(v) || (t?.errors?.gibberish ?? "Looks like gibberish."),
+    // ⚠️ Soupape RU : si page RU ou texte majoritairement cyrillique, on n’applique pas “gibberish”
+    noGibberish: (v) =>
+      lang === "ru" ||
+      isMostlyCyrillic(v) ||
+      !isGibberish(v) ||
+      (t?.errors?.gibberish ?? "Looks like gibberish."),
   });
 
   return {
@@ -49,13 +77,47 @@ export function makeContentGuards({ lang = "fr", whitelist = [], extraBadWords =
       optionalize({
         noUrl: (v) => !looksLikeUrlOrHtml(v) || (t?.errors?.noUrl ?? "Pas de liens/HTML ici."),
         noProfanity: (v) => !hasProfanity(v) || (t?.errors?.profanity ?? "Langage inapproprié."),
+        noGibberish: (v) => {
+          const txt = String(v || "").trim();
+          if (!txt) return true; // optionnel → vide OK
+
+          // lettres / voyelles (FR/EN + cyrillique), séparateurs usuels d'une raison sociale
+          const letters = (txt.match(/\p{L}/gu) || []).length;
+          const vowels = (txt.match(/[aeiouyàâäéèêëîïôöùûüAEIOUYаеёиоуыэюяАЕЁИОУЫЭЮЯ]/gu) || [])
+            .length;
+          const separators = (txt.match(/[&+@.,'’/\-() ]/g) || []).length;
+
+          // 1) suites répétées (aaaaa, -----)
+          if (/(.)\1{4,}/.test(txt))
+            return t?.errors?.gibberishCompany ?? "Le texte ressemble à un gribouillage.";
+
+          // 2) motifs clavier évidents
+          if (/azerty|qwerty|asdfg|йцукен/iu.test(txt))
+            return t?.errors?.gibberishCompany ?? "Le texte ressemble à un gribouillage.";
+
+          // 3) très pauvre en voyelles (long, sans séparateurs)
+          const len = txt.length;
+          if (len >= 9 && separators === 0 && vowels / (letters || 1) < 0.15)
+            return t?.errors?.gibberishCompany ?? "Le texte ressemble à un gribouillage.";
+
+          // 4) très long bloc sans séparateurs (ça sent la frappe au hasard)
+          if (len >= 18 && separators === 0)
+            return t?.errors?.gibberishCompany ?? "Le texte ressemble à un gribouillage.";
+
+          // sinon OK (on tolère chiffres & symboles usuels dans les raisons sociales)
+          return true;
+        },
       }),
 
-    // Sujet
+    // Sujet (pour “other”/custom)
     forSubject: (t) => ({
       noUrl: (v) => !looksLikeUrlOrHtml(v) || (t?.errors?.noUrl ?? "No links/HTML here."),
       noProfanity: (v) => !hasProfanity(v) || (t?.errors?.profanity ?? "Sujet inapproprié."),
-      noGibberish: (v) => !isGibberish(v) || (t?.errors?.gibberish ?? "Sujet invalide."),
+      noGibberish: (v) =>
+        lang === "ru" ||
+        isMostlyCyrillic(v) ||
+        !isGibberish(v) ||
+        (t?.errors?.gibberish ?? "Sujet invalide."),
     }),
 
     // Message
@@ -63,7 +125,10 @@ export function makeContentGuards({ lang = "fr", whitelist = [], extraBadWords =
       noProfanity: (v) =>
         !hasProfanity(v) || (t?.errors?.profanity ?? "Merci de reformuler (langage inapproprié)."),
       noGibberish: (v) =>
-        !isGibberish(v) || (t?.errors?.gibberish ?? "Le message ressemble à un gribouillage."),
+        lang === "ru" ||
+        isMostlyCyrillic(v) ||
+        !isGibberish(v) ||
+        (t?.errors?.gibberish ?? "Le message ressemble à un gribouillage."),
     }),
 
     // utilitaires exposés

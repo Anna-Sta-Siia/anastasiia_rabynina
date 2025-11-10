@@ -1,0 +1,247 @@
+/* ===== Tooltip (hover + focus-visible) ===== */
+
+/* conteneur du trigger + bulle */
+.tipWrap {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+/* режим «ширина строки» */
+.tipWrap[data-wide="true"] {
+  display: block; /* растягиваем на всю строку */
+  width: 100%;
+}
+.tip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + var(--tip-offset, 6px));
+  transform: translate(-50%, -4px);
+  inline-size: fit-content;
+  max-inline-size: var(--tip-maxch, 16ch);
+  background: var(--tip-bg, #b47b38);
+  color: var(--tip-fg, #fff);
+  padding: var(--tip-pad, 6px);
+  border-radius: var(--tip-br, 12px);
+  box-shadow: var(--tip-shadow, 0 10px 24px rgba(0, 0, 0, 0.18));
+  border: var(--tip-border, none);
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+  line-height: 1.35;
+  z-index: 5;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+
+  /* IMPORTANT : pas de clamp ici, pas de max-height fixe */
+  overflow-x: clip;
+  /* on activera le scroll Y seulement si overflow détecté */
+}
+
+.tipText {
+  display: block;
+  hyphens: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+/* >>> OUVERTURE pilotée par l'attribut data-open posé en JS <<< */
+.tip[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+/* Quand il y a overflow réel → autoriser scroll Y */
+.tip[data-overflow="true"] {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tip[data-overflow="true"]::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* “pont” sous la bulle pour ne PAS perdre le hover en la rejoignant */
+.tip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 10px;
+  bottom: -10px;
+  pointer-events: auto;
+  background: transparent;
+}
+
+/* petite flèche (accrochée au wrapper) */
+.tipWrap::after {
+  content: "";
+  position: absolute;
+  left: 25%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: var(--tip-bg, #b47b38);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.tipWrap:hover::after {
+  opacity: 1;
+}
+/* ...visible quand le wrapper est “ouvert” */
+.tipWrap[data-open="true"]::after {
+  opacity: 1;
+  --arrow: 1;
+}
+
+.tip[data-clamped="true"] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tip[data-clamped="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  background: linear-gradient(to bottom, transparent, var(--tip-bg, #b47b38));
+  pointer-events: none;
+  display: none !important;
+}
+
+/* Cache par défaut */
+.tipActions {
+  display: none;
+  margin-top: 0.35rem;
+  position: sticky; /* reste collé en bas si la bulle scrolle */
+  bottom: 0;
+  padding-top: 0.4rem;
+  background: linear-gradient(
+    to top,
+    var(--tip-bg, #b47b38),
+    color-mix(in oklab, var(--tip-bg) 80%, transparent)
+  );
+}
+
+.tip[data-has-options="true"] .tipActions,
+.tip[data-overflow="true"] .tipActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.tipPrimary {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between; /* si tu veux de l’espace */
+}
+.tip[data-clamped="true"] .tipText {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--tip-lines, 5);
+  line-clamp: var(--tip-lines, 5);
+  overflow: hidden;
+}
+/* Le texte clamped + ellipsis posé en bas à droite */
+.tip[data-overflow="true"] .tipText {
+  position: relative;
+}
+/* Fondu en bas pour indiquer qu’il y a la suite */
+.tip[data-overflow="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(1.6em + 6px); /* laisse la place aux boutons */
+  height: 24px;
+  background: linear-gradient(to bottom, transparent, var(--tip-bg, #b47b38));
+  pointer-events: none;
+}
+/* style des boutons d’action */
+.tipBtn {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-weight: 600;
+  cursor: pointer;
+  color: inherit;
+}
+.tipBtn:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* (option) désactiver le tooltip sur écrans sans hover (mobiles) */
+@media (hover: none) {
+  .tip {
+    display: none !important;
+  }
+  .tipWrap::after {
+    display: none !important;
+  }
+}
+
+/* WebKit: masquer la barre de scroll */
+.tip::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Dropdown dans la bulle */
+.tipDropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Bouton qui ouvre le mini-menu */
+.tipToggle {
+  appearance: none;
+  border: 1px solid currentColor;
+  background: transparent;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  line-height: 1.2;
+  cursor: pointer;
+  color: inherit;
+  width: 100%;
+  text-align: center;
+}
+
+/* Liste déroulante verticale */
+.tipMenu {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+/* Chaque option = pilule pleine largeur */
+.tipMenu li {
+  margin: 0;
+}
+
+.tipOption {
+  appearance: none;
+  width: 100%;
+  text-align: center;
+  border: 2px solid currentColor;
+  background: color-mix(in oklab, var(--tip-bg) 15%, transparent);
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  line-height: 1.2;
+  cursor: pointer;
+  color: inherit;
+  font-weight: 600;
+}
+
+.tipOptionSelected {
+  background: color-mix(in oklab, var(--tip-bg) 30%, transparent);
+  text-decoration: underline;
+}
