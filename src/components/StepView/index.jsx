@@ -1,4 +1,5 @@
 // src/components/StepView.jsx
+import SubjectSelect from "../SubjectSelect";
 import styles from "../ContactForm/ContactForm.module.css";
 
 /**
@@ -118,7 +119,7 @@ export default function StepView({
         {showCompany && (
           <div
             className={styles.field}
-            data-err-lines="1"
+            data-err-lines="2"
             data-invalid={!!errors?.company && showCompanyErr}
           >
             <label htmlFor="company">{t.companyLabel}</label>
@@ -189,37 +190,37 @@ export default function StepView({
 
   /* ===== Étape 3 : Sujet ===== */
   if (kind === "subject") {
+    const subjectOptions = [
+      {
+        value: "client",
+        label: t.subjectOptions?.clientProject || "Proposition de travail (client)",
+      },
+      {
+        value: "job",
+        label: t.subjectOptions?.jobOffer || "Proposition d’embauche",
+      },
+      {
+        value: "other",
+        label: t.subjectOptions?.other || "Divers",
+      },
+    ];
+
     return (
       <div className={styles.view}>
-        {/* Subject */}
         <div
           className={styles.field}
           data-invalid={!!errors?.subject && showSubjectErr}
-          data-err-lines="2"
+          data-err-lines="1"
         >
           <label htmlFor="subject">{t.subjectLabel}</label>
 
-          <select
-            id="subject"
-            defaultValue={subjectValue || ""}
-            aria-invalid={errors?.subject ? "true" : "false"}
-            {...register("subject", {
-              required: t.errors.subjectRequired,
-              validate: (v) => v !== "" || t.errors.subjectRequired,
-              onChange: (e) => onSubjectChange?.(e.target.value),
-            })}
-          >
-            <option value="" disabled>
-              {t.subjectPlaceholder}
-            </option>
-            <option value="client">
-              {t.subjectOptions?.clientProject || "Client work proposal"}
-            </option>
-            <option value="job">{t.subjectOptions?.jobOffer || "Job offer"}</option>
-            <option value="other">{t.subjectOptions?.other || "Other"}</option>
-          </select>
+          <SubjectSelect
+            name="subject"
+            t={t}
+            options={subjectOptions}
+            onChangeValue={onSubjectChange} // чтобы логика "other" осталась
+          />
 
-          {/* lien pour rouvrir la modale quand Divers est sélectionné */}
           {subjectValue === "other" && (
             <div className={styles.helperRow} style={{ marginTop: 6 }}>
               <button
@@ -227,7 +228,6 @@ export default function StepView({
                 className={styles.linkBtn}
                 onClickCapture={(e) => {
                   e.stopPropagation();
-                  // ouvre la modale custom
                   typeof window !== "undefined" &&
                     window.dispatchEvent(new Event("open-subject-modal"));
                 }}
@@ -273,7 +273,7 @@ export default function StepView({
     <div className={styles.view}>
       <div className={styles.field} data-invalid={!!errors?.message && showMsgErr}>
         <label htmlFor="message">{t.messageLabel}</label>
-        <div className={styles.textarea_shell}>
+        <div className={styles.editorShell}>
           <textarea
             id="message"
             placeholder={t.messagePlaceholder}

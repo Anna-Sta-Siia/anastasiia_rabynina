@@ -12,6 +12,7 @@ import styles from "../ContactForm/ContactForm.module.css";
  *  - type: "text" | "email" (по умолч. text)
  *  - onSave(nextValue: string)
  *  - placeholder? (опционально)
+ *  - t: словарь переводов (contact.xx.json)
  */
 export default function QuickEditModal({
   open,
@@ -21,6 +22,7 @@ export default function QuickEditModal({
   type = "text",
   onSave,
   placeholder = "",
+  t, // 👈 добавили
 }) {
   const [draft, setDraft] = useState(value);
   const inputRef = useRef(null);
@@ -43,11 +45,16 @@ export default function QuickEditModal({
     onClose?.();
   };
 
+  // небольшие страховки, если вдруг t не передали
+  const closeLabel = t?.close || "Close";
+  const cancelLabel = t?.confirmCancel || "Cancel";
+  const saveLabel = t?.save || "Save";
+
   return (
     <Modal
       open={open}
       onClose={onClose}
-      closeLabel="Fermer"
+      closeLabel={closeLabel}
       initialFocus="element"
       initialFocusRef={inputRef}
       title={label}
@@ -68,7 +75,7 @@ export default function QuickEditModal({
         <div className={styles.modalBar}>
           <div className={styles.modalActions}>
             <button type="button" className={styles.btn} onClick={onClose}>
-              Annuler
+              {cancelLabel}
             </button>
             <button
               type="button"
@@ -76,7 +83,7 @@ export default function QuickEditModal({
               onClick={handleSave}
               disabled={!draft.trim()}
             >
-              Enregistrer
+              {saveLabel}
             </button>
           </div>
         </div>

@@ -13,7 +13,7 @@
 }
 .tip {
   position: absolute;
-  left: 0;
+  left: -10%;
   bottom: calc(100% + var(--tip-offset, 6px));
   transform: translate(-50%, -4px);
   inline-size: fit-content;
@@ -115,8 +115,9 @@
 
 /* Cache par défaut */
 .tipActions {
-  display: none;
-  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   position: sticky; /* reste collé en bas si la bulle scrolle */
   bottom: 0;
   padding-top: 0.4rem;
@@ -127,24 +128,35 @@
   );
 }
 
-.tip[data-has-options="true"] .tipActions,
-.tip[data-overflow="true"] .tipActions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
 .tipPrimary {
   display: flex;
   gap: 0.75rem;
   justify-content: space-between; /* si tu veux de l’espace */
 }
+/* базовый кламп, включается только когда [data-clamped="true"] */
 .tip[data-clamped="true"] .tipText {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--tip-lines, 5);
-  line-clamp: var(--tip-lines, 5);
   overflow: hidden;
 }
+/* Профили строк по атрибуту */
+.tip[data-lines="1"] .tipText {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+.tip[data-lines="2"] .tipText {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.tip[data-lines="3"] .tipText {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+.tip[data-lines="4"] .tipText {
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
 /* Le texte clamped + ellipsis posé en bas à droite */
 .tip[data-overflow="true"] .tipText {
   position: relative;
@@ -194,7 +206,7 @@
 .tipDropdown {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.2rem;
 }
 
 /* Bouton qui ouvre le mini-menu */
@@ -214,34 +226,33 @@
 /* Liste déroulante verticale */
 .tipMenu {
   list-style: none;
-  margin: 0.4rem 0 0;
+  margin: 0.2rem 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.15rem;
   width: 100%;
 }
 
-/* Chaque option = pilule pleine largeur */
 .tipMenu li {
   margin: 0;
 }
 
 .tipOption {
   appearance: none;
+  border: none;
   width: 100%;
   text-align: center;
-  border: 2px solid currentColor;
   background: color-mix(in oklab, var(--tip-bg) 15%, transparent);
-  padding: 0.35rem 0.8rem;
+  padding: 0;
   border-radius: 999px;
   line-height: 1.2;
   cursor: pointer;
   color: inherit;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .tipOptionSelected {
   background: color-mix(in oklab, var(--tip-bg) 30%, transparent);
-  text-decoration: underline;
+  border: 1px solid currentColor;
 }

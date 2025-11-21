@@ -29,35 +29,41 @@
   "save": "Сохранить",
   "close": "Закрыть",
 
+  "edit": "Редактировать",
+  "tooltipEdit": "Править",
+  "tooltipMore": "Ещё",
+  "tooltipChoose": "Выбрать…",
+
   "recapFor": "Давай подытожим, {firstName}",
   "recapTitle": "Сводка",
 
-  "confirmBody": "Подтвердите, пожалуйста, отправку сообщения.",
+  "confirmBody": "Подтвердите, пожалуйста, отправку сообщения",
   "confirmSend": "Отправить",
   "confirmCancel": "Отмена",
   "sending": "Отправка…",
-  "sent": "Спасибо! Ваше сообщение отправлено.",
-  "sentWithName": "Спасибо, {fullName}! Ваше сообщение отправлено.",
+  "sent": "Спасибо! Ваше сообщение отправлено",
+  "sentWithName": "Спасибо, {fullName}! Ваше сообщение отправлено",
 
   "errors": {
-    "nameRequired": "Имя обязательно.",
-    "nameMin": "Не менее 2 символов.",
+    "nameRequired": "Имя обязательно",
+    "nameMin": "Не менее 2 символов",
     "patternCommon": "Только буквы, пробелы, - и '.",
-    "lastNameMax": "Максимум 60 символов.",
+    "lastNameMax": "Максимум 60 символов",
 
-    "emailRequired": "E-mail обязателен.",
-    "emailInvalid": "Неверный формат e-mail.",
-    "profanityEmail": "Недопустимый адрес.",
+    "emailRequired": "E-mail обязателен",
+    "emailInvalid": "Неверный формат e-mail",
+    "profanityEmail": "Недопустимый адрес",
 
-    "subjectRequired": "Тема обязательна.",
-    "subjectCustomMax": "Не более 120 символов.",
+    "subjectRequired": "Тема обязательна",
+    "subjectCustomMax": "Не более 120 символов",
+    "subjectTooShort": "Не менее 3 символов",
 
-    "messageRequired": "Сообщение обязательно.",
-    "messageMin": "Не менее 10 символов.",
-    "messageMax": "Максимум 1200 символов.",
+    "messageRequired": "Сообщение обязательно",
+    "messageMin": "Не менее 10 символов",
+    "messageMax": "Максимум 1200 символов",
 
-    "noUrl": "Без ссылок/HTML.",
-    "profanity": "Нецензурная лексика.",
-    "gibberish": "Похоже на бессмысленный набор."
+    "noUrl": "Без ссылок/HTML",
+    "profanity": "Нецензурная лексика",
+    "gibberish": "Похоже на бессмысленный набор"
   }
 }

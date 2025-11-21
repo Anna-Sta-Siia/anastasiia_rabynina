@@ -28,35 +28,40 @@
   "clear": "Effacer",
   "save": "Enregistrer",
   "close": "Fermer",
+  "edit": "Éditer",
+  "tooltipEdit": "Éditer",
+  "tooltipMore": "Voir plus",
+  "tooltipChoose": "Choisir…",
 
   "recapFor": "On récapitule, {firstName}",
   "recapTitle": "Récapitulatif",
 
-  "confirmBody": "Merci de confirmer l’envoi de ce message.",
+  "confirmBody": "Merci de confirmer l’envoi de ce message",
   "confirmSend": "Envoyer",
   "confirmCancel": "Annuler",
-  "sent": "Merci ! Votre message a été envoyé.",
-  "sentWithName": "Merci, {fullName} ! Votre message a été envoyé.",
+  "sent": "Merci ! Votre message a été envoyé",
+  "sentWithName": "Merci, {fullName} ! Votre message a été envoyé",
 
   "errors": {
-    "nameRequired": "Le prénom est requis.",
-    "nameMin": "Au moins 2 caractères.",
-    "patternCommon": "Lettres, espaces, - et ' seulement.",
-    "lastNameMax": "60 caractères maximum.",
+    "nameRequired": "Le prénom est requis",
+    "nameMin": "Au moins 2 caractères",
+    "patternCommon": "Lettres, espaces, - et ' seulement",
+    "lastNameMax": "60 caractères maximum",
 
-    "emailRequired": "L’e-mail est requis.",
-    "emailInvalid": "Format d’e-mail invalide.",
-    "profanityEmail": "Adresse inacceptable.",
+    "emailRequired": "L’e-mail est requis",
+    "emailInvalid": "Format d’e-mail invalide",
+    "profanityEmail": "Adresse inacceptable",
 
-    "subjectRequired": "Le sujet est obligatoire.",
-    "subjectCustomMax": "Maximum 120 characters.",
+    "subjectRequired": "Le sujet est obligatoire",
+    "subjectCustomMax": "Maximum 120 caractères",
+    "subjectTooShort": "Au moins 3 caractères",
 
-    "messageRequired": "Le message est requis.",
-    "messageMin": "Au moins 10 caractères.",
-    "messageMax": "Maximum 1200 caractères.",
+    "messageRequired": "Le message est requis",
+    "messageMin": "Au moins 10 caractères",
+    "messageMax": "Maximum 1200 caractères",
 
-    "noUrl": "Pas de liens/HTML ici.",
-    "profanity": "Langage inapproprié.",
-    "gibberish": "Le texte ressemble à un gribouillage."
+    "noUrl": "Pas de liens/HTML ici",
+    "profanity": "Langage inapproprié",
+    "gibberish": "Le texte ressemble à un gribouillage"
   }
 }

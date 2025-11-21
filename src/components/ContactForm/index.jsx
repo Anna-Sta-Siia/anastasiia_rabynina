@@ -72,57 +72,8 @@ function truncMiddle(input = "", max = 24, slack = 3) {
   return left + "…" + right;
 }
 
-/** texte par défaut */
-const tFallback = {
-  nameLabel: "Name",
-  namePlaceholder: "Your name",
-  lastNameLabel: "Surname",
-  lastNamePlaceholder: "Your surname",
-  emailLabel: "Email",
-  emailPlaceholder: "Your email",
-  companyLabel: "Company",
-  companyPlaceholder: "Company (optional)",
-  subjectLabel: "Subject",
-  subjectPlaceholder: "Choose…",
-  subjectCustomPlaceholder: "Type your subject…",
-  subjectOptions: {
-    clientProject: "Client work proposal",
-    jobOffer: "Job offer",
-    other: "Other",
-  },
-  messageLabel: "Message",
-  messagePlaceholder: "Your message…",
-  recapFor: "Let's recap, {firstName}",
-  recapTitle: "Summary",
-  confirmBody: "Please confirm you want to send this message.",
-  confirmSend: "Send",
-  confirmCancel: "Cancel",
-  sending: "Sending…",
-  sent: "Thanks! Your message was sent.",
-  sentWithName: (fullName) => `Thanks, ${fullName}! Your message was sent.`,
-  next: "Next",
-  back: "Back",
-  editInModal: "Edit in modal",
-  clear: "Clear",
-  save: "Save",
-  close: "Close",
-  errors: {
-    nameRequired: "Name is required.",
-    nameMin: "At least 2 characters.",
-    lastNameMax: "Maximum 60 characters.",
-    emailRequired: "Email is required.",
-    emailInvalid: "Invalid email format.",
-    subjectRequired: "Subject is required.",
-    subjectCustomMax: "120 caractères max.",
-    messageRequired: "Message is required.",
-    messageMin: "At least 10 characters.",
-    messageMax: "Maximum 1200 characters.",
-  },
-  subjectCustomTitle: "Custom subject",
-};
-
 export default function ContactForm({
-  t = tFallback,
+  t,
   accent = "#B0BEC5",
   className = "",
   onSubmit, // (data, { reset })
@@ -415,11 +366,17 @@ export default function ContactForm({
       setTriedNext2(false);
       setTriedNext3(false);
       setTriedNext4(false);
-      showToast(
-        typeof t.sentWithName === "function"
-          ? t.sentWithName(fullNameStr)
-          : t.sent || "Thanks! Your message was sent."
-      );
+      const makeSentMsg = () => {
+        if (typeof t.sentWithName === "function") {
+          return t.sentWithName(fullNameStr);
+        }
+        if (typeof t.sentWithName === "string") {
+          return t.sentWithName.replace("{fullName}", fullNameStr);
+        }
+        return t.sent || "Thanks! Your message was sent.";
+      };
+
+      showToast(makeSentMsg());
     } catch (err) {
       console.error("ContactForm submit error:", err);
       alert("Envoi impossible pour le moment. Vérifie la configuration API.");
@@ -613,6 +570,7 @@ export default function ContactForm({
         value={quickValue}
         type={quickField?.type || "text"}
         onSave={saveQuick}
+        t={t}
       />
 
       {/* ===== Modale Sujet (custom) ===== */}
@@ -646,18 +604,19 @@ export default function ContactForm({
               <label htmlFor="subject-editor" className={styles.srOnly}>
                 {t.subjectLabel}
               </label>
-              <textarea
-                id="subject-editor"
-                ref={subjectRef}
-                className={`${styles.editorText} ${err ? styles.inputInvalid : ""}`}
-                value={subjectDraft}
-                onChange={(e) => !subjectReadOnly && setSubjectDraft(e.target.value)}
-                placeholder={t.subjectCustomPlaceholder}
-                readOnly={subjectReadOnly}
-                aria-invalid={!!err}
-                aria-describedby="subject-editor-error"
-              />
-
+              <div className={styles.editorShell}>
+                <textarea
+                  id="subject-editor"
+                  ref={subjectRef}
+                  className={`${styles.editorText} ${err ? styles.inputInvalid : ""}`}
+                  value={subjectDraft}
+                  onChange={(e) => !subjectReadOnly && setSubjectDraft(e.target.value)}
+                  placeholder={t.subjectCustomPlaceholder}
+                  readOnly={subjectReadOnly}
+                  aria-invalid={!!err}
+                  aria-describedby="subject-editor-error"
+                />
+              </div>
               {/* message d'erreur live */}
               <div
                 id="subject-editor-error"
@@ -678,7 +637,7 @@ export default function ContactForm({
                       className={`${styles.btn} ${styles.btnPrimary}`}
                       onClick={() => openSubject({ readOnly: false })}
                     >
-                      Éditer
+                      {t.edit}
                     </button>
                   ) : (
                     <>
@@ -721,16 +680,18 @@ export default function ContactForm({
           <label htmlFor="message-editor" className={styles.srOnly}>
             {t.messageLabel}
           </label>
-          <textarea
-            id="message-editor"
-            ref={editorRef}
-            className={styles.editorText}
-            value={editorDraft}
-            onChange={(e) => !editorReadOnly && setEditorDraft(e.target.value.slice(0, MAX_MSG))}
-            maxLength={MAX_MSG}
-            placeholder={t.messagePlaceholder}
-            readOnly={editorReadOnly}
-          />
+          <div className={styles.editorShell}>
+            <textarea
+              id="message-editor"
+              ref={editorRef}
+              className={styles.editorText}
+              value={editorDraft}
+              onChange={(e) => !editorReadOnly && setEditorDraft(e.target.value.slice(0, MAX_MSG))}
+              maxLength={MAX_MSG}
+              placeholder={t.messagePlaceholder}
+              readOnly={editorReadOnly}
+            />
+          </div>
         </div>
         <div className={styles.modalBar}>
           <span className={styles.counter}>
@@ -743,7 +704,7 @@ export default function ContactForm({
                 className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={() => openEditor({ readOnly: false })}
               >
-                Éditer
+                {t.edit}
               </button>
             ) : (
               <>

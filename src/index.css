@@ -24,6 +24,8 @@ body {
   --cream: #fff5e1;
   --brown: #a67c52;
   --text: #333333;
+  --neutral: #b0bec5;
+  --ok: #2e7d32;
 
   /* Fond clair + motif Gzhel */
   --bg-color: #ffffff;
@@ -71,7 +73,9 @@ html {
   scrollbar-color: #b47b38 #f7eddc;
 }
 /* Pour Firefox  */
-textarea#message {
+textarea#message,
+textarea#message-editor,
+textarea#subject-editor {
   scrollbar-width: thin; /* plus fine */
   scrollbar-color: #b47b38 transparent; /* pouce + fond */
   border-radius: 0;
@@ -80,19 +84,25 @@ textarea#message {
   background: none;
   width: 95%;
   margin-top: 5px;
+  resize: none;
+  outline: none;
+  padding: 10px 15px;
 }
 
 /* Pour Chrome/Edge/Safari */
-textarea#message::-webkit-scrollbar {
+textarea#message::-webkit-scrollbar,
+textarea#message-editor::-webkit-scrollbar {
   width: 12px; /* largeur de la barre */
 }
 
-textarea#message::-webkit-scrollbar-track {
+textarea#message::-webkit-scrollbar-track,
+textarea#message-editor::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 999px; /* coins arrondis */
 }
 
-textarea#message::-webkit-scrollbar-thumb {
+textarea#message::-webkit-scrollbar-thumb,
+textarea#message-editor::-webkit-scrollbar-thumb {
   background: #b47b38; /* couleur du pouce */
   border-radius: 999px; /* pouce arrondi */
   border: 3px solid transparent; /* petit “gap” doux */
@@ -100,23 +110,16 @@ textarea#message::-webkit-scrollbar-thumb {
 }
 
 /* “Pousser” légèrement les flèches (haut/bas) */
-textarea#message::-webkit-scrollbar-button:single-button {
+textarea#message::-webkit-scrollbar-button:single-button,
+textarea#message-editor::-webkit-scrollbar-button:single-button {
   height: 10px; /* espace au-dessus et en dessous */
   background: transparent;
-}
-/* largeur + thumb arrondi (déjà chez toi) */
-textarea#message::-webkit-scrollbar {
-  width: 12px;
-}
-textarea#message::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 999px;
 }
 
 /*8. Tooltips */
 :root {
   --tip-maxch: 16ch;
-  --tip-lines: 5;
+  --tip-lines: 4;
   --tip-offset: 6px; /* écart avec le texte */
   --tip-bg: #b47b38; /* fond “or” */
   --tip-fg: #fff;

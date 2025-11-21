@@ -11,6 +11,7 @@ function firstNameForRecap(input = "") {
   const first = s.split(/[\s-]+/)[0];
   return first.length <= 15 ? first : first.slice(0, 15) + "…";
 }
+
 export default function Recap({
   t,
   guardLang = "fr",
@@ -44,6 +45,7 @@ export default function Recap({
 
   // pour surligner le preset sélectionné dans le tooltip
   const currentSubject = watch("subject");
+  const isCustomSubject = currentSubject === "other"; // sujet personnalisé
 
   const recapText = useMemo(() => {
     const fn = firstNameForRecap(wName);
@@ -51,10 +53,21 @@ export default function Recap({
       ? (t.recapFor || "Let's recap, {firstName}").replace("{firstName}", fn)
       : t.recapTitle || "Summary";
   }, [t, wName]);
+
   const opts = [
     ...(subjectPresetOptions || []),
     { value: "other", label: t.subjectOptions?.other || "Divers" },
   ];
+
+  // профили строк по полю
+  const CLAMP = {
+    first: 1, // prénom
+    last: 2, // nom
+    email: 3, // e-mail
+    subj: 4,
+    company: 4,
+    msg: 4,
+  };
 
   return (
     <div className={styles.view}>
@@ -71,10 +84,14 @@ export default function Recap({
           <Tooltip
             id={tipIds?.first}
             content={wName || "—"}
-            maxCh={16}
-            lines={5}
+            lines={CLAMP.first}
             wide
+            variant="name"
             lang={guardLang}
+            onMore={() => openQuick?.("name", t.firstNameLabel, wName || "", "text")}
+            onEdit={() => openQuick?.("name", t.firstNameLabel, wName || "", "text")}
+            labelMore={t.tooltipMore}
+            labelEdit={t.tooltipEdit}
           >
             <span
               className={styles.value}
@@ -93,10 +110,14 @@ export default function Recap({
             <Tooltip
               id={tipIds?.last}
               content={wLastName}
-              maxCh={16}
-              lines={5}
+              lines={CLAMP.last}
               wide
+              variant="lastname"
               lang={guardLang}
+              onMore={() => openQuick?.("lastName", t.lastNameLabel, wLastName || "", "text")}
+              onEdit={() => openQuick?.("lastName", t.lastNameLabel, wLastName || "", "text")}
+              labelMore={t.tooltipMore}
+              labelEdit={t.tooltipEdit}
             >
               <span
                 className={styles.value}
@@ -115,10 +136,13 @@ export default function Recap({
           <Tooltip
             id={tipIds?.email}
             content={wEmail || "—"}
-            maxCh={16}
-            lines={5}
+            lines={CLAMP.email}
             wide
             lang={guardLang}
+            onMore={() => openQuick?.("email", t.emailLabel, wEmail || "", "email")}
+            onEdit={() => openQuick?.("email", t.emailLabel, wEmail || "", "email")}
+            labelMore={t.tooltipMore}
+            labelEdit={t.tooltipEdit}
           >
             <span
               className={styles.value}
@@ -136,8 +160,7 @@ export default function Recap({
           <Tooltip
             id={tipIds?.subj}
             content={subjectFull}
-            maxCh={16}
-            lines={5}
+            lines={CLAMP.subj}
             wide
             lang={guardLang}
             options={opts.map((o) => ({
@@ -152,8 +175,14 @@ export default function Recap({
               },
             }))}
             currentOption={currentSubject}
-            onMore={openSubjectRead}
-            onEdit={openSubjectEdit}
+            // 👉 règles :
+            // - preset normal : pas d'onEdit / onMore
+            // - "other" (custom) : Éditer + Voir plus (si overflow)
+            onMore={isCustomSubject ? openSubjectRead : undefined}
+            onEdit={isCustomSubject ? openSubjectEdit : undefined}
+            labelMore={isCustomSubject ? t.tooltipMore : undefined}
+            labelEdit={isCustomSubject ? t.tooltipEdit : undefined}
+            labelChoose={t.tooltipChoose}
           >
             <span
               className={styles.value}
@@ -172,10 +201,13 @@ export default function Recap({
             <Tooltip
               id={tipIds?.company}
               content={wCompany}
-              maxCh={16}
-              lines={5}
+              lines={CLAMP.company}
               wide
               lang={guardLang}
+              onMore={() => openQuick?.("company", t.companyLabel, wCompany || "", "text")}
+              onEdit={() => openQuick?.("company", t.companyLabel, wCompany || "", "text")}
+              labelMore={t.tooltipMore}
+              labelEdit={t.tooltipEdit}
             >
               <span
                 className={styles.value}
@@ -194,12 +226,13 @@ export default function Recap({
           <Tooltip
             id={tipIds?.msg}
             content={wMessage || "—"}
-            maxCh={16}
-            lines={5}
+            lines={CLAMP.msg}
             lang={guardLang}
             wide
             onMore={openEditorRead}
             onEdit={openEditorEdit}
+            labelMore={t.tooltipMore}
+            labelEdit={t.tooltipEdit}
           >
             <span className={styles.value} aria-describedby={tipIds?.msg}>
               {msgShort || "—"}

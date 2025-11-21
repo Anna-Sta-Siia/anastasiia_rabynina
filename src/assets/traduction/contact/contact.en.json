@@ -29,35 +29,41 @@
   "save": "Save",
   "close": "Close",
 
+  "edit": "Edit",
+  "tooltipEdit": "Edit",
+  "tooltipMore": "See more",
+  "tooltipChoose": "Choose…",
+
   "recapFor": "Let's recap, {firstName}",
   "recapTitle": "Summary",
 
-  "confirmBody": "Please confirm you want to send this message.",
+  "confirmBody": "Please confirm you want to send this message",
   "confirmSend": "Send",
   "confirmCancel": "Cancel",
   "sending": "Sending…",
-  "sent": "Thanks! Your message was sent.",
-  "sentWithName": "Thanks, {fullName}! Your message was sent.",
+  "sent": "Thanks! Your message was sent",
+  "sentWithName": "Thanks, {fullName}! Your message was sent",
 
   "errors": {
-    "nameRequired": "First name is required.",
-    "nameMin": "At least 2 characters.",
+    "nameRequired": "First name is required",
+    "nameMin": "At least 2 characters",
     "patternCommon": "Only letters, spaces, - and '.",
-    "lastNameMax": "Maximum 60 characters.",
+    "lastNameMax": "Maximum 60 characters",
 
-    "emailRequired": "Email is required.",
-    "emailInvalid": "Invalid email format.",
-    "profanityEmail": "Address not acceptable.",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "profanityEmail": "Address not acceptable",
 
-    "subjectRequired": "Subject is required.",
-    "subjectCustomMax": "120 caractères max.",
+    "subjectRequired": "Subject is required",
+    "subjectCustomMax": "Maximum 120 characters",
+    "subjectTooShort": "At least 3 characters",
 
-    "messageRequired": "Message is required.",
-    "messageMin": "At least 10 characters.",
-    "messageMax": "Maximum 1200 characters.",
+    "messageRequired": "Message is required",
+    "messageMin": "At least 10 characters",
+    "messageMax": "Maximum 1200 characters",
 
-    "noUrl": "No links/HTML here.",
-    "profanity": "Inappropriate language.",
-    "gibberish": "Looks like gibberish."
+    "noUrl": "No links/HTML here",
+    "profanity": "Inappropriate language",
+    "gibberish": "Looks like gibberish"
   }
 }

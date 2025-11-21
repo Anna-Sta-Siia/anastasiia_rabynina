@@ -37,9 +37,6 @@
 }
 /* The egg itself */
 .egg {
-  /* control colors */
-  --neutral: #b0bec5;
-  --ok: #2e7d32;
   width: var(--egg-w);
   height: calc(var(--egg-w) * 6 / 5);
   aspect-ratio: auto;
@@ -166,6 +163,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  justify-content: center;
 }
 
 /* chaque <p> devient une ligne "label | valeur" */
@@ -254,7 +252,6 @@ label {
 
 /* Inputs / Selects (rounded + comfy) */
 .form input,
-.form textarea,
 .form select {
   width: 80%;
   box-sizing: border-box;
@@ -302,7 +299,7 @@ textarea {
   max-height: clamp(150px, 50vh, 500px);
   overflow: auto;
 }
-.textarea_shell {
+.editorShell {
   width: 80%;
   border-radius: 18px;
   border: 1px solid var(--neutral);
@@ -310,7 +307,9 @@ textarea {
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
   transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
-
+.modalEditor .editorShell {
+  width: 100%;
+}
 /* Error rows: reserve space always => no jump */
 .error {
   --err-lines: 2;
@@ -322,7 +321,7 @@ textarea {
   color: #d33;
   opacity: 0; /* becomes visible when there is text */
   transition: opacity 0.15s ease;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .error:not(:empty) {
@@ -557,30 +556,12 @@ textarea {
   inline-size: clamp(90px, 60vw, 200px); /* фиксируем коридор */
 }
 
-.editorText {
-  padding: 0 10px;
-  height: auto;
-  padding: 12px 14px 0 14px;
-  border-radius: 12px;
-  border: 1px solid #ccd6dd;
-  background: #fff;
-  outline: none;
-  line-height: 1.5;
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  resize: none;
-}
-.editorText:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-}
-
 .modalBar {
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: flex-start;
-  min-height: 44px; /* réserve verticale */
+  margin-top: 8px;
   flex-direction: column;
 }
 .modalActions {
@@ -609,15 +590,6 @@ textarea {
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-/* Nice scrollbar in modal */
-.editorText::-webkit-scrollbar {
-  width: 10px;
-}
-.editorText::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--accent, #b0bec5) 55%, #777 45%);
-  border-radius: 8px;
 }
 
 /* inline error under Save when < 10 chars */
@@ -711,4 +683,21 @@ textarea {
 }
 .summaryRow {
   margin: 0.25rem 0;
+}
+.editorText {
+  padding: 0 10px;
+  height: auto;
+  padding: 12px 14px 0 14px;
+  border-radius: 12px;
+  border: 1px solid #ccd6dd;
+  background: #fff;
+  outline: none;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  resize: none;
+}
+.editorText:focus-visible {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }

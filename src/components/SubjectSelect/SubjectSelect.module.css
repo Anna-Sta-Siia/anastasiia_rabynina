@@ -1,0 +1,80 @@
+/* контейнер */
+.wrap {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* "закрытое" состояние — как остальные инпуты */
+.button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--neutral);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.86));
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+/* подпись и стрелочка */
+.buttonLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.buttonIcon {
+  margin-left: 8px;
+  font-size: 0.9em;
+}
+
+/* при открытом меню чуть усилим тень */
+.wrap[data-open="true"] .button {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15), inset 0 -2px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* выпадающее меню */
+.menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 4px 0;
+
+  list-style: none;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+/* пункт меню */
+.option {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* hover */
+.option:hover {
+  background: color-mix(in oklab, var(--tip-bg) 18%, transparent);
+}
+
+/* выбранный пункт */
+.optionSelected {
+  background: var(--tip-bg, #b47b38);
+  font-weight: 600;
+  color: white;
+}
