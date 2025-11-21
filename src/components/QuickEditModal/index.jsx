@@ -47,7 +47,7 @@ export default function QuickEditModal({
 
   // небольшие страховки, если вдруг t не передали
   const closeLabel = t?.close || "Close";
-  const cancelLabel = t?.confirmCancel || "Cancel";
+  const clearLabel = t?.confirmCancel || "Cancel";
   const saveLabel = t?.save || "Save";
 
   return (
@@ -75,7 +75,7 @@ export default function QuickEditModal({
         <div className={styles.modalBar}>
           <div className={styles.modalActions}>
             <button type="button" className={styles.btn} onClick={onClose}>
-              {cancelLabel}
+              {clearLabel}
             </button>
             <button
               type="button"

@@ -38,7 +38,7 @@
 
   "confirmBody": "Merci de confirmer l’envoi de ce message",
   "confirmSend": "Envoyer",
-  "confirmCancel": "Annuler",
+  "confirmClear": "Effacer le formulaire",
   "sent": "Merci ! Votre message a été envoyé",
   "sentWithName": "Merci, {fullName} ! Votre message a été envoyé",
 

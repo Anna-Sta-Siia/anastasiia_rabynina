@@ -92,17 +92,21 @@ export default function Tooltip({
   const showEdit = !!onEdit; // Nom/Prénom/Email/Company + Sujet custom
   const showMore = !!onMore && isOverflowing; // seulement si overflow ET callback fourni
   const showOptionsList = hasOptions; // Sujet
-  const hasAnyActions = showEdit || showMore || showOptionsList;
+
+  // когда меню открыто и есть options → показываем ТОЛЬКО список
+  const showDropdownOnly = menuOpen && hasOptions;
 
   const selectOption = (opt) => {
     opt?.onSelect?.(opt.value);
     setMenuOpen(false);
     setOpen(false);
   };
+
   // 👇 fallback'ы на случай, если label не передали
   const moreLabel = labelMore || "Voir plus";
   const editLabel = labelEdit || "Éditer";
   const chooseLabel = labelChoose || "Choisir…";
+
   return (
     <span
       ref={wrapRef}
@@ -131,64 +135,69 @@ export default function Tooltip({
         aria-hidden={!open}
         inert={open ? undefined : true}
       >
+        {/* Текст содержимого — не показываем, если меню открыто */}
         {!(menuOpen && hasOptions) && (
           <span ref={textRef} className={styles.tipText}>
             {content}
           </span>
         )}
 
-        {open && hasAnyActions && (
+        {/* Zone actions */}
+        {open && (
           <div className={styles.tipActions} role="group" aria-label="Actions">
-            {(showEdit || showMore) && (
-              <div className={styles.tipPrimary}>
-                {showEdit && (
-                  <button type="button" className={styles.tipBtn} onClick={onEdit}>
-                    {editLabel}
-                  </button>
-                )}
-
-                {showMore && (
-                  <button type="button" className={styles.tipBtn} onClick={onMore}>
-                    {moreLabel}
-                  </button>
-                )}
-              </div>
+            {/* 1. Если меню открыто → ТОЛЬКО список опций */}
+            {showDropdownOnly && (
+              <ul className={styles.tipMenu} role="listbox" aria-label="Presets de sujet">
+                {options.map((opt) => {
+                  const selected = currentOption === opt.value;
+                  return (
+                    <li key={opt.value} role="option" aria-selected={selected}>
+                      <button
+                        type="button"
+                        className={classes(styles.tipOption, selected && styles.tipOptionSelected)}
+                        onClick={() => selectOption(opt)}
+                      >
+                        {opt.label}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
 
-            {showOptionsList && (
-              <div className={styles.tipDropdown}>
-                <button
-                  type="button"
-                  className={styles.tipToggle}
-                  aria-haspopup="listbox"
-                  aria-expanded={menuOpen ? "true" : "false"}
-                  onClick={() => setMenuOpen((v) => !v)}
-                >
-                  {chooseLabel}
-                </button>
+            {/* 2. Если меню ЗАКРЫТО */}
+            {!showDropdownOnly && (
+              <>
+                {/* EDIT + MORE — только если ты их передала (для custom) */}
+                {(showEdit || showMore) && (
+                  <div className={styles.tipPrimary}>
+                    {showEdit && (
+                      <button type="button" className={styles.tipBtn} onClick={onEdit}>
+                        {editLabel}
+                      </button>
+                    )}
 
-                {menuOpen && (
-                  <ul className={styles.tipMenu} role="listbox" aria-label="Presets de sujet">
-                    {options.map((opt) => {
-                      const selected = currentOption === opt.value;
-                      return (
-                        <li key={opt.value} role="option" aria-selected={selected}>
-                          <button
-                            type="button"
-                            className={classes(
-                              styles.tipOption,
-                              selected && styles.tipOptionSelected
-                            )}
-                            onClick={() => selectOption(opt)}
-                          >
-                            {opt.label}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                    {showMore && (
+                      <button type="button" className={styles.tipBtn} onClick={onMore}>
+                        {moreLabel}
+                      </button>
+                    )}
+                  </div>
                 )}
-              </div>
+
+                {/* Кнопка открытия списка опций */}
+                {showOptionsList && (
+                  <button
+                    type="button"
+                    className={styles.tipToggle}
+                    aria-haspopup="listbox"
+                    aria-expanded={menuOpen ? "true" : "false"}
+                    onClick={() => setMenuOpen((v) => !v)}
+                  >
+                    {chooseLabel}
+                  </button>
+                )}
+              </>
             )}
           </div>
         )}

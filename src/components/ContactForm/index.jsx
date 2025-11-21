@@ -739,7 +739,7 @@ export default function ContactForm({
                   closeConfirm();
                 }}
               >
-                {t.confirmCancel}
+                {t.confirmClear}
               </button>
               <button
                 type="button"

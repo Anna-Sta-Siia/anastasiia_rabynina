@@ -48,7 +48,7 @@
   border-radius: 999px;
   padding: 10px 16px;
   cursor: pointer;
-  width: 35%;
+  width: 40%;
 }
 .modalClose:focus-visible {
   outline: 2px solid rgba(0, 0, 0, 0.35);

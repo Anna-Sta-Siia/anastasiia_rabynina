@@ -172,6 +172,7 @@
   background: linear-gradient(to bottom, transparent, var(--tip-bg, #b47b38));
   pointer-events: none;
 }
+
 /* style des boutons d’action */
 .tipBtn {
   background: none;
@@ -206,7 +207,6 @@
 .tipDropdown {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
 }
 
 /* Bouton qui ouvre le mini-menu */
@@ -226,16 +226,17 @@
 /* Liste déroulante verticale */
 .tipMenu {
   list-style: none;
-  margin: 0.2rem 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
   width: 100%;
 }
 
 .tipMenu li {
   margin: 0;
+  padding: 0;
 }
 
 .tipOption {
@@ -244,9 +245,9 @@
   width: 100%;
   text-align: center;
   background: color-mix(in oklab, var(--tip-bg) 15%, transparent);
-  padding: 0;
+  padding: 3px;
   border-radius: 999px;
-  line-height: 1.2;
+  line-height: 1;
   cursor: pointer;
   color: inherit;
   font-weight: 500;

@@ -39,7 +39,7 @@
 
   "confirmBody": "Please confirm you want to send this message",
   "confirmSend": "Send",
-  "confirmCancel": "Cancel",
+  "confirmClear": "Clear the form",
   "sending": "Sending…",
   "sent": "Thanks! Your message was sent",
   "sentWithName": "Thanks, {fullName}! Your message was sent",

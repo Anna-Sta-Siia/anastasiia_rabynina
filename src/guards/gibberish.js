@@ -1,31 +1,33 @@
-// src/guards/gibberish.js
-
 /**
- * Détection simple mais robuste de texte "gribouillé" (indépendante de la langue)
+ * Vérification gibberish UNIVERSELLE (latin + cyrillique)
  */
 export function makeGibberishChecker() {
-  return function isGibberish(s = "") {
-    const txt = String(s).trim();
-    if (!txt) return false;
+  return function isGibberishUniversal(input = "") {
+    const s = String(input).toLowerCase();
 
-    // 1. Répétitions de caractères identiques (aaaaa, !!!!!, 11111)
-    if (/(.)\1{4,}/u.test(txt)) return true;
+    // garder lettres + chiffres (latin + cyrillique)
+    const clean = s.replace(/[^a-zа-яё0-9]+/gi, " ");
+    const words = clean.split(/\s+/).filter((w) => w.length >= 4);
+    if (!words.length) return false;
 
-    // 2. Trop peu de lettres par rapport aux autres signes
-    const letters = (txt.match(/\p{L}/gu) || []).length;
-    if (letters && (txt.length - letters) / txt.length > 0.5) return true;
+    let weird = 0;
 
-    // 3. Longues séquences de consonnes (>=5)
-    //    Peu importe la langue : 5 consonnes d’affilée, c’est louche
-    if (/[bcdfghjklmnpqrstvwxzБВГДЖЗЙКЛМНПРСТФХЦЧШЩ]{5,}/iu.test(txt)) return true;
+    for (const w of words) {
+      const letters = w.replace(/[^a-zа-яё]/gi, "");
+      if (!letters) continue;
 
-    // 4. Texte sans voyelle (FR/EN/RU de base)
-    //    -> à partir de 5 caractères, s’il n’y a aucune voyelle
-    if (txt.length >= 5 && !/[aeiouyàâäéèêëîïôöùûüÿœæаеёиоуыэюя]/iu.test(txt)) return true;
+      const vowels = (letters.match(/[aeiouyаеёиоуыэюя]/gi) || []).length;
 
-    // 5. Claviers absurdes
-    if (/qwerty|azerty|asdfg|йцукен|цукен/iu.test(txt)) return true;
+      const longRun =
+        /[bcdfghjklmnpqrstvwxyz]{5,}/i.test(letters) ||
+        /[бвгджзйклмнпрстфхцчшщ]{5,}/i.test(letters);
 
-    return false;
+      const noVowels = vowels === 0;
+      const lowRatio = vowels / letters.length < 0.2;
+
+      if (noVowels || lowRatio || longRun) weird++;
+    }
+
+    return weird > 0 && weird / words.length >= 0.5;
   };
 }
