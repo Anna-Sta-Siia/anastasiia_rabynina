@@ -4,7 +4,7 @@
   position: relative;
   width: 100%;
   max-width: 100%;
-  z-index: 2;      
+  z-index: 2;
 }
 
 .arrow {
@@ -39,4 +39,44 @@
 .slider {
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+/* ---------- Modal editor ---------- */
+.modalEditor {
+  display: flex;
+  flex-direction: column;
+  inline-size: clamp(90px, 60vw, 200px); /* фиксируем коридор */
+}
+.modalContent {
+  text-align: center;
+}
+.modalBar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 8px;
+  flex-direction: column;
+}
+.modalActions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: #e9eef2;
+}
+.btnPrimary {
+  color: #122;
+  background: radial-gradient(
+      120% 150% at 30% 20%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(180deg, var(--ok), #b8e0c0);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.06);
 }

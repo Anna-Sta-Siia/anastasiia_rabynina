@@ -1,5 +1,5 @@
 // src/context/UIProvider.jsx
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { UIContext } from "./UIContext";
 import { makeContentGuards } from "../guards";
 import { IS_GHPAGES, REPO } from "../utils/env.js";
@@ -26,7 +26,10 @@ export function UIProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
   const [language, setLanguage] = useState(getInitialLang);
 
-  // thème
+  // ← наш новый флаг: есть незавершённый контакт-форм или нет
+  const [hasContactDraft, setHasContactDraft] = useState(false);
+
+  /* ========== THÈME ========== */
   useEffect(() => {
     localStorage.setItem("theme", theme);
     const isDark = theme === "dark";
@@ -34,27 +37,42 @@ export function UIProvider({ children }) {
     document.body.classList.toggle("dark", isDark);
   }, [theme]);
 
-  // langue (attribut <html lang>)
+  /* ========== LANGUE (html[lang]) ========== */
   useEffect(() => {
     localStorage.setItem("language", language);
     document.documentElement.setAttribute("lang", language);
   }, [language]);
 
-  // ✅ fabriquer les guards ici, à partir de la langue
+  /* ========== GUARDS dépendants de la langue ========== */
   const guards = useMemo(() => makeContentGuards({ lang: language }), [language]);
 
-  const changeLanguage = (nextLang) => {
+  /* ========== CHANGE LANGUAGE (stable) ========== */
+  const changeLanguage = useCallback((nextLang) => {
     localStorage.setItem("language", nextLang);
+
     const base = IS_GHPAGES ? REPO : "/";
     const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const rest = location.pathname.replace(new RegExp(`^${esc(base)}(?:fr|en|ru)/`), "/");
     const target = `${base}${nextLang}/${rest.slice(1)}${location.search}${location.hash}`;
-    if (!sameUrl(location.href, target)) location.replace(target);
-  };
 
+    if (!sameUrl(location.href, target)) {
+      location.replace(target);
+    }
+  }, []);
+
+  /* ========== VALUE du contexte ========== */
   const value = useMemo(
-    () => ({ theme, setTheme, language, setLanguage, changeLanguage, guards }),
-    [theme, language, guards]
+    () => ({
+      theme,
+      setTheme,
+      language,
+      setLanguage,
+      changeLanguage,
+      guards,
+      hasContactDraft,
+      setHasContactDraft,
+    }),
+    [theme, language, changeLanguage, guards, hasContactDraft]
   );
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;

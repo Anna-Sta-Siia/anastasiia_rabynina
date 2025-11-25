@@ -40,6 +40,7 @@
   "confirmBody": "Please confirm you want to send this message",
   "confirmSend": "Send",
   "confirmClear": "Clear the form",
+  "confirmClearHelper": "The form will be refreshed",
   "sending": "Sending…",
   "sent": "Thanks! Your message was sent",
   "sentWithName": "Thanks, {fullName}! Your message was sent",
@@ -65,5 +66,9 @@
     "noUrl": "No links/HTML here",
     "profanity": "Inappropriate language",
     "gibberish": "Looks like gibberish"
-  }
+  },
+  "unsentGuardTitle": "Leave the Contact section?",
+  "unsentGuardBody": "Your contact form contains unsent data. Do you really want to leave this section?",
+  "unsentGuardStay": "Stay on Contact",
+  "unsentGuardLeave": "Leave without sending"
 }

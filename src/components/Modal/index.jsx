@@ -11,6 +11,7 @@ export default function Modal({
   initialFocus = "close",
   initialFocusRef = null,
   closeLabel = "Close",
+  showCloseButton = true,
 }) {
   const closeRef = useRef(null);
   const titleId = useId();
@@ -75,15 +76,16 @@ export default function Modal({
         </h3>
 
         {children}
-
-        <button
-          className={styles.modalClose}
-          onClick={() => onCloseRef.current?.()}
-          ref={closeRef}
-          type="button"
-        >
-          {closeLabel}
-        </button>
+        {showCloseButton && (
+          <button
+            className={styles.modalClose}
+            onClick={() => onCloseRef.current?.()}
+            ref={closeRef}
+            type="button"
+          >
+            {closeLabel}
+          </button>
+        )}
       </div>
     </div>
   );

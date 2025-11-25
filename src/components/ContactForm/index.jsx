@@ -82,12 +82,12 @@ export default function ContactForm({
   showCompany = true,
   debugHoneypot = false,
 }) {
-  const { language, guards } = useContext(UIContext);
+  const { language, guards, setHasContactDraft } = useContext(UIContext);
   const methods = useForm({ mode: "onChange" });
   const {
     register,
     handleSubmit,
-    formState: { errors, touchedFields },
+    formState: { errors, touchedFields, isDirty },
     getValues,
     setValue,
     setFocus,
@@ -361,6 +361,7 @@ export default function ContactForm({
       }
 
       reset();
+      setHasContactDraft(false);
       setStep(1);
       setTriedNext1(false);
       setTriedNext2(false);
@@ -392,6 +393,23 @@ export default function ContactForm({
   const showSubjectErr = triedNext3 || touchedFields.subject;
   const showSubjectCustomErr = triedNext3 || touchedFields.subjectCustom;
   const showMsgErr = triedNext4 || touchedFields.message;
+
+  useEffect(() => {
+    setHasContactDraft?.(isDirty);
+  }, [isDirty, setHasContactDraft]);
+
+  // Системное окно при закрытии вкладки/обновлении
+  useEffect(() => {
+    if (!isDirty) return;
+
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = ""; // нужно для большинства браузеров
+    };
+
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
   /* =====================
      Rendu
@@ -727,7 +745,7 @@ export default function ContactForm({
       {/* ===== Confirmation d’envoi ===== */}
       <Modal open={confirmOpen} onClose={closeConfirm} closeLabel={t.close}>
         <div className={styles.modalEditor}>
-          <p style={{ margin: 0 }}>{t.confirmBody}</p>
+          <p className={styles.modalContent}>{t.confirmBody}</p>
           <div className={styles.modalBar}>
             <div className={styles.modalActions}>
               <button
@@ -738,6 +756,7 @@ export default function ContactForm({
                   setStep(1);
                   closeConfirm();
                 }}
+                title={t.confirmClearHelper}
               >
                 {t.confirmClear}
               </button>

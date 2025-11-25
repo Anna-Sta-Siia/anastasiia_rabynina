@@ -39,6 +39,7 @@
   "confirmBody": "Merci de confirmer l’envoi de ce message",
   "confirmSend": "Envoyer",
   "confirmClear": "Effacer le formulaire",
+  "confirmClearHelper": "Le formulaire sera remis à neuf",
   "sent": "Merci ! Votre message a été envoyé",
   "sentWithName": "Merci, {fullName} ! Votre message a été envoyé",
 
@@ -63,5 +64,9 @@
     "noUrl": "Pas de liens/HTML ici",
     "profanity": "Langage inapproprié",
     "gibberish": "Le texte ressemble à un gribouillage"
-  }
+  },
+  "unsentGuardTitle": "Quitter la section Contact ?",
+  "unsentGuardBody": "Le formulaire de contact contient des données non envoyées. Voulez-vous vraiment quitter cette section ?",
+  "unsentGuardStay": "Rester sur Contact",
+  "unsentGuardLeave": "Quitter sans envoyer"
 }
