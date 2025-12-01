@@ -124,7 +124,12 @@ export default function ContactForm({
     const tmo = setTimeout(() => setShowOverlay(false), 3000);
     return () => clearTimeout(tmo);
   }, [showOverlay]);
-
+  /*Скролл в начало Recap*/
+  useEffect(() => {
+    if (step === 5 && recapRef.current) {
+      recapRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [step]);
   // Flags “j’ai tenté Next”
   const [triedNext1, setTriedNext1] = useState(false);
   const [triedNext2, setTriedNext2] = useState(false);
@@ -324,7 +329,7 @@ export default function ContactForm({
   const subjectShort = useMemo(() => truncEnd(subjectFull, 17, 3), [subjectFull]);
   const companyShort = useMemo(() => truncEnd(wCompany || "—", 17, 3), [wCompany]);
   const msgShort = useMemo(() => truncEnd(wMessage || "—", 17, 3), [wMessage]);
-
+  const recapRef = useRef(null);
   /* ===== Étapes : validations ===== */
   const goNext1 = async () => {
     setTriedNext1(true);
@@ -370,12 +375,14 @@ export default function ContactForm({
   };
 
   const handleMessageKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      e.stopPropagation(); // évite d’aller directement au Confirm
-      goNext4(); // Step 4 → Step 5
+      e.stopPropagation();
+      goNext4(); // Enter → Recap
     }
+    // Shift+Enter оставляем браузеру → перенос строки
   };
+
   // Envoi
   const submit = async (data) => {
     if (data.hp) return; // anti-bot
@@ -560,53 +567,55 @@ export default function ContactForm({
             )}
 
             {step === 5 && (
-              <Recap
-                t={t}
-                guardLang={language}
-                tipIds={{
-                  first: idTipFirst,
-                  last: idTipLast,
-                  email: idTipEmail,
-                  subj: idTipSubj,
-                  company: idTipCompany,
-                  msg: idTipMsg,
-                }}
-                subjectPresetOptions={[
-                  {
-                    value: "client",
-                    label: t.subjectOptions?.clientProject || "Client work proposal",
-                  },
-                  { value: "job", label: t.subjectOptions?.jobOffer || "Job offer" },
-                ]}
-                onSelectSubjectPreset={(val) => {
-                  setValue("subject", val, { shouldDirty: true, shouldValidate: true });
-                }}
-                showLastName={showLastName}
-                showCompany={showCompany}
-                values={{
-                  wName,
-                  wLastName,
-                  wEmail,
-                  wCompany,
-                  wMessage,
-                  subjectFull,
-                  firstNameShort,
-                  lastNameShort,
-                  emailShort,
-                  subjectShort,
-                  companyShort,
-                  msgShort,
-                }}
-                actions={{
-                  openQuick,
-                  openSubjectRead: () => openSubject({ readOnly: true, text: subjectFull }),
-                  openSubjectEdit: () => openSubject({ readOnly: false }),
-                  openEditorRead: () => openEditor({ readOnly: true, text: wMessage }),
-                  openEditorEdit: () => openEditor({ readOnly: false }),
-                }}
-                onBack={() => setStep(4)}
-                onConfirm={openConfirm}
-              />
+              <div ref={recapRef} className={styles.recapParent}>
+                <Recap
+                  t={t}
+                  guardLang={language}
+                  tipIds={{
+                    first: idTipFirst,
+                    last: idTipLast,
+                    email: idTipEmail,
+                    subj: idTipSubj,
+                    company: idTipCompany,
+                    msg: idTipMsg,
+                  }}
+                  subjectPresetOptions={[
+                    {
+                      value: "client",
+                      label: t.subjectOptions?.clientProject || "Client work proposal",
+                    },
+                    { value: "job", label: t.subjectOptions?.jobOffer || "Job offer" },
+                  ]}
+                  onSelectSubjectPreset={(val) => {
+                    setValue("subject", val, { shouldDirty: true, shouldValidate: true });
+                  }}
+                  showLastName={showLastName}
+                  showCompany={showCompany}
+                  values={{
+                    wName,
+                    wLastName,
+                    wEmail,
+                    wCompany,
+                    wMessage,
+                    subjectFull,
+                    firstNameShort,
+                    lastNameShort,
+                    emailShort,
+                    subjectShort,
+                    companyShort,
+                    msgShort,
+                  }}
+                  actions={{
+                    openQuick,
+                    openSubjectRead: () => openSubject({ readOnly: true, text: subjectFull }),
+                    openSubjectEdit: () => openSubject({ readOnly: false }),
+                    openEditorRead: () => openEditor({ readOnly: true, text: wMessage }),
+                    openEditorEdit: () => openEditor({ readOnly: false }),
+                  }}
+                  onBack={() => setStep(4)}
+                  onConfirm={openConfirm}
+                />
+              </div>
             )}
           </form>
         </div>
