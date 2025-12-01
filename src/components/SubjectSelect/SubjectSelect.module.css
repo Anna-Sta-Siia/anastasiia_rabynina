@@ -67,8 +67,8 @@
   cursor: pointer;
 }
 
-/* hover */
-.option:hover {
+.option:hover,
+.optionActive {
   background: color-mix(in oklab, var(--tip-bg) 18%, transparent);
 }
 

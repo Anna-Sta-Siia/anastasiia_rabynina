@@ -43,9 +43,8 @@ export default function Recap({
 
   const { openQuick, openSubjectRead, openSubjectEdit, openEditorRead, openEditorEdit } = actions;
 
-  // pour surligner le preset sélectionné dans le tooltip
   const currentSubject = watch("subject");
-  const isCustomSubject = currentSubject === "other"; // sujet personnalisé
+  const isCustomSubject = currentSubject === "other";
 
   const recapText = useMemo(() => {
     const fn = firstNameForRecap(wName);
@@ -59,11 +58,10 @@ export default function Recap({
     { value: "other", label: t.subjectOptions?.other || "Divers" },
   ];
 
-  // профили строк по полю
   const CLAMP = {
-    first: 1, // prénom
-    last: 2, // nom
-    email: 3, // e-mail
+    first: 1,
+    last: 2,
+    email: 3,
     subj: 4,
     company: 4,
     msg: 4,
@@ -79,7 +77,7 @@ export default function Recap({
       {/* Liste récap */}
       <div className={styles.summary} lang={guardLang}>
         {/* Prénom */}
-        <p>
+        <div className={styles.summaryRow}>
           <strong>{t.firstNameLabel || "Prénom"}:</strong>{" "}
           <Tooltip
             id={tipIds?.first}
@@ -101,11 +99,11 @@ export default function Recap({
               {firstNameShort || "—"}
             </span>
           </Tooltip>
-        </p>
+        </div>
 
         {/* Nom */}
         {showLastName && wLastName?.trim() && (
-          <p>
+          <div className={styles.summaryRow}>
             <strong>{t.lastNameLabel || "Nom"}:</strong>{" "}
             <Tooltip
               id={tipIds?.last}
@@ -127,11 +125,11 @@ export default function Recap({
                 {lastNameShort}
               </span>
             </Tooltip>
-          </p>
+          </div>
         )}
 
         {/* Email */}
-        <p>
+        <div className={styles.summaryRow}>
           <strong>{t.emailLabel || "E-mail"}:</strong>{" "}
           <Tooltip
             id={tipIds?.email}
@@ -152,10 +150,10 @@ export default function Recap({
               {emailShort || "—"}
             </span>
           </Tooltip>
-        </p>
+        </div>
 
         {/* Sujet */}
-        <p>
+        <div className={styles.summaryRow}>
           <strong>{t.subjectLabel || "Sujet"}:</strong>{" "}
           <Tooltip
             id={tipIds?.subj}
@@ -168,16 +166,13 @@ export default function Recap({
               onSelect: (val) => {
                 setValue("subject", val, { shouldDirty: true, shouldValidate: true });
                 if (val === "other") {
-                  actions?.openSubjectEdit?.(); // ouvre la modale "Sujet personnalisé"
+                  actions?.openSubjectEdit?.();
                 } else {
                   setValue("subjectCustom", "", { shouldDirty: true, shouldValidate: true });
                 }
               },
             }))}
             currentOption={currentSubject}
-            // 👉 règles :
-            // - preset normal : pas d'onEdit / onMore
-            // - "other" (custom) : Éditer + Voir plus (si overflow)
             onMore={isCustomSubject ? openSubjectRead : undefined}
             onEdit={isCustomSubject ? openSubjectEdit : undefined}
             labelMore={isCustomSubject ? t.tooltipMore : undefined}
@@ -192,11 +187,11 @@ export default function Recap({
               {subjectShort}
             </span>
           </Tooltip>
-        </p>
+        </div>
 
         {/* Société */}
         {showCompany && wCompany?.trim() && (
-          <p>
+          <div className={styles.summaryRow}>
             <strong>{t.companyLabel || "Société"}:</strong>{" "}
             <Tooltip
               id={tipIds?.company}
@@ -217,11 +212,11 @@ export default function Recap({
                 {companyShort}
               </span>
             </Tooltip>
-          </p>
+          </div>
         )}
 
         {/* Message */}
-        <p>
+        <div className={styles.summaryRow}>
           <strong>{t.messageLabel || "Message"}:</strong>{" "}
           <Tooltip
             id={tipIds?.msg}
@@ -238,7 +233,7 @@ export default function Recap({
               {msgShort || "—"}
             </span>
           </Tooltip>
-        </p>
+        </div>
       </div>
 
       <div className={styles.flexGrow} />

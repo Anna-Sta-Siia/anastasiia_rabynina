@@ -162,17 +162,17 @@
 .summary {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
   justify-content: center;
 }
 
 /* chaque <p> devient une ligne "label | valeur" */
-.summary p {
+.summaryRow {
   display: flex;
   gap: 4px;
   overflow: visible;
 }
-.summary p > strong {
+.summaryRow > strong {
   white-space: nowrap;
   text-align: right;
   flex: 0 0 auto;
@@ -619,6 +619,8 @@ textarea {
   animation: overlayFadeIn 0.18s ease-out both;
 }
 .overlayCard {
+  max-width: min(345px, 100%);
+  text-align: center;
   padding: 16px 22px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.95);

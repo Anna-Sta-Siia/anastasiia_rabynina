@@ -106,7 +106,12 @@ export default function ContactForm({
 
   // Étapes (1 → 5) + progression
   const { step, setStep, progress } = useStep(STEPS, 1);
-
+  const confirmSendRef = useRef(null);
+  useEffect(() => {
+    if (step === 1) setFocus("name");
+    if (step === 2) setFocus("company");
+    if (step === 4) setFocus("message");
+  }, [step, setFocus]);
   /* ===== Overlay “toast” ===== */
   const [showOverlay, setShowOverlay] = useState(false);
   const [toastText, setToastText] = useState(t.sent);
@@ -133,13 +138,17 @@ export default function ContactForm({
   const editorRef = useRef(null);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const openConfirm = () => setConfirmOpen(true);
-  const closeConfirm = () => setConfirmOpen(false);
-
+  const openConfirm = useCallback(() => {
+    setConfirmOpen(true);
+  }, []);
+  const closeConfirm = useCallback(() => {
+    setConfirmOpen(false);
+  }, []);
   const [subjectOpen, setSubjectOpen] = useState(false);
   const [subjectDraft, setSubjectDraft] = useState("");
   const [subjectReadOnly, setSubjectReadOnly] = useState(false);
   const [subjectDismissed, setSubjectDismissed] = useState(false);
+  const [subjectFromWizard, setSubjectFromWizard] = useState(false);
   const subjectRef = useRef(null);
 
   // Quick edit
@@ -181,11 +190,18 @@ export default function ContactForm({
     if (trimmed.length < MIN_MSG) return;
     setValue("message", trimmed, { shouldValidate: true, shouldDirty: true });
     setEditorOpen(false);
+    // 👉 если мы в мастере на шаге 4 — сразу прыгаем на Recap
+    if (step === 4) {
+      setStep(5);
+      // можно заодно сбросить флаг triedNext4, если он есть
+      setTriedNext4(false);
+    }
   };
 
   const openSubject = useCallback(
     (opts = {}) => {
-      const { readOnly = false, text } = opts;
+      const { readOnly = false, text, fromWizard = false } = opts;
+      setSubjectFromWizard(fromWizard);
       setSubjectReadOnly(readOnly);
       if (readOnly && typeof text === "string") {
         setSubjectDraft(text);
@@ -213,6 +229,11 @@ export default function ContactForm({
     if (v && v.length < 3) return;
     setValue("subjectCustom", v, { shouldDirty: true, shouldValidate: true });
     setSubjectOpen(false);
+    // 👉 если модалка была открыта с шага 3, после сохранения идём на шаг 4
+    if (subjectFromWizard && step === 3) {
+      setStep(4);
+    }
+    setSubjectFromWizard(false);
   };
 
   // autofocus
@@ -261,6 +282,23 @@ export default function ContactForm({
       openSubject();
     }
   }, [step, wSubject, subjectOpen, subjectDismissed, getValues, openSubject]);
+
+  useEffect(() => {
+    if (step !== 5) return;
+
+    const onKey = (e) => {
+      const isEnter = e.key === "Enter";
+      const withModifier = e.ctrlKey || e.metaKey; // Ctrl (Win/Linux) или Cmd (Mac)
+
+      if (!isEnter || !withModifier) return;
+
+      e.preventDefault();
+      openConfirm();
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [step, openConfirm]);
 
   // Résumés (troncature)
   const subjectFull = useMemo(() => {
@@ -331,6 +369,13 @@ export default function ContactForm({
     setStep(5);
   };
 
+  const handleMessageKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation(); // évite d’aller directement au Confirm
+      goNext4(); // Step 4 → Step 5
+    }
+  };
   // Envoi
   const submit = async (data) => {
     if (data.hp) return; // anti-bot
@@ -486,7 +531,7 @@ export default function ContactForm({
                 onSubjectChange={(v) => {
                   if (v === "other") {
                     setSubjectDismissed(false);
-                    openSubject();
+                    openSubject({ fromWizard: true }); // 👈 важный флаг
                   } else {
                     setValue("subjectCustom", "", { shouldDirty: true });
                     setSubjectDismissed(false);
@@ -510,6 +555,7 @@ export default function ContactForm({
                 openEditor={() => openEditor()}
                 onBack={() => setStep(3)}
                 onNext={goNext4}
+                onMessageKeyDown={handleMessageKeyDown}
               />
             )}
 
@@ -743,7 +789,13 @@ export default function ContactForm({
       </Modal>
 
       {/* ===== Confirmation d’envoi ===== */}
-      <Modal open={confirmOpen} onClose={closeConfirm} closeLabel={t.close}>
+      <Modal
+        open={confirmOpen}
+        onClose={closeConfirm}
+        closeLabel={t.close}
+        initialFocus="element"
+        initialFocusRef={confirmSendRef}
+      >
         <div className={styles.modalEditor}>
           <p className={styles.modalContent}>{t.confirmBody}</p>
           <div className={styles.modalBar}>
@@ -762,6 +814,7 @@ export default function ContactForm({
               </button>
               <button
                 type="button"
+                ref={confirmSendRef}
                 className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={() => {
                   closeConfirm();

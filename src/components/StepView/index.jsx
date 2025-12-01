@@ -19,6 +19,7 @@ export default function StepView({
   // RHF & guards
   register,
   guards,
+  onMessageKeyDown,
 
   // états d’erreur (bools déjà calculés dans ContactForm)
   showNameErr = false,
@@ -58,6 +59,21 @@ export default function StepView({
             placeholder={t.namePlaceholder}
             autoComplete="given-name"
             aria-invalid={errors?.name ? "true" : "false"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                // если есть поле "Фамилия" — прыгнуть туда
+                if (showLastName) {
+                  const last = document.getElementById("lastName");
+                  if (last) {
+                    last.focus();
+                    return;
+                  }
+                }
+                // иначе — попытаться перейти на следующий шаг
+                onNext?.();
+              }
+            }}
             {...register("name", {
               required: t.errors.nameRequired,
               minLength: { value: 2, message: t.errors.nameMin },
@@ -83,6 +99,13 @@ export default function StepView({
               placeholder={t.lastNamePlaceholder}
               autoComplete="family-name"
               aria-invalid={errors?.lastName ? "true" : "false"}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  // на фамилии Enter = попытка перейти на шаг 2
+                  onNext?.();
+                }
+              }}
               {...register("lastName", {
                 setValueAs: guards?._raw?.normalize,
                 validate: { ...(guards?.forLastNameOptional?.(t) || {}) },
@@ -128,6 +151,13 @@ export default function StepView({
               placeholder={t.companyPlaceholder}
               autoComplete="organization"
               aria-invalid={errors?.company ? "true" : "false"}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  // Пытаемся перейти на шаг 3: email всё решает
+                  onNext?.();
+                }
+              }}
               {...register("company", {
                 setValueAs: guards?._raw?.normalize,
                 validate: { ...(guards?.forCompany?.(t) || {}) }, // noUrl + noProfanity + noGibberish
@@ -152,6 +182,12 @@ export default function StepView({
             placeholder={t.emailPlaceholder}
             autoComplete="email"
             aria-invalid={errors?.email ? "true" : "false"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onNext?.(); // если email валиден → шаг 3
+              }
+            }}
             {...register("email", {
               required: t.errors.emailRequired,
               pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t.errors.emailInvalid },
@@ -204,7 +240,16 @@ export default function StepView({
         label: t.subjectOptions?.other || "Divers",
       },
     ];
+    // когда пользователь выбрал значение в SubjectSelect
+    const handleSubjectSelect = (val) => {
+      // старая логика: открыть модалку для "other", очистить кастом и т.п.
+      onSubjectChange?.(val);
 
+      // если тема НЕ "other" → сразу вперёд на шаг "Message"
+      if (val !== "other") {
+        onNext?.();
+      }
+    };
     return (
       <div className={styles.view}>
         <div
@@ -218,7 +263,8 @@ export default function StepView({
             name="subject"
             t={t}
             options={subjectOptions}
-            onChangeValue={onSubjectChange} // чтобы логика "other" осталась
+            onChangeValue={handleSubjectSelect}
+            autoFocus
           />
 
           {subjectValue === "other" && (
@@ -286,6 +332,7 @@ export default function StepView({
               setValueAs: (v) => (typeof v === "string" ? v : ""),
               validate: { ...(guards?.forMessage?.(t) || {}) },
             })}
+            onKeyDown={onMessageKeyDown}
           />
         </div>
 
