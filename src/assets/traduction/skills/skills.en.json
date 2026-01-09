@@ -1,7 +1,7 @@
 {
   "skills": {
     "title": "Skills",
-    "hint": "Click = OR filter; Alt+Click = AND.",
+    "info": "You can select one or multiple filters",
     "cats": {
       "markup": "MARKUP",
       "styles": "STYLE",
@@ -11,6 +11,15 @@
       "api": "API",
       "a11y": "SEO",
       "tooling": "TOOLS"
+    },
+    "levelFilterLabel": "Level",
+    "chooseLevelHint": "Choose a skill level",
+    "screenreader": "Use arrow keys to choose a level",
+    "levels": {
+      "beginner": "beginner",
+      "intermediate": "intermediate",
+      "advanced": "advanced",
+      "expert": "expert"
     }
   }
 }

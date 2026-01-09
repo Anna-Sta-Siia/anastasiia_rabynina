@@ -20,6 +20,7 @@ export default function Filter({
   defaultSort = "",
   defaultMode = "or",
   fireOnMount = true,
+  showToolsRow = true,
 }) {
   const { language } = useUI();
 
@@ -115,41 +116,43 @@ export default function Filter({
         ))}
       </div>
 
-      <div className={styles.toolsRow}>
-        <input
-          className={styles.search}
-          type="search"
-          placeholder={ui.search}
-          value={search}
-          onChange={(e) => {
-            const v = e.target.value;
-            setSearch(v);
-            pushChange(selected, v);
-          }}
-        />
-        <div className={styles.sortBtns}>
-          <button
-            type="button"
-            className={sort === "az" ? styles.activeBtn : ""}
-            onClick={() => {
-              setSort("az");
-              pushChange(selected, search, "az");
+      {showToolsRow && (
+        <div className={styles.toolsRow}>
+          <input
+            className={styles.search}
+            type="search"
+            placeholder={ui.search}
+            value={search}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSearch(v);
+              pushChange(selected, v);
             }}
-          >
-            {ui.sortAZ}
-          </button>
-          <button
-            type="button"
-            className={sort === "za" ? styles.activeBtn : ""}
-            onClick={() => {
-              setSort("za");
-              pushChange(selected, search, "za");
-            }}
-          >
-            {ui.sortZA}
-          </button>
+          />
+          <div className={styles.sortBtns}>
+            <button
+              type="button"
+              className={sort === "az" ? styles.activeBtn : ""}
+              onClick={() => {
+                setSort("az");
+                pushChange(selected, search, "az");
+              }}
+            >
+              {ui.sortAZ}
+            </button>
+            <button
+              type="button"
+              className={sort === "za" ? styles.activeBtn : ""}
+              onClick={() => {
+                setSort("za");
+                pushChange(selected, search, "za");
+              }}
+            >
+              {ui.sortZA}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

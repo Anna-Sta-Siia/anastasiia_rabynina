@@ -39,9 +39,9 @@ export default function SkillCard({ skill, catsColors, projectNames, catsLabels 
       {/* Titre */}
       <h3 className={styles.title}>{name}</h3>
 
-      {/* Niveau (1–5) */}
-      <div className={styles.level} aria-label={`Level ${level}/5`}>
-        {new Array(5).fill(0).map((_, i) => (
+      {/* Niveau (1–4) */}
+      <div className={styles.level} aria-label={`Level ${level}/4`}>
+        {new Array(4).fill(0).map((_, i) => (
           <span key={i} className={`${styles.dot} ${i < level ? styles.full : ""}`} />
         ))}
       </div>

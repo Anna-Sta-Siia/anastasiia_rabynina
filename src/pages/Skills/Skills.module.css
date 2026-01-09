@@ -1,7 +1,24 @@
 .skills {
   padding: 0 20px 20px 20px;
 }
-
+.levelLegend {
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0.5rem auto 1rem;
+  max-width: 40rem;
+  opacity: 0.9;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .list {
   width: min(100%, var(--content-width, 1120px));
   margin: 0 auto;
@@ -12,4 +29,39 @@
   justify-content: center;
   align-items: stretch;
   padding-inline: clamp(8px, 2vw, 16px); /* un petit respir */
+}
+.filterZone {
+  position: relative;
+}
+
+.filterHint {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(6px);
+
+  font-weight: 600;
+  font-size: clamp(12px, 2.6vw, 14px);
+  white-space: nowrap;
+
+  animation: fadeUp 180ms ease-out;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% + 6px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%);
+  }
 }

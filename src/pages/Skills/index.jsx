@@ -2,6 +2,7 @@ import { useMemo, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageTitle from "../../components/PageTitle";
 import Filter from "../../components/Filter";
+import LevelSlider from "../../components/LevelSlider";
 import SkillCard from "../../components/SkillCard";
 import { SKILLS, CATEGORIES, PROJECTS } from "../../assets/traduction/skills/data";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
@@ -16,13 +17,14 @@ import skillsRU from "../../assets/traduction/skills/skills.ru.json";
 export default function Skills() {
   const { label, color } = usePageMeta();
   const { language } = useUI();
-
-  /* ---------------- Libellés localisés des catégories ---------------- */
-  const catsLabels = useMemo(() => {
-    const pack = ({ fr: skillsFR, en: skillsEN, ru: skillsRU }[language] ?? skillsEN)?.skills ?? {};
-    return pack.cats ?? {}; // { markup: "HTML", styles: "STYLE", ... }
+  const [minLevel, setMinLevel] = useState(1);
+  const tSkills = useMemo(() => {
+    const pack = { fr: skillsFR, en: skillsEN, ru: skillsRU }[language] ?? skillsEN;
+    return pack.skills ?? {};
   }, [language]);
-
+  const [showFilterHint, setShowFilterHint] = useState(false);
+  /* ---------------- Libellés localisés des catégories ---------------- */
+  const catsLabels = useMemo(() => tSkills.cats || {}, [tSkills]);
   /* ---------------- URL (?only=slug) ---------------- */
   const [searchParams, setSearchParams] = useSearchParams();
   const projectOnly = (searchParams.get("only") || "").trim(); // ex: "ohmyfood" | ""
@@ -67,29 +69,23 @@ export default function Skills() {
 
   /* ---------------- Liste finale ---------------- */
   const filteredSkills = useMemo(() => {
-    const { filters, search, sort, mode } = query;
+    const { filters, mode } = query;
     let list = usedByProject; // on part déjà du sous-ensemble ciblé par ?only=
 
-    // 1) filtres catégories
+    // 1)filtres catégories
     if (filters.length) {
       list = list.filter((s) => {
         const has = (c) => (s.cats || []).includes(c);
         return mode === "and" ? filters.every(has) : filters.some(has);
       });
     }
-
-    // 2) recherche par nom
-    if (search.trim()) {
-      const n = search.trim().toLowerCase();
-      list = list.filter((s) => s.name.toLowerCase().includes(n));
-    }
-
-    // 3) tri
-    if (sort === "az") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
-    if (sort === "za") list = [...list].sort((a, b) => b.name.localeCompare(a.name));
-
+    // 2) фильтр по уровню skills
+    list = list.filter((s) => {
+      const lvl = typeof s.level === "number" ? s.level : 1;
+      return lvl >= minLevel; // показываем только навыки с уровнем ≥ выбранного
+    });
     return list;
-  }, [query, usedByProject]);
+  }, [query, usedByProject, minLevel]);
 
   /* ---------------- Callback Filter ----------------
      Si l’utilisateur clique sur “All” (tout vide), on enlève ?only
@@ -115,16 +111,71 @@ export default function Skills() {
     [catsLabels]
   );
 
+  function handleFirstFilterInteraction() {
+    if (sessionStorage.getItem("skills-filters-hint-seen")) return;
+
+    sessionStorage.setItem("skills-filters-hint-seen", "1"); // <-- сразу
+    setShowFilterHint(true);
+  }
+  useEffect(() => {
+    if (!showFilterHint) return;
+
+    const timer = setTimeout(() => {
+      setShowFilterHint(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [showFilterHint]);
+
   return (
     <section className={styles.skills}>
       <PageTitle text={label} color={color} />
 
-      <Filter
-        items={filterItems}
-        defaultMode="or"
-        onChange={handleFilterChange}
-        defaultSelected={initialCats}
-      />
+      <div
+        className={styles.filterZone}
+        aria-describedby="skills-filter-hint"
+        onMouseEnter={handleFirstFilterInteraction}
+        onFocusCapture={handleFirstFilterInteraction}
+      >
+        {showFilterHint && (
+          <div className={styles.filterHint} role="status" aria-live="polite">
+            {tSkills?.info ?? "Можно выбрать один или несколько фильтров."}
+          </div>
+        )}
+
+        <div
+          className={styles.filterZone}
+          aria-describedby="skills-filter-hint"
+          onMouseEnter={handleFirstFilterInteraction}
+          onFocusCapture={handleFirstFilterInteraction}
+          onPointerDown={handleFirstFilterInteraction}
+        >
+          {showFilterHint && (
+            <div className={styles.filterHint} role="status" aria-live="polite">
+              {tSkills?.info ?? "Можно выбрать один или несколько фильтров."}
+            </div>
+          )}
+
+          <Filter
+            items={filterItems}
+            defaultMode="or"
+            onChange={handleFilterChange}
+            defaultSelected={initialCats}
+            showToolsRow={false}
+          />
+
+          <p id="skills-filter-hint" className={styles.srOnly}>
+            {tSkills?.info ?? ""}
+          </p>
+        </div>
+
+        {/* Доступно для скринридеров всегда */}
+        <p id="skills-filter-hint" className={styles.srOnly}>
+          {tSkills?.info ?? ""}
+        </p>
+      </div>
+
+      <LevelSlider value={minLevel} onChange={setMinLevel} t={tSkills} />
 
       <div className={styles.list}>
         {filteredSkills.map((s) => (
@@ -133,7 +184,7 @@ export default function Skills() {
             skill={s}
             catsColors={catsColors}
             projectNames={projectNames}
-            catsLabels={catsLabels} // chips localisées
+            catsLabels={catsLabels}
           />
         ))}
       </div>

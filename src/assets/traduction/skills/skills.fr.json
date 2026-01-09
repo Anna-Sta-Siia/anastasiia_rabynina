@@ -1,7 +1,7 @@
 {
   "skills": {
     "title": "Compétences",
-    "hint": "Clic = filtre OU ; Alt+Clic = ET.",
+    "info": "Vous pouvez sélectionner un ou plusieurs filtres",
     "cats": {
       "markup": "HTML",
       "styles": "STYLE",
@@ -11,6 +11,15 @@
       "api": "API",
       "a11y": "SEO",
       "tooling": "OUTILS"
+    },
+    "levelFilterLabel": "Niveau",
+    "chooseLevelHint": "Choisissez un niveau de compétence",
+    "screenreader": "Utilisez les flèches pour choisir un niveau",
+    "levels": {
+      "beginner": "débutant",
+      "intermediate": "intermédiaire",
+      "advanced": "avancé",
+      "expert": "expert"
     }
   }
 }
