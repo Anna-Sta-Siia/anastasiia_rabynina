@@ -52,6 +52,49 @@
   object-fit: cover;
   border-radius: 50%;
 }
+/* === SOFT SHIMMER ================================================= */
+
+.medallionShimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.medallionShimmer::before {
+  content: "";
+  position: absolute;
+  inset: -60%; /* важно: большой “запас”, чтобы прыжок не был виден */
+  pointer-events: none;
+
+  /* Диагональный блик — направление задаёт угол градиента */
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.22) 35%,
+    rgba(255, 255, 255, 0.22) 46%,
+    rgba(255, 255, 255, 0.22) 52%,
+    rgba(255, 255, 255, 0.22) 63%
+  );
+
+  transform: translateX(-60%);
+  animation: shimmerDiag 9s linear infinite; /* без остановки */
+  mix-blend-mode: screen; /* мягче/дороже выглядит */
+  opacity: 0.9;
+}
+
+@keyframes shimmerDiag {
+  0% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(60%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medallionShimmer::before {
+    animation: none;
+  }
+}
+
 @media (max-width: 768px) {
   /* Сцена: узкая, высотой в два овала — верх под крышку, низ под About */
   .accueil {

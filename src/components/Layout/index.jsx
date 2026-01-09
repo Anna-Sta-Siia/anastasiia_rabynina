@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import Header from "../Header";
 import Footer from "../Footer";
 import { Outlet } from "react-router-dom";
+import medallionBack from "../../assets/images/medaillon_back.webp";
+import portrait from "../../assets/images/AnastasiaGirard.webp";
 
 export default function Layout({ phase }) {
   const headerRef = useRef(null);
@@ -39,6 +41,38 @@ export default function Layout({ phase }) {
 
   return (
     <>
+      {/* Preload DOM permanent (ne se démonte jamais) */}
+      <img
+        src={medallionBack}
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          opacity: 0,
+          pointerEvents: "none",
+        }}
+      />
+      <img
+        src={portrait}
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          opacity: 0,
+          pointerEvents: "none",
+        }}
+      />
+
       <Header ref={headerRef} className={phase !== "app" ? "hidden" : ""} />
       <Outlet />
       <Footer ref={footerRef} className={phase !== "app" ? "hidden" : ""} />

@@ -85,11 +85,26 @@ export default function Accueil({ phase, onFinish }) {
           transition={shouldAnimate ? { duration: 1.8, ease: "easeInOut" } : { duration: 0 }}
         >
           <div className={styles.front}>
-            <img src={medallionBack} alt={about.alt.medallionBack} />
+            <img
+              src={medallionBack}
+              alt={about.alt.medallionBack}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
           </div>
 
           <div className={styles.back}>
-            <img src={portrait} alt={about.alt.portrait} />
+            <img
+              src={portrait}
+              alt={about.alt.portrait}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
+
+            {/* Нежный перелив — только после первого визита */}
+            {played && <div className={styles.medallionShimmer} aria-hidden />}
           </div>
         </Motion.div>
 

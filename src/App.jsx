@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import medallionBack from "./assets/images/medaillon_back.webp";
+import portrait from "./assets/images/AnastasiaGirard.webp";
 import MatryoshkaLoader from "./components/MatryoshkaLoader";
 import Layout from "./components/Layout";
 import Accueil from "./pages/Accueil";
@@ -29,6 +30,15 @@ export default function App() {
     setPhase("app");
   };
 
+  useEffect(() => {
+    const warm = (src) => {
+      const img = new Image();
+      img.src = src;
+      img.decode?.().catch(() => {});
+    };
+    warm(medallionBack);
+    warm(portrait);
+  }, []);
   return (
     <>
       <Routes>
