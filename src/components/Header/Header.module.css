@@ -108,5 +108,7 @@
 }
 
 .hidden {
-  display: none; /* ainsi la hauteur mesurée = 0 quand caché */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }

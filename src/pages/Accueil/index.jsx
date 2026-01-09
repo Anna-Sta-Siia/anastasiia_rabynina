@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+// src/pages/Accueil/index.jsx
+import { useEffect, useMemo, useState } from "react";
 import { motion as Motion } from "framer-motion";
 import { useUI } from "../../context";
 
@@ -13,62 +14,80 @@ import styles from "./Accueil.module.css";
 
 export default function Accueil({ phase, onFinish }) {
   const { language } = useUI();
+
+  const about = useMemo(
+    () => ({ fr: aboutFr, en: aboutEn, ru: aboutRu }[language] ?? aboutEn),
+    [language]
+  );
+
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
+  // 1 раз за сессию
+  const [played, setPlayed] = useState(() => sessionStorage.getItem("hasPlayedOnce") === "true");
   const [flipped, setFlipped] = useState(false);
-  const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const translations = { fr: aboutFr, en: aboutEn, ru: aboutRu };
-  const about = translations[language] || aboutEn;
-
-  // 🔁 Détection responsive
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 🎬 Lecture unique de l’anim
   useEffect(() => {
-    const alreadyPlayed = sessionStorage.getItem("hasPlayedOnce") === "true";
-    setHasPlayedOnce(alreadyPlayed);
+    const already = sessionStorage.getItem("hasPlayedOnce") === "true";
+    setPlayed(already);
 
-    if (phase === "medallion" && !alreadyPlayed) {
+    if (phase === "medallion" && already) {
+      setFlipped(true);
+      onFinish?.();
+      return;
+    }
+
+    if (phase === "medallion" && !already) {
       const t1 = setTimeout(() => setFlipped(true), 500);
       const t2 = setTimeout(() => {
-        onFinish?.();
-        setHasPlayedOnce(true);
         sessionStorage.setItem("hasPlayedOnce", "true");
+        setPlayed(true);
+        onFinish?.();
       }, 2500);
+
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
       };
     }
-    if (phase === "medallion" && alreadyPlayed) onFinish?.();
+
+    if (phase === "app") setFlipped(true);
   }, [phase, onFinish]);
 
-  // ✅ Осмысленные состояния анимации
-  const opened = flipped || hasPlayedOnce || phase === "app";
-  const animate = isMobile ? { rotateX: opened ? 180 : 0 } : { rotateY: opened ? -180 : 0 };
+  const shouldAnimate = phase === "medallion" && !played;
+  const opened = phase === "app" || played || flipped;
 
-  // ✅ initial = 0 на нужной оси, чтобы не было «вспышки задника»
-  const initial = isMobile ? { rotateX: 0 } : { rotateY: 0 };
+  // Поза "закрыто" и "открыто" — строго под текущую ось
+  const closedPose = isMobile ? { rotateX: 0 } : { rotateY: 0 };
+  const openPose = isMobile ? { rotateX: -180 } : { rotateY: -180 };
 
-  // ✅ Класс для выбора правильной оси в CSS (см. чек‑лист ниже)
+  // ВАЖНО: initial должен совпадать с текущим opened, чтобы при remount (после resize)
+  // не показывать крышку на долю секунды
+  const initialPose = opened ? openPose : closedPose;
+
+  // Ключ: при смене mobile/desktop медальон пересоздаётся, и 3D-ось не ломает face
+  const axisKey = isMobile ? "medallion-mobile" : "medallion-desktop";
   const axisClass = isMobile ? styles.mobile : styles.desktop;
 
   return (
     <section className={styles.accueil}>
       <div className={styles.duo}>
         <Motion.div
+          key={axisKey}
           className={`${styles.medallion} ${axisClass}`}
-          initial={initial}
-          animate={animate}
-          transition={{ duration: 1.8, ease: "easeInOut" }}
+          initial={initialPose}
+          animate={opened ? openPose : closedPose}
+          transition={shouldAnimate ? { duration: 1.8, ease: "easeInOut" } : { duration: 0 }}
         >
           <div className={styles.front}>
             <img src={medallionBack} alt={about.alt.medallionBack} />
           </div>
+
           <div className={styles.back}>
             <img src={portrait} alt={about.alt.portrait} />
           </div>

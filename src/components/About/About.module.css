@@ -17,7 +17,7 @@
   font-size: clamp(20px, 7cqw, 28px);
   font-family: var(--logo-font);
   font-weight: 700;
-  margin: 10% 8% 8% 8%;
+  margin: 12% 8% 8% 8%;
   text-wrap: balance;
   hyphens: manual; /* on évite les césures automatiques dans le titre */
 }

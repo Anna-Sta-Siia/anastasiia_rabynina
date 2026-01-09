@@ -30,12 +30,12 @@ export default function MatryoshkaLoader({ onComplete }) {
 
       // Анимация верхней части
       topControls.start({
-        y: -60, // приподнимается вверх
+        y: -100, // приподнимается вверх
         x: -180, // уезжает влево
         rotate: -180, // поворот против часовой
         originY: 1, // вращаем относительно нижнего края
         transition: {
-          duration: 1.8,
+          duration: 6,
           ease: "easeInOut",
         },
       });
@@ -51,21 +51,16 @@ export default function MatryoshkaLoader({ onComplete }) {
 
       overlayControls.start({
         opacity: 0,
-        transition: { duration: 1.2, ease: "easeOut" },
+        transition: { duration: 0.6, ease: "easeOut" },
       });
-
-      setTimeout(() => onComplete?.(), 1200);
+      setTimeout(() => onComplete?.(), 600);
     }
 
     animate();
   }, [topControls, bottomControls, overlayControls, onComplete]);
 
   return (
-    <Motion.div
-      className={styles.overlay}
-      initial={{ opacity: 1 }}
-      animate={overlayControls}
-    >
+    <Motion.div className={styles.overlay} initial={{ opacity: 1 }} animate={overlayControls}>
       <AnimatePresence>
         {phase === "rotating" && (
           <Motion.img

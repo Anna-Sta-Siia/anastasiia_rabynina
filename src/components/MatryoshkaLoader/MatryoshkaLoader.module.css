@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: #F5EFE4;
+  background-color: #f5efe4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +23,7 @@
 }
 
 .top {
-  top: 45%; /* чуть выше центра */
+  top: 36%; /* чуть выше центра */
   z-index: 2;
 }
 
