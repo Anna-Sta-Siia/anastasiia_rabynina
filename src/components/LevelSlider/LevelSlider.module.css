@@ -33,7 +33,9 @@
   background: #6fa66f;
   transition: width 220ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
-
+.dragging .fill {
+  transition: none;
+}
 /* ================= HINT (avant interaction) ================= */
 .hint {
   position: absolute;
@@ -46,7 +48,7 @@
 
   color: rgba(0, 0, 0, 0.45);
   font-weight: 600;
-  font-size: clamp(12px, 3.2vw, 16px);
+  font-size: clamp(16px, 3.2vw, 22px);
 
   transition: opacity 160ms ease;
 }
@@ -151,33 +153,19 @@
 /* thumb */
 .range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, #fff 0 35%, #f2f2f2 60%, #e8e8e8 100%),
-    repeating-linear-gradient(45deg, rgba(111, 166, 111, 0.793) 0 6px, rgba(0, 0, 0, 0) 6px 12px);
-  background-blend-mode: multiply;
-
-  border: 3px solid #6fa66f;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-  transform: rotate(var(--roll, 0deg));
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
 }
 .range:active::-webkit-slider-thumb {
   transform: scale(1.08) rotate(var(--roll, 0deg));
 }
 
 .range::-moz-range-thumb {
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, #fff 0 35%, #f2f2f2 60%, #e8e8e8 100%),
-    repeating-linear-gradient(45deg, rgba(111, 166, 111, 0.793) 0 6px, rgba(0, 0, 0, 0) 6px 12px);
-  background-blend-mode: multiply;
-  border: 3px solid #6fa66f;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-  transform: rotate(var(--roll, 0deg));
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: 0;
 }
 .range:active::-moz-range-thumb {
   transform: scale(1.08) rotate(var(--roll, 0deg));
@@ -196,24 +184,122 @@
   border: 0;
 }
 
-/* ================= MOBILE ================= */
-@media (max-width: 520px) {
-  .labels {
-    display: none;
-  }
+/* ===== KOLOBOK (style capture) ===== */
+.kolobok {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+
+  pointer-events: none;
+
+  /* Corps : jaune chaud + ombre douce + lumière centrale */
+  background: radial-gradient(
+      circle at 45% 38%,
+      rgba(255, 255, 255, 0.85) 0 20%,
+      rgba(255, 255, 255, 0) 55%
+    ),
+    radial-gradient(circle at 55% 60%, #ffeaa7 0%, #f3cf6f 55%, #e5b45b 100%);
+
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18), inset 0 2px 8px rgba(255, 255, 255, 0.35),
+    inset 0 -6px 10px rgba(150, 90, 20, 0.15);
+
+  border: 2px solid rgba(185, 120, 30, 0.25);
+
+  /* Roule + placement */
+  transform: translate(-50%, -50%) rotate(var(--roll, 0deg));
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  will-change: transform;
 }
 
-/* ================= REDUCED MOTION ================= */
-@media (prefers-reduced-motion: reduce) {
-  .fill {
-    transition: none;
-  }
-  .labels,
-  .activeLabel {
-    animation: none;
-  }
-  .range::-webkit-slider-thumb,
-  .range::-moz-range-thumb {
-    transition: none;
-  }
+.kolobokDragging {
+  transform: translate(-50%, -50%) rotate(var(--roll, 0deg)) scale(1.08);
+}
+
+/* ===== SOURCILS (petits ovales comme sur la capture) ===== */
+.browLeft,
+.browRight {
+  position: absolute;
+  top: 22%;
+  width: 6px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(140, 95, 25, 0.35);
+  filter: blur(0.1px);
+}
+.browLeft {
+  left: 18%;
+  transform: rotate(-12deg);
+}
+.browRight {
+  right: 18%;
+  transform: rotate(12deg);
+}
+
+/* ===== JOUES ROSÉES ===== */
+.cheekLeft,
+.cheekRight {
+  position: absolute;
+  top: 58%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 120, 120, 0.55) 0%, rgba(255, 120, 120, 0) 70%);
+}
+.cheekLeft {
+  left: 8%;
+}
+.cheekRight {
+  right: 8%;
+}
+
+/* ===== YEUX (bleu brillant) ===== */
+.eyeLeft,
+.eyeRight {
+  position: absolute;
+  top: 36%;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+
+  /* Iris bleu + pupille + reflet */
+  background: radial-gradient(circle at 35% 35%, #ffffff 0 18%, rgba(255, 255, 255, 0) 19%),
+    radial-gradient(circle at 50% 55%, #0a0a0a 0 22%, rgba(0, 0, 0, 0) 23%),
+    radial-gradient(circle at 50% 55%, #2b79ff 0 55%, #0f3c96 85%, #07264f 100%);
+
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.7), 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.eyeLeft {
+  left: 20%;
+}
+.eyeRight {
+  right: 20%;
+}
+
+/* ===== NEZ (petit, rond, chaud) ===== */
+.nose {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+
+  background: radial-gradient(circle at 35% 35%, #ffd9b6 0 30%, #d79255 65%, #b67135 100%);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* ===== BOUCHE  ===== */
+.mouth {
+  position: absolute;
+  left: 50%;
+  top: 76%;
+  width: 20px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-bottom: 2px solid rgba(90, 40, 10, 0.75);
+  border-radius: 0 0 999px 999px;
 }

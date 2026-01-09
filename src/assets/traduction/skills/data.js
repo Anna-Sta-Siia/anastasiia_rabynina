@@ -21,33 +21,33 @@ export const PROJECTS = [
 
 // Compétences (level 1–5) + rattachement aux pétales + projets où c’est utilisé
 export const SKILLS = [
-  { name: "HTML", cats: ["markup"], level: 5, projects: [] },
+  { name: "HTML", cats: ["markup"], level: 4, projects: [] },
   { name: "SASS / SCSS", cats: ["styles"], level: 5, projects: ["ohmyfood", "kasa"] },
   {
     name: "CSS",
     cats: ["styles"],
-    level: 5,
+    level: 4,
     projects: ["mon-projet", "sophie-bluel", "argentbank"],
   },
 
   {
     name: "Async / Promises",
     cats: ["js"],
-    level: 4,
+    level: 3,
     projects: ["sophie-bluel", "argentbank", "kasa"],
   },
   {
     name: "React Hooks",
     cats: ["react"],
-    level: 4,
+    level: 2,
     projects: ["argentbank", "kasa", "mon-projet"],
   },
-  { name: "Redux Toolkit", cats: ["state", "react"], level: 4, projects: ["argentbank"] },
+  { name: "Redux Toolkit", cats: ["state", "react"], level: 2, projects: ["argentbank"] },
 
   {
     name: "REST / fetch",
     cats: ["api", "js"],
-    level: 4,
+    level: 3,
     projects: ["sophie-bluel", "kasa", "argentbank"],
   },
   {
@@ -64,15 +64,15 @@ export const SKILLS = [
   {
     name: "Vite (React)",
     cats: ["tooling"],
-    level: 5,
+    level: 3,
     projects: ["mon-projet", "kasa", "argentbank"],
   },
-  { name: "Git / GitHub", cats: ["tooling"], level: 5, projects: [] },
+  { name: "Git / GitHub", cats: ["tooling"], level: 2, projects: [] },
   {
     name: "VS Code",
     cats: ["tooling"],
-    level: 5,
+    level: 2,
     projects: [],
   },
-  { name: "Terminal (WSL)", cats: ["tooling"], level: 4, projects: [] },
+  { name: "Terminal (WSL)", cats: ["tooling"], level: 3, projects: [] },
 ];
