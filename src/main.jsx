@@ -6,11 +6,8 @@ import { UIProvider } from "./context";
 import App from "./App.jsx";
 import "./index.css";
 
-// 👇 on importe notre détecteur de base
-import { detectRouterBase } from "./routerBase.js";
-
 // Détection automatique du bon basename
-const BASENAME = detectRouterBase();
+const BASENAME = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

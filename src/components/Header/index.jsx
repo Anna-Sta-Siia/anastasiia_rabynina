@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { useUI } from "../../context";
 import { useLocation, Link } from "react-router-dom";
-import menuItems from "../../config/menuConfig";
+import { menuItems } from "../../config/menuConfig";
 
 import luna from "../../assets/images/luna.svg";
 import solnyshko from "../../assets/images/solnyshko.svg";

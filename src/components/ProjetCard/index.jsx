@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useUI } from "../../context";
 import { useOverflow } from "../../hooks/useOverflow";
 import { useReturnFocus } from "../../hooks/useReturnFocus";
-import menuItems from "../../config/menuConfig";
+import { menuItems } from "../../config/menuConfig";
 import styles from "./ProjetCard.module.css";
 import Modal from "../Modal";
 import modalCss from "../Modal/Modal.module.css";

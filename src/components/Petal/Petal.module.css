@@ -1,12 +1,12 @@
 .petal {
   display: inline-block;
   padding: 0.6rem 1rem;
-  margin: 0.5% 0; 
+  margin: 0.5% 0;
   background: var(--bg);
   color: var(--text);
   text-decoration: none;
-  border-radius: 40%   ;
-  border: 2px solid rgba(0,0,0,0.15);
+  border-radius: 40%;
+  border: 2px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 3px 6px #00000026;
   font-size: 24px;
   width: fit-content;
@@ -14,22 +14,31 @@
   will-change: transform, filter;
   cursor: pointer;
   width: fit-content;
-}  
+}
 /* Desktop / souris : hover réel */
 @media (hover: hover) and (pointer: fine) {
-  .petal:hover { transform: scale(1.06); box-shadow: 0 10px 20px rgba(0,0,0,.15); }
+  .petal:hover {
+    transform: scale(1.06);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
 }
 
 /* Mobile / tactile : feedback au tap */
 @media (hover: none) and (pointer: coarse) {
-  .petal:active { transform: scale(1.04); filter: brightness(0.98); }
+  .petal:active {
+    transform: scale(1.04);
+    filter: brightness(0.98);
+  }
 }
 
 /* Clavier (accessibilité) partout */
-.petal:focus-visible { transform: scale(1.06); box-shadow: 0 10px 20px rgba(0,0,0,.15); }
+.petal:focus-visible {
+  transform: scale(1.06);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
 
 .petal.active {
-  box-shadow: 0 0 0 4px rgba(0,0,0,0.15), inset 0 0 0 3px #fff;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.15), inset 0 0 0 3px #fff;
   transform: scale(1.08);
   font-weight: bold;
 }
@@ -40,3 +49,8 @@
   z-index: 1;
 }
 
+.petal[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}

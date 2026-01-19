@@ -1,11 +1,12 @@
 // src/config/hooks/usePageMeta.js
-import { useLocation } from 'react-router-dom';
-import { useUI } from '../../context';
-import menuItems from '../menuConfig';
+import { useLocation } from "react-router-dom";
+import { useUI } from "../../context";
+import { menuItems } from "../menuConfig";
+import { normalizePath, removeLanguage } from "../../utils/pathManager";
 
-import menuEn from '../../assets/traduction/menu/menu.en.json';
-import menuFr from '../../assets/traduction/menu/menu.fr.json';
-import menuRu from '../../assets/traduction/menu/menu.ru.json';
+import menuEn from "../../assets/traduction/menu/menu.en.json";
+import menuFr from "../../assets/traduction/menu/menu.fr.json";
+import menuRu from "../../assets/traduction/menu/menu.ru.json";
 
 const labels = { en: menuEn, fr: menuFr, ru: menuRu };
 
@@ -13,20 +14,26 @@ export function usePageMeta() {
   const { pathname } = useLocation();
   const { language } = useUI();
 
-  // Ne garder que les routes internes
-  const routeItems = menuItems.filter(it => typeof it.path === 'string' && it.path.startsWith('/'));
+  let p = removeLanguage(pathname);
 
-  // ====> le plus long préfixe gagnant
+  // on ne laisse que les routes internes
+  const routeItems = menuItems.filter(
+    (it) => typeof it.path === "string" && !it.path.startsWith("http")
+  );
+
   const current =
     routeItems
       .slice()
-      .sort((a, b) => b.path.length - a.path.length)
-      .find(it => pathname === it.path || pathname.startsWith(`${it.path}/`))
-    || routeItems.find(it => it.path === '/')
-    || routeItems[0];
+      .sort((a, b) => normalizePath(b.path).length - normalizePath(a.path).length) //on trie selon le niveau de la specificité/imrification/actuellment on n'en pas besoin, car toutes les routes sont de niveau , mais pour la perspective c'est indispensable
+      .find((it) => {
+        const ip = normalizePath(it.path);
+        return p === ip || p.startsWith(`${ip}/`);
+      }) ||
+    routeItems.find((it) => normalizePath(it.path) === "/") || //le cas de la page d'accueil
+    routeItems[0]; //le cas de la page d'accueil
 
-  const key   = current?.key ?? 'accueil';
-  const color = current?.color ?? '#eee';
+  const key = current?.key ?? "accueil";
+  const color = current?.color ?? "#fff5e1";
   const label = labels[language]?.[key] || key;
 
   return { key, color, label };

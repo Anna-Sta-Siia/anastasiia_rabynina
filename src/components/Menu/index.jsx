@@ -1,11 +1,12 @@
 // src/components/Menu/index.jsx
+import { menuItems } from "../../config/menuConfig";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUI } from "../../context";
 import Petal from "../Petal/PetalMenu";
 import Modal from "../Modal";
 import styles from "./Menu.module.css";
-
+import { usePageMeta } from "../../config/hooks/usePageMeta";
 import menuEn from "../../assets/traduction/menu/menu.en.json";
 import menuFr from "../../assets/traduction/menu/menu.fr.json";
 import menuRu from "../../assets/traduction/menu/menu.ru.json";
@@ -16,27 +17,14 @@ import contactRu from "../../assets/traduction/contact/contact.ru.json";
 const labels = { en: menuEn, fr: menuFr, ru: menuRu };
 const contactLabels = { en: contactEn, fr: contactFr, ru: contactRu };
 
-const items = [
-  { key: "projects", path: "/projects", color: "#F8BBD0" },
-  { key: "skills", path: "/skills", color: "#FFCC80" },
-  { key: "contact", path: "/contact", color: "#B0BEC5" },
-  {
-    key: "linkedin",
-    path: "https://www.linkedin.com/in/anastasia-rabynina-139992312/",
-    color: "#81D4FA",
-  },
-  { key: "github", path: "https://github.com/Anna-Sta-Siia", color: "#D1C4E9" },
-  { key: "cv", path: "/cv", color: "#bbf8c5" },
-];
-
 export default function Menu() {
+  const visibleItems = menuItems.filter((it) => it.showInMenu !== false);
   const { language, hasContactDraft, setHasContactDraft } = useUI();
   const translated = labels[language] || labels.en;
   const tContact = contactLabels[language] || contactLabels.en;
   const location = useLocation();
   const navigate = useNavigate();
-  const currentPath = location.pathname;
-
+  const { key: activeKey } = usePageMeta();
   const [index, setIndex] = useState(0);
   const [fade, setFade] = useState(false);
   const [visibleCount, setVisibleCount] = useState(2);
@@ -90,7 +78,7 @@ export default function Menu() {
 
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      setIndex((prev) => (prev + delta + items.length) % items.length);
+      setIndex((prev) => (prev + delta + visibleItems.length) % visibleItems.length);
       setFade(false);
       isAnimatingRef.current = false;
     }, FADE_MS);
@@ -183,10 +171,10 @@ export default function Menu() {
         {Array(visibleCount)
           .fill(0)
           .map((_, i) => {
-            const item = items[(index + i) % items.length];
-            const isActive = item.path === currentPath;
-
-            const isExternal = /^https?:\/\//.test(item.path);
+            const item = visibleItems[(index + i) % visibleItems.length];
+            const disabled = typeof item.path !== "string" || item.path.trim() === "";
+            const isExternal = !disabled && /^https?:\/\//.test(item.path);
+            const isActive = item.key === activeKey;
 
             return (
               <Petal
@@ -196,8 +184,9 @@ export default function Menu() {
                 path={item.path}
                 color={item.color}
                 isActive={isActive}
+                disabled={disabled}
                 // ⚠️ guard только для внутренних внутренних ссылок
-                onClick={isExternal ? undefined : (e) => handleLeaveClick(e, item.path)}
+                onClick={disabled || isExternal ? undefined : (e) => handleLeaveClick(e, item.path)}
               />
             );
           })}
