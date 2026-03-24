@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ohmyfood",
+    "title": "OhMyFood",
+    "titleLogo": "images/logos/ohmyfood.svg",
+    "image": "images/projects/ohmyfood.webp",
+    "link": "https://anna-sta-siia.github.io/Ohmyfood/",
+    "stack": ["HTML", "SASS"],
+    "color": "linear-gradient(90deg, #FF79DA, #9356DC)",
+    "imageEffect": "spin"
+  },
+  {
+    "id": "kasa",
+    "title": "Kasa",
+    "titleLogo": "images/logos/kasa.webp",
+    "image": "images/projects/kasa.webp",
+    "link": "https://anna-sta-siia.github.io/Kasa/",
+    "stack": ["JS", "React", "SASS", "HTML", "API"],
+    "imageEffect": "fade"
+  },
+  {
+    "id": "sophie-bluel",
+    "title": "Sophie Bluel",
+    "titleLogo": "images/logos/sophie-bluel.webp",
+    "image": "images/projects/sophie-bluel.webp",
+    "link": "https://anna-sta-siia.github.io/Architecte-Sophie-Bluel/",
+    "stack": ["HTML", "CSS", "JS", "API"],
+    "color": "#FAF9F3"
+  },
+  {
+    "id": "argentbank",
+    "title": "Argent Bank",
+    "titleLogo": "images/logos/argentbank.webp",
+    "image": "images/projects/argentbank.webp",
+    "link": "https://anna-sta-siia.github.io/ArgentBank/",
+    "stack": ["JS", "React", "RTK", "API", "CSS", "HTML"]
+  },
+  {
+    "id": "nina-carducci",
+    "title": "Nina Carducci",
+    "titleLogo": "images/logos/nina-carducci.webp",
+    "image": "images/projects/nina-carducci.webp",
+    "link": "https://anna-sta-siia.github.io/Nina-Carducci/",
+    "stack": ["SEO", "HTML", "CSS"]
+  },
+  {
+    "id": "mon-projet",
+    "title": "Anastasia R.",
+    "titleLogo": "images/logos/anastasia-rabynina.webp",
+    "image": "images/projects/anastasia-rabynina.webp",
+    "link": "https://anna-sta-siia.github.io/anastasiia_rabynina/",
+    "stack": ["JS", "React", "CSS", "HTML", "SEO"],
+    "color": "#F8BBD0",
+    "imageEffect": "spin"
+  }
+]

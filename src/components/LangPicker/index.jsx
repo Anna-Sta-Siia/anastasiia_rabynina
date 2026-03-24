@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUI } from "../../context";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
 import styles from "./LangPicker.module.css";
 
 const LANGS = [
@@ -15,16 +16,18 @@ const T = {
 };
 
 export default function LangPicker() {
-  const { language, changeLanguage } = useUI();
+  const { requestedLang, changeLanguage } = useUI();
+  const displayLang = useDisplayLang();
+
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const btnRef = useRef(null);
   const listRef = useRef(null);
 
-  const i18n = T[language] || T.en;
+  const i18n = T[displayLang] || T.en;
   const currentIndex = Math.max(
     0,
-    LANGS.findIndex((l) => l.code === language)
+    LANGS.findIndex((l) => l.code === displayLang),
   );
 
   useEffect(() => {
@@ -53,7 +56,7 @@ export default function LangPicker() {
         title={i18n.change}
         onClick={() => setOpen((o) => !o)}
       >
-        {LANGS[currentIndex]?.label ?? language.toUpperCase()}
+        {LANGS[currentIndex]?.label ?? displayLang.toUpperCase()}
         <span className={styles.caret} aria-hidden>
           ▾
         </span>
@@ -90,12 +93,11 @@ export default function LangPicker() {
               role="option"
               tabIndex={0}
               data-idx={i}
-              aria-selected={l.code === language}
-              className={`${styles.item} ${l.code === language ? styles.active : ""}`}
+              aria-selected={l.code === requestedLang}
+              className={`${styles.item} ${l.code === displayLang ? styles.active : ""}`}
               onClick={() => {
                 setOpen(false);
-                // PAS de setLanguage ici → pas de flash
-                changeLanguage(l.code); // redirection (rechargement court)
+                changeLanguage(l.code);
               }}
             >
               {l.label}

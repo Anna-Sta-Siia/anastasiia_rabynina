@@ -6,10 +6,15 @@ import { useUI } from "../../context";
 import Petal from "../Petal/PetalMenu";
 import Modal from "../Modal";
 import styles from "./Menu.module.css";
+
 import { usePageMeta } from "../../config/hooks/usePageMeta";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
+import { buildLangUrl } from "../../utils/pathManager";
+
 import menuEn from "../../assets/traduction/menu/menu.en.json";
 import menuFr from "../../assets/traduction/menu/menu.fr.json";
 import menuRu from "../../assets/traduction/menu/menu.ru.json";
+
 import contactEn from "../../assets/traduction/contact/contact.en.json";
 import contactFr from "../../assets/traduction/contact/contact.fr.json";
 import contactRu from "../../assets/traduction/contact/contact.ru.json";
@@ -19,23 +24,31 @@ const contactLabels = { en: contactEn, fr: contactFr, ru: contactRu };
 
 export default function Menu() {
   const visibleItems = menuItems.filter((it) => it.showInMenu !== false);
-  const { language, hasContactDraft, setHasContactDraft } = useUI();
-  const translated = labels[language] || labels.en;
-  const tContact = contactLabels[language] || contactLabels.en;
+
+  const { requestedLang, hasContactDraft, setHasContactDraft } = useUI();
+  const displayLang = useDisplayLang();
+
+  const translated = labels[displayLang] || labels.en;
+  const tContact = contactLabels[displayLang] || contactLabels.en;
+
   const location = useLocation();
   const navigate = useNavigate();
-  const { key: activeKey } = usePageMeta();
+
+  const { key: activeKey } = usePageMeta(displayLang);
+
   const [index, setIndex] = useState(0);
   const [fade, setFade] = useState(false);
   const [visibleCount, setVisibleCount] = useState(2);
-  // ==== garde "quitter la section Contact" ====
-  const [leaveTarget, setLeaveTarget] = useState(null); // путь, куда хотим уйти
-  const [leaveOpen, setLeaveOpen] = useState(false); // открыта ли модалка
+
+  const [leaveTarget, setLeaveTarget] = useState(null);
+  const [leaveOpen, setLeaveOpen] = useState(false);
 
   const sliderRef = useRef(null);
   const petalRef = useRef(null);
+
   const [dir, setDir] = useState(+1);
   const dirRef = useRef(dir);
+
   useEffect(() => {
     dirRef.current = dir;
   }, [dir]);
@@ -48,11 +61,26 @@ export default function Menu() {
   const FADE_MS = 400;
   const AUTO_MS = 6000;
   const RESUME_AFTER = 2000;
+  const step = useCallback(
+    (delta) => {
+      if (isAnimatingRef.current) return;
 
+      isAnimatingRef.current = true;
+      setFade(true);
+
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setIndex((prev) => (prev + delta + visibleItems.length) % visibleItems.length);
+        setFade(false);
+        isAnimatingRef.current = false;
+      }, FADE_MS);
+    },
+    [visibleItems.length],
+  );
   const startAuto = useCallback(() => {
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => step(dirRef.current), AUTO_MS);
-  }, []); // refs стабильны → deps можно оставить пустыми
+  }, [step]);
 
   function stopAuto() {
     clearInterval(intervalRef.current);
@@ -69,19 +97,6 @@ export default function Menu() {
     resumeTimeoutRef.current = setTimeout(() => {
       startAuto();
     }, RESUME_AFTER);
-  }
-
-  function step(delta) {
-    if (isAnimatingRef.current) return;
-    isAnimatingRef.current = true;
-    setFade(true);
-
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setIndex((prev) => (prev + delta + visibleItems.length) % visibleItems.length);
-      setFade(false);
-      isAnimatingRef.current = false;
-    }, FADE_MS);
   }
 
   useEffect(() => {
@@ -108,8 +123,7 @@ export default function Menu() {
       if (!container || !petal) return;
 
       const containerWidth = container.clientWidth;
-      const petalRect = petal.getBoundingClientRect();
-      const petalWidth = petalRect.width;
+      const petalWidth = petal.getBoundingClientRect().width;
 
       const styles = window.getComputedStyle(container);
       const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
@@ -121,6 +135,7 @@ export default function Menu() {
     updateVisibleCount();
     const ro = new ResizeObserver(updateVisibleCount);
     if (sliderRef.current) ro.observe(sliderRef.current);
+
     window.addEventListener("resize", updateVisibleCount);
     return () => {
       ro.disconnect();
@@ -132,24 +147,19 @@ export default function Menu() {
     typeof window !== "undefined" &&
     window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-  /** 🧠 Garde SPA: quitter la section Contact avec un brouillon */
   const handleLeaveClick = useCallback(
     (event, targetPath) => {
-      // 1. Нет черновика — даём React Router самому навигировать
       if (!hasContactDraft) return;
 
-      // 2. Защищаем только когда мы *сейчас* на /contact
       if (!location.pathname.includes("/contact")) return;
 
-      // 3. Если кликаем по Contact → Contact, тоже ничего не делаем
       if (targetPath === "/contact") return;
 
-      // 4. Здесь точно есть черновик и попытка уйти с Contact
       event.preventDefault();
       setLeaveTarget(targetPath);
       setLeaveOpen(true);
     },
-    [hasContactDraft, location.pathname]
+    [hasContactDraft, location.pathname],
   );
 
   return (
@@ -172,21 +182,34 @@ export default function Menu() {
           .fill(0)
           .map((_, i) => {
             const item = visibleItems[(index + i) % visibleItems.length];
+
             const disabled = typeof item.path !== "string" || item.path.trim() === "";
             const isExternal = !disabled && /^https?:\/\//.test(item.path);
+
             const isActive = item.key === activeKey;
 
+            const targetPath =
+              !disabled && !isExternal
+                ? buildLangUrl(requestedLang, { pathname: item.path })
+                : item.path;
+            console.log("menu item", {
+              key: item.key,
+              itemPath: item.path,
+              targetPath,
+              requestedLang,
+            });
             return (
               <Petal
                 ref={i === 0 ? petalRef : null}
                 key={`${item.key}-${i}`}
                 name={translated[item.key] || item.key}
-                path={item.path}
+                path={targetPath}
                 color={item.color}
                 isActive={isActive}
                 disabled={disabled}
-                // ⚠️ guard только для внутренних внутренних ссылок
-                onClick={disabled || isExternal ? undefined : (e) => handleLeaveClick(e, item.path)}
+                onClick={
+                  disabled || isExternal ? undefined : (e) => handleLeaveClick(e, targetPath)
+                }
               />
             );
           })}
@@ -195,7 +218,8 @@ export default function Menu() {
       <button className={styles.arrow} onClick={() => handleScroll("left")}>
         ▶
       </button>
-      {/* === Modal "Quitter la section Contact ?" === */}
+
+      {/* === Modal quitter Contact === */}
       <Modal
         open={leaveOpen}
         onClose={() => {
@@ -208,6 +232,7 @@ export default function Menu() {
       >
         <div className={styles.modalEditor}>
           <p className={styles.modalContent}>{tContact.unsentGuardBody}</p>
+
           <div className={styles.modalBar}>
             <div className={styles.modalActions}>
               <button
@@ -228,11 +253,8 @@ export default function Menu() {
                   const target = leaveTarget;
                   setLeaveOpen(false);
                   setLeaveTarget(null);
-                  // по желанию: больше не считать, что есть черновик
                   setHasContactDraft(false);
-                  if (target) {
-                    navigate(target);
-                  }
+                  if (target) navigate(target);
                 }}
               >
                 {tContact.unsentGuardLeave}

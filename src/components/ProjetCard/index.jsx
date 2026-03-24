@@ -1,73 +1,54 @@
 // src/components/ProjetCard/index.jsx
 import { useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useUI } from "../../context";
+import { makeAriaId } from "../../utils/makeAriaId.js";
 import { useOverflow } from "../../hooks/useOverflow";
 import { useReturnFocus } from "../../hooks/useReturnFocus";
 import { menuItems } from "../../config/menuConfig";
+import { buildLangUrl } from "../../utils/pathManager";
 import styles from "./ProjetCard.module.css";
 import Modal from "../Modal";
 import modalCss from "../Modal/Modal.module.css";
 
-// UI (projet)
-import uiFr from "../../assets/traduction/projet/ui.fr.json";
-import uiEn from "../../assets/traduction/projet/ui.en.json";
-import uiRu from "../../assets/traduction/projet/ui.ru.json";
+// UI (projets)
+import UiProjetEn from "../../assets/traduction/projet/ui.en.json";
+import UiProjetFR from "../../assets/traduction/projet/ui.fr.json";
+import UiProjetRu from "../../assets/traduction/projet/ui.ru.json";
 
-// Labels des filtres (affichage humain des stacks)
+// Labels des filtres
 import labelsFr from "../../assets/traduction/filters/filters.fr.json";
 import labelsEn from "../../assets/traduction/filters/filters.en.json";
 import labelsRu from "../../assets/traduction/filters/filters.ru.json";
 
-export default function ProjetCard({ project }) {
-  const { language } = useUI();
+const PROJECTS_UI_DICTS = { fr: UiProjetFR, en: UiProjetEn, ru: UiProjetRu };
+const FILTER_LABELS_DICTS = { fr: labelsFr, en: labelsEn, ru: labelsRu };
 
-  /* ========== UI localisée ========== */
-  const ui = useMemo(() => {
-    switch (language) {
-      case "en":
-        return uiEn;
-      case "ru":
-        return uiRu;
-      default:
-        return uiFr;
-    }
-  }, [language]);
+export default function ProjetCard({ project, lang = "fr" }) {
+  const projectsUi = PROJECTS_UI_DICTS[lang] || PROJECTS_UI_DICTS.fr;
+  const filterLabels = FILTER_LABELS_DICTS[lang] || FILTER_LABELS_DICTS.fr;
 
-  const filterLabels = useMemo(() => {
-    switch (language) {
-      case "en":
-        return labelsEn;
-      case "ru":
-        return labelsRu;
-      default:
-        return labelsFr;
-    }
-  }, [language]);
-
-  /* ========== Lien Skills ========== */
   const skillsPath = useMemo(() => {
     const item = menuItems.find((i) => i.key === "skills");
     return item?.path || "/skills";
   }, []);
 
-  /* ========== Données projet ========== */
+  const DEFAULT_CARD_COLOR = "#ffffff";
+  const DEFAULT_IMAGE_EFFECT = "none";
+
   const {
     id,
     title,
     titleLogo,
-    titleLogoAlt,
     image,
     imageAlt,
     link,
     description,
     stack = [],
-    color,
-    imageEffect = "none",
+    color = DEFAULT_CARD_COLOR,
+    imageEffect = DEFAULT_IMAGE_EFFECT,
     slogan,
   } = project;
 
-  /* ========== Effet visuel image ========== */
   const imgEffectClass = useMemo(() => {
     switch (imageEffect) {
       case "spin":
@@ -81,55 +62,47 @@ export default function ProjetCard({ project }) {
 
   const [isFlipped, setIsFlipped] = useState(false);
 
-  /* ===========================
-     CLAMP + MODALE (hooks)
-     =========================== */
+  const withBase = (p) => `${import.meta.env.BASE_URL}${p}`;
 
-  // --- APERÇU ---
   const descRef = useRef(null);
   const descOpenerRef = useRef(null);
-  const descOverflow = useOverflow(descRef, [language, description]); // true si ça déborde
+  const descOverflow = useOverflow(descRef, [description, projectsUi]);
 
-  // --- OUTILS ---
   const toolsRef = useRef(null);
   const toolsOpenerRef = useRef(null);
-  const toolsOverflow = useOverflow(toolsRef, [language, stack]);
+  const toolsOverflow = useOverflow(toolsRef, [stack, filterLabels]);
 
-  // Modale commune (null | 'desc' | 'tools')
   const [modalType, setModalType] = useState(null);
   const showModal = modalType !== null;
 
-  // Rendre le focus au bon bouton après fermeture
   const lastOpenerRef = useReturnFocus(showModal);
 
-  // Outils condensés (clampables)
   const toolsHuman = useMemo(
     () => stack.map((k) => filterLabels[k] ?? k).join(" · "),
-    [stack, filterLabels]
+    [stack, filterLabels],
   );
 
-  // ID stable pour aria-describedby de la modale (contenu)
-  const modalTitleId = useMemo(() => {
-    const base = (id || title || "desc")
-      .toString()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9_-]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    return `desc-title-${base}`;
-  }, [id, title]);
+  const modalTitleId = useMemo(
+    () => `desc-title-${makeAriaId(id || title || "desc")}`,
+    [id, title],
+  );
+
+  const skillsUrl = useMemo(() => {
+    return buildLangUrl(lang, {
+      pathname: skillsPath,
+      search: `?only=${encodeURIComponent(id)}`,
+    });
+  }, [lang, skillsPath, id]);
 
   return (
     <div className={styles.card} data-project={id}>
       <div className={`${styles.inner} ${isFlipped ? styles.flipped : ""}`}>
-        {/* ---------- FACE AVANT ---------- */}
         <div className={styles.front} style={{ background: color }}>
           {titleLogo ? (
             <img
               className={styles.titleLogo}
-              src={`${import.meta.env.BASE_URL}${titleLogo}`}
-              alt={titleLogoAlt || title}
+              src={withBase(titleLogo)}
+              alt={title}
               width={180}
               decoding="async"
               loading="lazy"
@@ -138,11 +111,10 @@ export default function ProjetCard({ project }) {
             <h3 className={styles.title}>{title}</h3>
           )}
 
-          {/* Bulle média ronde */}
           {image && (
             <figure className={styles.mediaWrap}>
               <img
-                src={`${import.meta.env.BASE_URL}${image}`}
+                src={withBase(image)}
                 alt={imageAlt || title}
                 className={`${styles.mediaImg ?? ""} ${imgEffectClass}`}
                 decoding="async"
@@ -160,22 +132,23 @@ export default function ProjetCard({ project }) {
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className={styles.skillsrefer}
-                aria-label={`${ui.visit} — ${title}`}
+                aria-label={`${projectsUi.visit} — ${title}`}
+                title={projectsUi.visit}
               >
-                {ui.visit}
+                {projectsUi.visit}
               </a>
             )}
 
             <div className={styles.arrowContainer}>
-              <p>{ui.flip}</p>
+              <p>{projectsUi.flip}</p>
               <button
                 className={styles.flipArrow}
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsFlipped(true);
                 }}
-                aria-label={ui.flip}
-                title={ui.flip}
+                aria-label={projectsUi.flip}
+                title={projectsUi.flip}
               >
                 ▶
               </button>
@@ -183,11 +156,9 @@ export default function ProjetCard({ project }) {
           </div>
         </div>
 
-        {/* ---------- FACE ARRIÈRE ---------- */}
         <div className={styles.back} style={{ background: color }}>
-          <h4 className={styles.descriptiontitle}>{ui.preview}</h4>
+          <h4 className={styles.descriptiontitle}>{projectsUi.preview}</h4>
 
-          {/* Aperçu (clamp + bouton) */}
           <div className={styles.previewZone}>
             <div className={styles.descBox} ref={descRef} aria-live="polite">
               {description}
@@ -206,16 +177,15 @@ export default function ProjetCard({ project }) {
                 aria-expanded={showModal && modalType === "desc" ? "true" : "false"}
                 ref={descOpenerRef}
               >
-                {ui.seeMore}…
+                {projectsUi.seeMore}…
               </button>
             )}
           </div>
 
           {!!stack.length && (
             <>
-              <h4 className={styles.descriptiontitle}>{ui.tools}</h4>
+              <h4 className={styles.descriptiontitle}>{projectsUi.tools}</h4>
 
-              {/* OUTILS (clamp 2 lignes + bouton) */}
               <div className={styles.toolsZone}>
                 <div className={styles.toolsBox} ref={toolsRef} aria-live="polite">
                   {toolsHuman}
@@ -234,7 +204,7 @@ export default function ProjetCard({ project }) {
                     aria-expanded={showModal && modalType === "tools" ? "true" : "false"}
                     ref={toolsOpenerRef}
                   >
-                    {ui.seeMore}…
+                    {projectsUi.seeMore}…
                   </button>
                 )}
               </div>
@@ -243,25 +213,24 @@ export default function ProjetCard({ project }) {
 
           <div className={styles.projectcardbottom}>
             <div className={styles.skillsCta}>
-              {/* on passe l’id du projet pour filtrer la page Skills */}
               <Link
-                to={`${skillsPath}?only=${encodeURIComponent(id)}`}
+                to={skillsUrl}
                 className={styles.skillsLink}
                 onClick={(e) => e.stopPropagation()}
-                aria-label={ui.seeSkills}
-                title={ui.seeSkills}
+                aria-label={projectsUi.seeSkills}
+                title={projectsUi.seeSkills}
               >
-                {ui.seeSkills}
+                {projectsUi.seeSkills}
               </Link>
             </div>
 
             <div className={styles.arrowContainer}>
-              <p>{ui.flipBack}</p>
+              <p>{projectsUi.flipBack}</p>
               <button
                 type="button"
                 className={`${styles.flipArrow} ${styles.flipBack}`}
-                aria-label={ui.flipBack}
-                title={ui.flipBack}
+                aria-label={projectsUi.flipBack}
+                title={projectsUi.flipBack}
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsFlipped(false);
@@ -274,10 +243,9 @@ export default function ProjetCard({ project }) {
         </div>
       </div>
 
-      {/* ---------- MODALE (externe) ---------- */}
       <Modal
         open={showModal}
-        title={`${title} — ${modalType === "tools" ? ui.tools : ui.preview}`}
+        title={`${title} — ${modalType === "tools" ? projectsUi.tools : projectsUi.preview}`}
         onClose={() => setModalType(null)}
         describedById={`${modalTitleId}-desc`}
       >

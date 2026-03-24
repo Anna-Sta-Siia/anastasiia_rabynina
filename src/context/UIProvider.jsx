@@ -1,13 +1,8 @@
 // src/context/UIProvider.jsx
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { UIContext } from "./UIContext";
-import { makeContentGuards } from "../guards";
-import {
-  getLangFromPathname,
-  LANGUAGE_STORAGE_KEY,
-  buildLangUrl,
-  getDefaultLang,
-} from "../utils/pathManager";
+import { makeContentGuards } from "../guards/lexical";
+import { getLangFromPathname, buildLangUrl, getDefaultLang, saveLang } from "../utils/pathManager";
 
 //pour éviter de recharger la page si l’URL cible est déjà la même
 function sameUrl(a, b) {
@@ -16,13 +11,14 @@ function sameUrl(a, b) {
   return na.pathname === nb.pathname && na.search === nb.search && na.hash === nb.hash;
 }
 
-function getInitialLang() {
-  return getLangFromPathname(location.pathname) || getDefaultLang();
-}
-
 export function UIProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
-  const [language, setLanguage] = useState(getInitialLang);
+
+  const [requestedLang, setRequestedLang] = useState(() => {
+    return (
+      localStorage.getItem("lang") || getLangFromPathname(location.pathname) || getDefaultLang()
+    );
+  });
 
   const [hasContactDraft, setHasContactDraft] = useState(false);
 
@@ -34,14 +30,14 @@ export function UIProvider({ children }) {
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-    document.documentElement.setAttribute("lang", language);
-  }, [language]);
+    saveLang(requestedLang);
+  }, [requestedLang]);
 
-  const guards = useMemo(() => makeContentGuards({ lang: language }), [language]);
+  const guards = useMemo(() => makeContentGuards({ lang: requestedLang }), [requestedLang]);
 
   const changeLanguage = useCallback((nextLang) => {
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLang);
+    setRequestedLang(nextLang);
+    saveLang(nextLang);
 
     const target = buildLangUrl(nextLang);
     if (!sameUrl(location.href, target)) {
@@ -53,14 +49,14 @@ export function UIProvider({ children }) {
     () => ({
       theme,
       setTheme,
-      language,
-      setLanguage,
+      requestedLang,
+      setRequestedLang,
       changeLanguage,
       guards,
       hasContactDraft,
       setHasContactDraft,
     }),
-    [theme, language, changeLanguage, guards, hasContactDraft]
+    [theme, requestedLang, changeLanguage, guards, hasContactDraft],
   );
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;

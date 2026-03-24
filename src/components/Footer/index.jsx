@@ -1,21 +1,17 @@
-import { forwardRef } from 'react';
-import styles from './Footer.module.css';
-import { useUI } from '../../context';
+import { forwardRef } from "react";
+import styles from "./Footer.module.css";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
 
-import footerEn from '../../assets/traduction/footer/footer.en.json';
-import footerFr from '../../assets/traduction/footer/footer.fr.json';
-import footerRu from '../../assets/traduction/footer/footer.ru.json';
+import footerEn from "../../assets/traduction/footer/footer.en.json";
+import footerFr from "../../assets/traduction/footer/footer.fr.json";
+import footerRu from "../../assets/traduction/footer/footer.ru.json";
 
-const Footer = forwardRef(function Footer({ className = '', style }, ref) {
-  const { language } = useUI();
-  const t = ({ fr: footerFr, en: footerEn, ru: footerRu }[language]) || footerEn;
+const Footer = forwardRef(function Footer({ className = "", style }, ref) {
+  const displayLang = useDisplayLang();
+  const t = { fr: footerFr, en: footerEn, ru: footerRu }[displayLang] || footerEn;
 
   return (
-    <footer
-      ref={ref}
-      className={`${styles.footer} ${className}`}
-      style={style}
-    >
+    <footer ref={ref} className={`${styles.footer} ${className}`} style={style}>
       © {new Date().getFullYear()} {t.paragraph}
     </footer>
   );

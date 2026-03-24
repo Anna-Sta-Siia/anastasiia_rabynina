@@ -1,7 +1,6 @@
-// src/pages/Projects/index.jsx
-import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { PROJECTS_GUARD_RULES } from "../../guards/page/projectsGuardRules";
 import styles from "./Projects.module.css";
 import Filter from "../../components/Filter";
 import ProjetCard from "../../components/ProjetCard";
@@ -9,15 +8,51 @@ import PageTitle from "../../components/PageTitle";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
 import { useUI } from "../../context";
 
-// Données projets par langue
-import projectsFr from "../../assets/traduction/projet/projet.fr.json";
-import projectsEn from "../../assets/traduction/projet/projet.en.json";
-import projectsRu from "../../assets/traduction/projet/projet.ru.json";
+// Projects base + localized content
+import projectsBase from "../../assets/traduction/projet/projects.base.json";
+import projectsContentFr from "../../assets/traduction/projet/projects.content.fr.json";
+import projectsContentEn from "../../assets/traduction/projet/projects.content.en.json";
+import projectsContentRu from "../../assets/traduction/projet/projects.content.ru.json";
 
-// UI (textes) par langue
+// UI projects
 import uiFr from "../../assets/traduction/projet/ui.fr.json";
 import uiEn from "../../assets/traduction/projet/ui.en.json";
 import uiRu from "../../assets/traduction/projet/ui.ru.json";
+
+// General
+import generalFr from "../../assets/traduction/general/general.fr.json";
+import generalEn from "../../assets/traduction/general/general.en.json";
+import generalRu from "../../assets/traduction/general/general.ru.json";
+
+// Guard page
+import { useResolvedPageLanguage } from "../../hooks/useResolvedPageLanguage";
+import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
+
+/* ---------- Merge helper ---------- */
+const mergeProjects = (base = [], content = {}) =>
+  base.map((project) => ({
+    ...project,
+    ...(content?.[project.id] || {}),
+  }));
+
+/* ---------- Lang maps ---------- */
+const PROJECTS_BY_LANG = {
+  fr: mergeProjects(projectsBase, projectsContentFr),
+  en: mergeProjects(projectsBase, projectsContentEn),
+  ru: mergeProjects(projectsBase, projectsContentRu),
+};
+
+const PROJECTS_UI_BY_LANG = {
+  fr: uiFr,
+  en: uiEn,
+  ru: uiRu,
+};
+
+const GENERAL_BY_LANG = {
+  fr: generalFr,
+  en: generalEn,
+  ru: generalRu,
+};
 
 /* ---------- Helpers ---------- */
 const normalize = (s = "") =>
@@ -28,7 +63,6 @@ const normalize = (s = "") =>
     .toLowerCase()
     .trim();
 
-// recherche par début de mot (séparateurs: espace, tiret, underscore)
 const startsAtWord = (title, q) => {
   const t = normalize(title);
   const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -37,40 +71,66 @@ const startsAtWord = (title, q) => {
 };
 
 export default function Projects() {
-  const { label, color } = usePageMeta();
-  const { language } = useUI();
+  const { requestedLang: askedLang } = useUI();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Dataset par langue
-  const allProjects = useMemo(() => {
-    switch (language) {
-      case "en":
-        return projectsEn;
-      case "ru":
-        return projectsRu;
-      default:
-        return projectsFr;
-    }
-  }, [language]);
+  /* ==================================================
+     1) LANG RESOLUTION
+     ================================================== */
 
-  // Si on arrive avec ?only=slug -> forcer l’affichage d’un seul projet
+  const resolveGuard = useCallback(() => {
+    return resolveEffectiveLang({
+      askedLang,
+      contentByLang: PROJECTS_BY_LANG,
+      uiByLang: PROJECTS_UI_BY_LANG,
+      rules: PROJECTS_GUARD_RULES,
+      debugLabel: "Projects i18n",
+    });
+  }, [askedLang]);
+
+  const { effectiveLang, hasFallback, unavailable, noticeUi } = useResolvedPageLanguage({
+    askedLang,
+    resolveGuard,
+    generalByLang: GENERAL_BY_LANG,
+  });
+  const { label, color } = usePageMeta(effectiveLang || askedLang);
+  const allProjects = useMemo(() => {
+    return PROJECTS_BY_LANG[effectiveLang] || [];
+  }, [effectiveLang]);
+
+  const pageUi = useMemo(() => {
+    return PROJECTS_UI_BY_LANG[effectiveLang] || PROJECTS_UI_BY_LANG.fr;
+  }, [effectiveLang]);
+
+  const emptyUi = pageUi?.empty ?? {
+    title: "Aucun projet pour le moment",
+    hint: "Aucun projet ne correspond actuellement à cette combinaison d’outils.",
+    showAll: "Afficher tous les projets",
+  };
+
+  /* ==================================================
+     2) URL / ONLY
+     ================================================== */
+
   const onlyFromUrl = (searchParams.get("only") || "").trim();
   const [only, setOnly] = useState(onlyFromUrl);
 
-  // Suivre l'URL si elle change (navigation interne)
   useEffect(() => {
     setOnly(onlyFromUrl);
   }, [onlyFromUrl]);
 
-  // Trouver la stack du projet ciblé (pour entourer les bulles)
   const preselectedStack = useMemo(() => {
     if (!only) return [];
     const p = allProjects.find((x) => x.id === only);
     return Array.isArray(p?.stack) ? p.stack : [];
   }, [only, allProjects]);
+
   const stackSig = preselectedStack.join("|");
 
-  // État de la requête courante (alimenté par le <Filter/>)
+  /* ==================================================
+     3) FILTER STATE
+     ================================================== */
+
   const [query, setQuery] = useState({
     filters: [],
     search: "",
@@ -78,7 +138,6 @@ export default function Projects() {
     mode: "and",
   });
 
-  // Valeurs par défaut injectées dans <Filter/> + "nonce" pour forcer un remount visuel
   const [filterDefaults, setFilterDefaults] = useState({
     selected: [],
     search: "",
@@ -87,9 +146,8 @@ export default function Projects() {
     nonce: 0,
   });
 
-  // ⚠️ Remonter le Filter uniquement quand on *arrive* avec ?only=… (ou si la stack ciblée change)
   useEffect(() => {
-    if (!only) return; // <-- ne pas remonter quand on quitte le mode "only"
+    if (!only) return;
     setFilterDefaults((d) => ({
       selected: preselectedStack,
       search: "",
@@ -97,34 +155,21 @@ export default function Projects() {
       mode: "and",
       nonce: d.nonce + 1,
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stackSig, only]);
+  }, [stackSig, only, preselectedStack]);
 
-  // Textes localisés pour l'état vide
-  const emptyUi = useMemo(() => {
-    const pack = { fr: uiFr, en: uiEn, ru: uiRu }[language] || uiEn;
-    return (
-      pack?.empty || {
-        title: "No project yet",
-        hint: "There’s no project that combines these tools (for now).",
-        showAll: "Show all projects",
+  const handleFilterChange = useCallback(
+    (payload) => {
+      if (only) {
+        const next = new URLSearchParams(searchParams);
+        next.delete("only");
+        setSearchParams(next, { replace: true });
+        setOnly("");
       }
-    );
-  }, [language]);
+      setQuery(payload);
+    },
+    [only, searchParams, setSearchParams],
+  );
 
-  // Interaction avec la barre de filtres.
-  // Au 1er clic, on sort du mode "only" *sans* remonter le Filter.
-  function handleFilterChange(payload) {
-    if (only) {
-      const next = new URLSearchParams(searchParams);
-      next.delete("only");
-      setSearchParams(next, { replace: true });
-      setOnly("");
-    }
-    setQuery(payload);
-  }
-
-  // Reset (bouton dans l’état vide)
   function resetFilters() {
     const next = new URLSearchParams(searchParams);
     next.delete("only");
@@ -141,9 +186,11 @@ export default function Projects() {
     }));
   }
 
-  // Liste filtrée
+  /* ==================================================
+     4) FILTERED PROJECTS
+     ================================================== */
+
   const filteredProjects = useMemo(() => {
-    // 1) Cas ?only=... -> on court-circuite tout
     if (only) {
       return allProjects.filter((p) => p.id === only);
     }
@@ -151,7 +198,6 @@ export default function Projects() {
     const { filters, search, sort, mode } = query;
     let list = allProjects;
 
-    // 2) Filtres par stack
     if (filters.length) {
       list =
         mode === "and"
@@ -159,29 +205,63 @@ export default function Projects() {
           : list.filter((p) => filters.some((f) => p.stack.includes(f)));
     }
 
-    // 3) Recherche (début de mot)
     if (search.trim()) {
       list = list.filter((p) => startsAtWord(p.title, search));
     }
 
-    // 4) Tri
     if (sort === "az") {
-      list = [...list].sort((a, b) => a.title.localeCompare(b.title, language));
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title, effectiveLang || "fr"));
     } else if (sort === "za") {
-      list = [...list].sort((a, b) => b.title.localeCompare(a.title, language));
+      list = [...list].sort((a, b) => b.title.localeCompare(a.title, effectiveLang || "fr"));
     }
 
     return list;
-  }, [allProjects, query, language, only]);
+  }, [allProjects, query, effectiveLang, only]);
 
   const hasResults = filteredProjects.length > 0;
+
+  /* ==================================================
+     5) UNAVAILABLE STATE
+     ================================================== */
+
+  if (unavailable) {
+    return (
+      <section className={styles.projects}>
+        <PageTitle text={label} color={color} />
+
+        <div className={styles.empty}>
+          <article className={styles.emptyEgg} aria-live="polite">
+            <h3 className={styles.emptyEggTitle}>{noticeUi.pageUnavailableTitle}</h3>
+            <p className={styles.emptyEggText}>{noticeUi.pageUnavailableText}</p>
+
+            <div className={styles.emptyEggActions}>
+              <Link to="/" className={styles.emptyEggBtn}>
+                {noticeUi.backHome}
+              </Link>
+            </div>
+          </article>
+        </div>
+      </section>
+    );
+  }
+
+  /* ==================================================
+     6) NORMAL / FALLBACK RENDER
+     ================================================== */
 
   return (
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
 
-      {/* AND par défaut. Quand on arrive avec ?only, on *n’émet pas* onChange au montage */}
+      {hasFallback && (
+        <div className={styles.notice} role="status" aria-live="polite">
+          <strong>{noticeUi.pageFallbackTitle}</strong>
+          <p>{noticeUi.pageFallbackText}</p>
+        </div>
+      )}
+
       <Filter
+        lang={effectiveLang || askedLang}
         key={filterDefaults.nonce}
         onChange={handleFilterChange}
         defaultMode={filterDefaults.mode}
@@ -193,7 +273,9 @@ export default function Projects() {
 
       <div className={styles.projectslist}>
         {hasResults ? (
-          filteredProjects.map((project) => <ProjetCard key={project.id} project={project} />)
+          filteredProjects.map((project) => (
+            <ProjetCard key={project.id} project={project} lang={effectiveLang || askedLang} />
+          ))
         ) : (
           <div className={styles.empty}>
             <article className={styles.emptyEgg} aria-live="polite">

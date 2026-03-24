@@ -65,3 +65,9 @@ export const buildLangUrl = (
   const targetPath = addLanguage(nextLang, logical);
   return `${targetPath}${search}${hash}`;
 };
+//enregistrer la langue dans le local storage
+export const saveLang = (lang) => {
+  if (LANGS.includes(lang)) {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  }
+};

@@ -2,6 +2,8 @@ import { forwardRef } from "react";
 import { useUI } from "../../context";
 import { useLocation, Link } from "react-router-dom";
 import { menuItems } from "../../config/menuConfig";
+import { removeLanguage, buildLangUrl } from "../../utils/pathManager";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
 
 import luna from "../../assets/images/luna.svg";
 import solnyshko from "../../assets/images/solnyshko.svg";
@@ -9,23 +11,23 @@ import styles from "./Header.module.css";
 import Menu from "../Menu";
 import LangPicker from "../LangPicker";
 
-/* === UI localisée pour les tooltips === */
 import uiEN from "../../assets/traduction/header/ui.en.json";
 import uiFR from "../../assets/traduction/header/ui.fr.json";
 import uiRU from "../../assets/traduction/header/ui.ru.json";
 
 const Header = forwardRef(function Header({ className = "", style }, ref) {
-  // setLanguage теперь не нужен — им управляет LangPicker
-  const { theme, setTheme, language } = useUI();
+  const { theme, setTheme } = useUI();
   const location = useLocation();
-  const currentPath = location.pathname;
+  const displayLang = useDisplayLang();
 
-  const logoText = language === "ru" ? "Анастасия Р. " : "Anastasia R.";
+  const currentPath = removeLanguage(location.pathname);
+
+  const logoText = displayLang === "ru" ? "Анастасия Р." : "Anastasia R.";
+
   const matched = menuItems.find((item) => item.path === currentPath);
   const bgColor = matched?.color || "#FFFFFF";
 
-  // Пакет локализованных строк (фолбэк EN)
-  const ui = { en: uiEN, fr: uiFR, ru: uiRU }[language] || uiEN;
+  const ui = { en: uiEN, fr: uiFR, ru: uiRU }[displayLang] || uiEN;
 
   return (
     <header
@@ -34,19 +36,15 @@ const Header = forwardRef(function Header({ className = "", style }, ref) {
       style={{ backgroundColor: bgColor, ...style }}
     >
       <div className={styles.header_up}>
-        {/* Слева: логотип */}
         <div className={styles.left}>
-          <Link to="/" className={`${styles.logo} logo`}>
+          <Link to={buildLangUrl(displayLang, { pathname: "/" })} className={`${styles.logo} logo`}>
             {logoText}
           </Link>
         </div>
 
-        {/* Справа: элементы управления */}
         <div className={styles.right}>
-          {/* Кастомный переключатель языка */}
           <LangPicker />
 
-          {/* Переключатель темы */}
           <button
             type="button"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -63,7 +61,6 @@ const Header = forwardRef(function Header({ className = "", style }, ref) {
         </div>
       </div>
 
-      {/* Центр: слайдер лепестков */}
       <div className={styles.header_bottom}>
         <Menu />
       </div>

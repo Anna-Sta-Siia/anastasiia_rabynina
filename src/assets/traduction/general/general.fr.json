@@ -1,0 +1,19 @@
+{
+  "disabledTitle": "Lien temporairement indisponible",
+  "disabledText": "Cette fonctionnalité n’est pas encore disponible.",
+
+  "loading": "Chargement…",
+  "empty": "Rien à afficher pour le moment.",
+
+  "errorGeneric": "Une erreur est survenue.",
+  "retry": "Réessayer",
+
+  "comingSoon": "Bientôt disponible",
+  "notAvailable": "Indisponible",
+  "missing": "—",
+  "pageFallbackTitle": "Version de langue temporairement indisponible",
+  "pageFallbackText": "La version de cette page dans la langue choisie n’est pas encore complètement prête. La version affichée a été remplacée par une langue disponible pour garantir un affichage correct.",
+  "pageUnavailableTitle": "Page temporairement indisponible",
+  "pageUnavailableText": "Le contenu de cette page est en cours de mise à jour. Merci de réessayer un peu plus tard.",
+  "backHome": "Retour à l’accueil"
+}

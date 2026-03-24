@@ -1,0 +1,19 @@
+{
+  "disabledTitle": "Link temporarily unavailable",
+  "disabledText": "This feature is not available yet.",
+
+  "loading": "Loading…",
+  "empty": "Nothing to display yet.",
+
+  "errorGeneric": "Something went wrong.",
+  "retry": "Try again",
+
+  "comingSoon": "Coming soon",
+  "notAvailable": "Not available",
+  "missing": "—",
+  "pageFallbackTitle": "Selected language version temporarily unavailable",
+  "pageFallbackText": "The version of this page in the selected language is not fully ready yet. A fallback language is currently displayed to ensure the page renders correctly.",
+  "pageUnavailableTitle": "Page temporarily unavailable",
+  "pageUnavailableText": "This page content is currently being updated. Please try again a little later.",
+  "backHome": "Back to home"
+}

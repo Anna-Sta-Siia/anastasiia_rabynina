@@ -1,6 +1,6 @@
-import fr from "../assets/traduction/profanity/profanity.fr.json";
-import en from "../assets/traduction/profanity/profanity.en.json";
-import ru from "../assets/traduction/profanity/profanity.ru.json";
+import fr from "../../assets/traduction/profanity/profanity.fr.json";
+import en from "../../assets/traduction/profanity/profanity.en.json";
+import ru from "../../assets/traduction/profanity/profanity.ru.json";
 
 const LISTS = { fr, en, ru };
 const NORM = (s = "") => String(s).toLowerCase().normalize("NFKD").trim();
