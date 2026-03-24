@@ -192,7 +192,16 @@ export default function Menu() {
               !disabled && !isExternal
                 ? buildInternalLangPath(requestedLang, item.path)
                 : item.path;
-
+            console.log("[MENU ITEM]", {
+              key: item.key,
+              itemPath: item.path,
+              requestedLang,
+              displayLang,
+              locationPathname: location.pathname,
+              targetPath,
+              disabled,
+              isExternal,
+            });
             return (
               <Petal
                 ref={i === 0 ? petalRef : null}
