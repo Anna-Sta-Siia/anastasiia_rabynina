@@ -59,7 +59,7 @@ export const getLangFromPathname = (pathname = location.pathname) => {
 // changer de langue (URL complète)
 export const buildLangUrl = (
   nextLang,
-  { pathname = location.pathname, search = location.search, hash = location.hash } = {}
+  { pathname = location.pathname, search = location.search, hash = location.hash } = {},
 ) => {
   const logical = removeLanguage(pathname);
   const targetPath = addLanguage(nextLang, logical);
@@ -70,4 +70,9 @@ export const saveLang = (lang) => {
   if (LANGS.includes(lang)) {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
   }
+};
+export const buildInternalLangPath = (nextLang, path = "/") => {
+  const logical = normalizePath(path);
+  const out = `/${nextLang}${logical}`;
+  return out.replace(/\/{2,}/g, "/");
 };

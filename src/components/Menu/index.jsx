@@ -9,7 +9,7 @@ import styles from "./Menu.module.css";
 
 import { usePageMeta } from "../../config/hooks/usePageMeta";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
-import { buildLangUrl } from "../../utils/pathManager";
+import { buildInternalLangPath } from "../../utils/pathManager";
 
 import menuEn from "../../assets/traduction/menu/menu.en.json";
 import menuFr from "../../assets/traduction/menu/menu.fr.json";
@@ -190,14 +190,9 @@ export default function Menu() {
 
             const targetPath =
               !disabled && !isExternal
-                ? buildLangUrl(requestedLang, { pathname: item.path })
+                ? buildInternalLangPath(requestedLang, item.path)
                 : item.path;
-            console.log("menu item", {
-              key: item.key,
-              itemPath: item.path,
-              targetPath,
-              requestedLang,
-            });
+
             return (
               <Petal
                 ref={i === 0 ? petalRef : null}
