@@ -29,7 +29,6 @@ export function usePageMeta(lang = "fr") {
     routeItems[0];
 
   const key = current?.key ?? "accueil";
-  console.log(current.key);
   const color = current?.color ?? "#fff5e1";
   const label = labels[lang]?.[key] || key;
 
