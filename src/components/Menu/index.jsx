@@ -1,4 +1,3 @@
-// src/components/Menu/index.jsx
 import { menuItems } from "../../config/menuConfig";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -9,7 +8,7 @@ import styles from "./Menu.module.css";
 
 import { usePageMeta } from "../../config/hooks/usePageMeta";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
-import { buildInternalLangPath } from "../../utils/pathManager";
+import { buildInternalLangPath, removeLanguage, normalizePath } from "../../utils/pathManager";
 
 import menuEn from "../../assets/traduction/menu/menu.en.json";
 import menuFr from "../../assets/traduction/menu/menu.fr.json";
@@ -25,7 +24,7 @@ const contactLabels = { en: contactEn, fr: contactFr, ru: contactRu };
 export default function Menu() {
   const visibleItems = menuItems.filter((it) => it.showInMenu !== false);
 
-  const { requestedLang, hasContactDraft, setHasContactDraft } = useUI();
+  const { hasContactDraft, setHasContactDraft } = useUI();
   const displayLang = useDisplayLang();
 
   const translated = labels[displayLang] || labels.en;
@@ -34,7 +33,7 @@ export default function Menu() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { key: activeKey } = usePageMeta(displayLang);
+  const { key: activeKey } = usePageMeta();
 
   const [index, setIndex] = useState(0);
   const [fade, setFade] = useState(false);
@@ -61,6 +60,7 @@ export default function Menu() {
   const FADE_MS = 400;
   const AUTO_MS = 6000;
   const RESUME_AFTER = 2000;
+
   const step = useCallback(
     (delta) => {
       if (isAnimatingRef.current) return;
@@ -77,6 +77,7 @@ export default function Menu() {
     },
     [visibleItems.length],
   );
+
   const startAuto = useCallback(() => {
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => step(dirRef.current), AUTO_MS);
@@ -153,7 +154,8 @@ export default function Menu() {
 
       if (!location.pathname.includes("/contact")) return;
 
-      if (targetPath === "/contact") return;
+      const targetLogicalPath = normalizePath(removeLanguage(targetPath));
+      if (targetLogicalPath === "/contact") return;
 
       event.preventDefault();
       setLeaveTarget(targetPath);
@@ -185,23 +187,11 @@ export default function Menu() {
 
             const disabled = typeof item.path !== "string" || item.path.trim() === "";
             const isExternal = !disabled && /^https?:\/\//.test(item.path);
-
             const isActive = item.key === activeKey;
 
             const targetPath =
-              !disabled && !isExternal
-                ? buildInternalLangPath(requestedLang, item.path)
-                : item.path;
-            console.log("[MENU ITEM]", {
-              key: item.key,
-              itemPath: item.path,
-              requestedLang,
-              displayLang,
-              locationPathname: location.pathname,
-              targetPath,
-              disabled,
-              isExternal,
-            });
+              !disabled && !isExternal ? buildInternalLangPath(displayLang, item.path) : item.path;
+
             return (
               <Petal
                 ref={i === 0 ? petalRef : null}
@@ -223,7 +213,6 @@ export default function Menu() {
         ▶
       </button>
 
-      {/* === Modal quitter Contact === */}
       <Modal
         open={leaveOpen}
         onClose={() => {

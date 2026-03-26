@@ -19,7 +19,7 @@ const WIP_BY_LANG = {
 
 export default function CV() {
   const displayLang = useDisplayLang();
-  const { label, color } = usePageMeta(displayLang);
+  const { label, color } = usePageMeta();
 
   const t = useMemo(() => {
     return WIP_BY_LANG[displayLang] || WIP_BY_LANG.fr;
@@ -38,7 +38,7 @@ export default function CV() {
   return (
     <section className={styles.cv}>
       <PageTitle text={label} color={color} />
-      <WipMessage texts={t.cv} links={links} />
+      <WipMessage texts={t.cv} links={links} lang={displayLang} />
     </section>
   );
 }

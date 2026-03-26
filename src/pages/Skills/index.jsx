@@ -263,6 +263,7 @@ export default function Skills() {
             catsColors={catsColors}
             projectNames={projectNames}
             catsLabels={catsLabels}
+            lang={displayLang}
           />
         ))}
       </div>

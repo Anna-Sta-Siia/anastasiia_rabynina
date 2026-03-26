@@ -1,5 +1,5 @@
-// WipMessage.jsx
 import { Link } from "react-router-dom";
+import { buildInternalLangPath } from "../../utils/pathManager";
 import styles from "./WipMessage.module.css";
 
 /**
@@ -7,13 +7,18 @@ import styles from "./WipMessage.module.css";
  *  - texts: { title, lead, body, ctaProjects?, ctaHome?, ctaContact?, ctaCV? }
  *  - links?: { projects?: string, home?: string, contact?: string, cv?: string }
  *  - blur?: boolean (default: true)
+ *  - lang?: "fr" | "en" | "ru"
  */
-export default function WipMessage({
-  texts,
-  links = { projects: "/projects", home: "/", contact: "/contact", cv: "/cv" },
-  blur = true,
-}) {
+export default function WipMessage({ texts, links, blur = true, lang = "fr" }) {
   if (!texts) return null;
+
+  const resolvedLinks = {
+    projects: buildInternalLangPath(lang, "/projects"),
+    home: buildInternalLangPath(lang, "/"),
+    contact: buildInternalLangPath(lang, "/contact"),
+    cv: `${import.meta.env.BASE_URL}cv.pdf`,
+    ...links,
+  };
 
   return (
     <div
@@ -23,33 +28,43 @@ export default function WipMessage({
     >
       <div className={styles.card}>
         <h2 className={styles.title}>{texts.title}</h2>
+
         {texts.lead && (
           <p className={styles.lead}>
             <strong>{texts.lead}</strong>
           </p>
         )}
+
         {texts.body && <p className={styles.body}>{texts.body}</p>}
 
         <div className={styles.actions}>
           {texts.ctaProjects && (
-            <Link className={styles.btn} to={links.projects}>
+            <Link className={styles.btn} to={resolvedLinks.projects}>
               {texts.ctaProjects}
             </Link>
           )}
+
           {texts.ctaHome && (
-            <Link className={styles.btn} to={links.home}>
+            <Link className={styles.btn} to={resolvedLinks.home}>
               {texts.ctaHome}
             </Link>
           )}
+
           {texts.ctaContact && (
-            <Link className={styles.btn} to={links.contact}>
+            <Link className={styles.btn} to={resolvedLinks.contact}>
               {texts.ctaContact}
             </Link>
           )}
+
           {texts.ctaCV && (
-            <Link className={styles.btn} to={links.cv}>
+            <a
+              className={styles.btn}
+              href={resolvedLinks.cv}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {texts.ctaCV}
-            </Link>
+            </a>
           )}
         </div>
       </div>

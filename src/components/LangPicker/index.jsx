@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useUI } from "../../context";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
+import { buildLangUrl, saveLang } from "../../utils/pathManager";
 import styles from "./LangPicker.module.css";
 
 const LANGS = [
@@ -16,8 +17,9 @@ const T = {
 };
 
 export default function LangPicker() {
-  const { requestedLang, changeLanguage } = useUI();
   const displayLang = useDisplayLang();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
@@ -35,6 +37,7 @@ export default function LangPicker() {
       if (!rootRef.current) return;
       if (!rootRef.current.contains(e.target)) setOpen(false);
     };
+
     document.addEventListener("pointerdown", onDocClick);
     return () => document.removeEventListener("pointerdown", onDocClick);
   }, []);
@@ -44,6 +47,18 @@ export default function LangPicker() {
       listRef.current.querySelector(`[data-idx="${currentIndex}"]`)?.focus();
     }
   }, [open, currentIndex]);
+
+  function handleChange(nextLang) {
+    saveLang(nextLang);
+
+    const nextUrl = buildLangUrl(nextLang, {
+      pathname: location.pathname,
+      search: location.search,
+      hash: location.hash,
+    });
+
+    navigate(nextUrl);
+  }
 
   return (
     <div className={styles.langRoot} ref={rootRef}>
@@ -70,8 +85,10 @@ export default function LangPicker() {
           aria-label={i18n.change}
           onKeyDown={(e) => {
             if (!open) return;
+
             const items = Array.from(listRef.current.querySelectorAll("[role=option]"));
             const idx = items.findIndex((n) => n === document.activeElement);
+
             if (e.key === "Escape") {
               setOpen(false);
               btnRef.current?.focus();
@@ -93,11 +110,11 @@ export default function LangPicker() {
               role="option"
               tabIndex={0}
               data-idx={i}
-              aria-selected={l.code === requestedLang}
+              aria-selected={l.code === displayLang}
               className={`${styles.item} ${l.code === displayLang ? styles.active : ""}`}
               onClick={() => {
                 setOpen(false);
-                changeLanguage(l.code);
+                handleChange(l.code);
               }}
             >
               {l.label}
