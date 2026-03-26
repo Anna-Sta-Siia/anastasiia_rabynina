@@ -1,33 +1,39 @@
 import { getNestedValue } from "./getNestedValue";
 
+function isMissingValue(value) {
+  if (value === undefined || value === null) return true;
+  if (typeof value === "string" && value.trim() === "") return true;
+  return false;
+}
+
 export function validatePagePack({ content, ui, rules }) {
   const criticalContent = rules?.criticalContent || [];
   const criticalUI = rules?.criticalUI || [];
 
   let missingContent = [];
 
-  // 🔥 CAS TABLEAU (Projects)
+  // Cas tableau (ex: Projects)
   if (Array.isArray(content)) {
-    for (const project of content) {
+    for (const item of content) {
       for (const key of criticalContent) {
-        const value = getNestedValue(project, key);
+        const value = getNestedValue(item, key);
 
-        if (value === undefined || value === null || value === "") {
-          missingContent.push(`${project.id || "unknown"}.${key}`);
+        if (isMissingValue(value)) {
+          missingContent.push(`${item.id || "unknown"}.${key}`);
         }
       }
     }
   } else {
-    // 🔥 CAS NORMAL (pages simples)
+    // Cas objet simple (ex: Skills)
     missingContent = criticalContent.filter((key) => {
       const value = getNestedValue(content, key);
-      return value === undefined || value === null || value === "";
+      return isMissingValue(value);
     });
   }
 
   const missingUI = criticalUI.filter((key) => {
     const value = getNestedValue(ui, key);
-    return value === undefined || value === null || value === "";
+    return isMissingValue(value);
   });
 
   return {

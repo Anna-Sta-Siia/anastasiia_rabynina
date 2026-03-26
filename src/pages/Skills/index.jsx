@@ -1,6 +1,9 @@
-import { SKILLS_GUARD_RULES } from "../../guards/page/skillsGuardRules";
 import { useMemo, useEffect, useState, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+
+import { SKILLS_GUARD_RULES } from "../../guards/page/skillsGuardRules";
+import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
 
 import PageTitle from "../../components/PageTitle";
 import Filter from "../../components/Filter";
@@ -9,7 +12,6 @@ import SkillCard from "../../components/SkillCard";
 
 import { SKILLS, CATEGORIES, PROJECTS } from "../../assets/traduction/skills/data";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
-import { useUI } from "../../context";
 import styles from "./Skills.module.css";
 
 // Content Skills
@@ -22,17 +24,12 @@ import generalFr from "../../assets/traduction/general/general.fr.json";
 import generalEn from "../../assets/traduction/general/general.en.json";
 import generalRu from "../../assets/traduction/general/general.ru.json";
 
-// Guard page
-import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
-
 const SKILLS_BY_LANG = {
   fr: skillsFR,
   en: skillsEN,
   ru: skillsRU,
 };
 
-// Ici on réutilise le même pack pour la validation de page.
-// Si plus tard tu sépares content/ui pour Skills, tu remplaceras juste cette map.
 const SKILLS_UI_BY_LANG = {
   fr: skillsFR,
   en: skillsEN,
@@ -46,32 +43,32 @@ const GENERAL_BY_LANG = {
 };
 
 export default function Skills() {
-  const { requestedLang: askedLang } = useUI();
+  const displayLang = useDisplayLang();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [minLevel, setMinLevel] = useState(1);
   const [showFilterHint, setShowFilterHint] = useState(false);
 
-  /* ==================================================
-     1) LANG RESOLUTION
-     ================================================== */
+  // langue demandée avant fallback
+  const requestedLang = searchParams.get("from") || displayLang;
+  const showFallback = requestedLang !== displayLang;
 
-  const resolveGuard = useCallback(() => {
+  const noticeUi = GENERAL_BY_LANG[requestedLang] || GENERAL_BY_LANG.fr;
+
+  /* ==================================================
+     1) GUARD RESULT (sans redirect ici)
+  ================================================== */
+  const guardResult = useMemo(() => {
     return resolveEffectiveLang({
-      askedLang,
+      askedLang: displayLang,
       contentByLang: SKILLS_BY_LANG,
-      uiByLang: SKILLS_BY_LANG,
+      uiByLang: SKILLS_UI_BY_LANG,
       rules: SKILLS_GUARD_RULES,
       debugLabel: "Skills i18n",
     });
-  }, [askedLang]);
+  }, [displayLang]);
 
-  const { effectiveLang, hasFallback, unavailable, noticeUi } = {
-    askedLang,
-    resolveGuard,
-    generalByLang: GENERAL_BY_LANG,
-  };
-
-  const displayLang = effectiveLang || askedLang;
+  const { unavailable } = guardResult;
 
   const { label, color } = usePageMeta(displayLang);
 
@@ -91,6 +88,7 @@ export default function Skills() {
 
   /* ---------------- Couleurs et noms humains ---------------- */
   const catsColors = useMemo(() => Object.fromEntries(CATEGORIES.map((c) => [c.id, c.color])), []);
+
   const projectNames = useMemo(() => Object.fromEntries(PROJECTS.map((p) => [p.id, p.name])), []);
 
   /* ---------------- Sous-ensemble piloté par ?only= ---------------- */
@@ -108,6 +106,7 @@ export default function Skills() {
     if (!projectOnly) return [];
 
     const set = new Set();
+
     for (const s of usedByProject) {
       (s.cats || []).forEach((c) => set.add(c));
     }
@@ -167,7 +166,7 @@ export default function Skills() {
       CATEGORIES.map((c) => ({
         key: c.id,
         color: c.color,
-        label: catsLabels[c.id] ?? c.id,
+        label: catsLabels[c.id]?.trim() || c.id,
       })),
     [catsLabels],
   );
@@ -191,8 +190,7 @@ export default function Skills() {
 
   /* ==================================================
      2) UNAVAILABLE STATE
-     ================================================== */
-
+  ================================================== */
   if (unavailable) {
     return (
       <section className={styles.skills}>
@@ -216,13 +214,12 @@ export default function Skills() {
 
   /* ==================================================
      3) NORMAL / FALLBACK RENDER
-     ================================================== */
-
+  ================================================== */
   return (
     <section className={styles.skills}>
       <PageTitle text={label} color={color} />
 
-      {hasFallback && (
+      {showFallback && (
         <div className={styles.notice} role="status" aria-live="polite">
           <strong>{noticeUi.pageFallbackTitle}</strong>
           <p>{noticeUi.pageFallbackText}</p>

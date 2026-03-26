@@ -1,4 +1,6 @@
 import { useLocation } from "react-router-dom";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
+
 import { menuItems } from "../menuConfig";
 import { normalizePath, removeLanguage } from "../../utils/pathManager";
 
@@ -8,8 +10,9 @@ import menuRu from "../../assets/traduction/menu/menu.ru.json";
 
 const labels = { en: menuEn, fr: menuFr, ru: menuRu };
 
-export function usePageMeta(lang = "fr") {
+export function usePageMeta() {
   const { pathname } = useLocation();
+  const lang = useDisplayLang(); // 🔥 source unique
 
   const p = normalizePath(removeLanguage(pathname));
 

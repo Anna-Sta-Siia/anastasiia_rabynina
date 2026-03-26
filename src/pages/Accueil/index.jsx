@@ -1,7 +1,6 @@
-// src/pages/Accueil/index.jsx
 import { useEffect, useMemo, useState } from "react";
 import { motion as Motion } from "framer-motion";
-import { useUI } from "../../context";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
 
 import medallionBack from "../../assets/images/medaillon_back.webp";
 import portrait from "../../assets/images/AnastasiaGirard.webp";
@@ -13,16 +12,14 @@ import About from "../../components/About";
 import styles from "./Accueil.module.css";
 
 export default function Accueil({ phase, onFinish }) {
-  const { language } = useUI();
+  const language = useDisplayLang();
 
   const about = useMemo(
-    () => ({ fr: aboutFr, en: aboutEn, ru: aboutRu }[language] ?? aboutEn),
-    [language]
+    () => ({ fr: aboutFr, en: aboutEn, ru: aboutRu })[language] ?? aboutEn,
+    [language],
   );
 
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
-
-  // 1 раз за сессию
   const [played, setPlayed] = useState(() => sessionStorage.getItem("hasPlayedOnce") === "true");
   const [flipped, setFlipped] = useState(false);
 
@@ -62,15 +59,10 @@ export default function Accueil({ phase, onFinish }) {
   const shouldAnimate = phase === "medallion" && !played;
   const opened = phase === "app" || played || flipped;
 
-  // Поза "закрыто" и "открыто" — строго под текущую ось
   const closedPose = isMobile ? { rotateX: 0 } : { rotateY: 0 };
   const openPose = isMobile ? { rotateX: -180 } : { rotateY: -180 };
-
-  // ВАЖНО: initial должен совпадать с текущим opened, чтобы при remount (после resize)
-  // не показывать крышку на долю секунды
   const initialPose = opened ? openPose : closedPose;
 
-  // Ключ: при смене mobile/desktop медальон пересоздаётся, и 3D-ось не ломает face
   const axisKey = isMobile ? "medallion-mobile" : "medallion-desktop";
   const axisClass = isMobile ? styles.mobile : styles.desktop;
 
@@ -103,12 +95,11 @@ export default function Accueil({ phase, onFinish }) {
               fetchPriority="high"
             />
 
-            {/* Нежный перелив — только после первого визита */}
             {played && <div className={styles.medallionShimmer} aria-hidden />}
           </div>
         </Motion.div>
 
-        <About />
+        <About lang={language} />
       </div>
     </section>
   );
