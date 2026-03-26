@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
-import { buildLangUrl, saveLang } from "../../utils/pathManager";
+import { buildInternalLangPath, removeLanguage, saveLang } from "../../utils/pathManager";
 import styles from "./LangPicker.module.css";
 
 const LANGS = [
@@ -51,13 +51,16 @@ export default function LangPicker() {
   function handleChange(nextLang) {
     saveLang(nextLang);
 
-    const nextUrl = buildLangUrl(nextLang, {
-      pathname: location.pathname,
+    const logicalPath = removeLanguage(location.pathname);
+    const nextPath = buildInternalLangPath(nextLang, logicalPath);
+
+    navigate({
+      pathname: nextPath,
       search: location.search,
       hash: location.hash,
     });
 
-    navigate(nextUrl);
+    setOpen(false);
   }
 
   return (
@@ -112,10 +115,7 @@ export default function LangPicker() {
               data-idx={i}
               aria-selected={l.code === displayLang}
               className={`${styles.item} ${l.code === displayLang ? styles.active : ""}`}
-              onClick={() => {
-                setOpen(false);
-                handleChange(l.code);
-              }}
+              onClick={() => handleChange(l.code)}
             >
               {l.label}
             </li>

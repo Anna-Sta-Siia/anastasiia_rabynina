@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { useUI } from "../../context";
 import { useLocation, Link } from "react-router-dom";
 import { menuItems } from "../../config/menuConfig";
-import { removeLanguage, buildLangUrl } from "../../utils/pathManager";
+import { removeLanguage, buildInternalLangPath } from "../../utils/pathManager";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
 
 import luna from "../../assets/images/luna.svg";
@@ -37,7 +37,7 @@ const Header = forwardRef(function Header({ className = "", style }, ref) {
     >
       <div className={styles.header_up}>
         <div className={styles.left}>
-          <Link to={buildLangUrl(displayLang, { pathname: "/" })} className={`${styles.logo} logo`}>
+          <Link to={buildInternalLangPath(displayLang, "/")} className={`${styles.logo} logo`}>
             {logoText}
           </Link>
         </div>
