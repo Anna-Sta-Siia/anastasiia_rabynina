@@ -23,7 +23,6 @@ import generalEn from "../../assets/traduction/general/general.en.json";
 import generalRu from "../../assets/traduction/general/general.ru.json";
 
 // Guard page
-import { useResolvedPageLanguage } from "../../hooks/useResolvedPageLanguage";
 import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
 
 const SKILLS_BY_LANG = {
@@ -66,11 +65,11 @@ export default function Skills() {
     });
   }, [askedLang]);
 
-  const { effectiveLang, hasFallback, unavailable, noticeUi } = useResolvedPageLanguage({
+  const { effectiveLang, hasFallback, unavailable, noticeUi } = {
     askedLang,
     resolveGuard,
     generalByLang: GENERAL_BY_LANG,
-  });
+  };
 
   const displayLang = effectiveLang || askedLang;
 

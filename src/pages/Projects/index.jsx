@@ -1,12 +1,15 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+
 import { PROJECTS_GUARD_RULES } from "../../guards/page/projectsGuardRules";
+import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
+import { useDisplayLang } from "../../hooks/useDisplayLang";
+
 import styles from "./Projects.module.css";
 import Filter from "../../components/Filter";
 import ProjetCard from "../../components/ProjetCard";
 import PageTitle from "../../components/PageTitle";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
-import { useUI } from "../../context";
 
 // Projects base + localized content
 import projectsBase from "../../assets/traduction/projet/projects.base.json";
@@ -23,10 +26,6 @@ import uiRu from "../../assets/traduction/projet/ui.ru.json";
 import generalFr from "../../assets/traduction/general/general.fr.json";
 import generalEn from "../../assets/traduction/general/general.en.json";
 import generalRu from "../../assets/traduction/general/general.ru.json";
-
-// Guard page
-import { useResolvedPageLanguage } from "../../hooks/useResolvedPageLanguage";
-import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
 
 /* ---------- Merge helper ---------- */
 const mergeProjects = (base = [], content = {}) =>
@@ -63,44 +62,54 @@ const normalize = (s = "") =>
     .toLowerCase()
     .trim();
 
+const escapeRegExp = (s = "") => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const startsAtWord = (title, q) => {
   const t = normalize(title);
-  const n = normalize(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const n = escapeRegExp(normalize(q));
+
+  if (!n) return true;
+
   const re = new RegExp(`(^|[\\s_-])${n}`, "i");
   return re.test(t);
 };
 
 export default function Projects() {
-  const { requestedLang: askedLang } = useUI();
+  const displayLang = useDisplayLang();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  /* ==================================================
-     1) LANG RESOLUTION
-     ================================================== */
+  // langue réellement demandée par l’utilisateur avant fallback
+  const requestedLang = searchParams.get("from") || displayLang;
 
-  const resolveGuard = useCallback(() => {
+  // si from=en et URL=/fr/projects => notice visible en anglais
+  const showFallback = requestedLang !== displayLang;
+
+  const noticeUi = GENERAL_BY_LANG[requestedLang] || GENERAL_BY_LANG.fr;
+
+  /* ==================================================
+     1) PAGE GUARD RESULT (sans redirect ici)
+  ================================================== */
+  const guardResult = useMemo(() => {
     return resolveEffectiveLang({
-      askedLang,
+      askedLang: displayLang,
       contentByLang: PROJECTS_BY_LANG,
       uiByLang: PROJECTS_UI_BY_LANG,
       rules: PROJECTS_GUARD_RULES,
       debugLabel: "Projects i18n",
     });
-  }, [askedLang]);
+  }, [displayLang]);
 
-  const { effectiveLang, hasFallback, unavailable, noticeUi } = useResolvedPageLanguage({
-    askedLang,
-    resolveGuard,
-    generalByLang: GENERAL_BY_LANG,
-  });
-  const { label, color } = usePageMeta(effectiveLang || askedLang);
+  const { unavailable } = guardResult;
+
+  const { label, color } = usePageMeta(displayLang);
+
   const allProjects = useMemo(() => {
-    return PROJECTS_BY_LANG[effectiveLang] || [];
-  }, [effectiveLang]);
+    return PROJECTS_BY_LANG[displayLang] || [];
+  }, [displayLang]);
 
   const pageUi = useMemo(() => {
-    return PROJECTS_UI_BY_LANG[effectiveLang] || PROJECTS_UI_BY_LANG.fr;
-  }, [effectiveLang]);
+    return PROJECTS_UI_BY_LANG[displayLang] || PROJECTS_UI_BY_LANG.fr;
+  }, [displayLang]);
 
   const emptyUi = pageUi?.empty ?? {
     title: "Aucun projet pour le moment",
@@ -110,8 +119,7 @@ export default function Projects() {
 
   /* ==================================================
      2) URL / ONLY
-     ================================================== */
-
+  ================================================== */
   const onlyFromUrl = (searchParams.get("only") || "").trim();
   const [only, setOnly] = useState(onlyFromUrl);
 
@@ -129,8 +137,7 @@ export default function Projects() {
 
   /* ==================================================
      3) FILTER STATE
-     ================================================== */
-
+  ================================================== */
   const [query, setQuery] = useState({
     filters: [],
     search: "",
@@ -148,6 +155,7 @@ export default function Projects() {
 
   useEffect(() => {
     if (!only) return;
+
     setFilterDefaults((d) => ({
       selected: preselectedStack,
       search: "",
@@ -157,18 +165,16 @@ export default function Projects() {
     }));
   }, [stackSig, only, preselectedStack]);
 
-  const handleFilterChange = useCallback(
-    (payload) => {
-      if (only) {
-        const next = new URLSearchParams(searchParams);
-        next.delete("only");
-        setSearchParams(next, { replace: true });
-        setOnly("");
-      }
-      setQuery(payload);
-    },
-    [only, searchParams, setSearchParams],
-  );
+  const handleFilterChange = (payload) => {
+    if (only) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("only");
+      setSearchParams(next, { replace: true });
+      setOnly("");
+    }
+
+    setQuery(payload);
+  };
 
   function resetFilters() {
     const next = new URLSearchParams(searchParams);
@@ -176,7 +182,13 @@ export default function Projects() {
     setSearchParams(next, { replace: true });
 
     setOnly("");
-    setQuery({ filters: [], search: "", sort: "", mode: "and" });
+    setQuery({
+      filters: [],
+      search: "",
+      sort: "",
+      mode: "and",
+    });
+
     setFilterDefaults((d) => ({
       selected: [],
       search: "",
@@ -188,8 +200,7 @@ export default function Projects() {
 
   /* ==================================================
      4) FILTERED PROJECTS
-     ================================================== */
-
+  ================================================== */
   const filteredProjects = useMemo(() => {
     if (only) {
       return allProjects.filter((p) => p.id === only);
@@ -210,20 +221,19 @@ export default function Projects() {
     }
 
     if (sort === "az") {
-      list = [...list].sort((a, b) => a.title.localeCompare(b.title, effectiveLang || "fr"));
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title, displayLang || "fr"));
     } else if (sort === "za") {
-      list = [...list].sort((a, b) => b.title.localeCompare(a.title, effectiveLang || "fr"));
+      list = [...list].sort((a, b) => b.title.localeCompare(a.title, displayLang || "fr"));
     }
 
     return list;
-  }, [allProjects, query, effectiveLang, only]);
+  }, [allProjects, query, displayLang, only]);
 
   const hasResults = filteredProjects.length > 0;
 
   /* ==================================================
      5) UNAVAILABLE STATE
-     ================================================== */
-
+  ================================================== */
   if (unavailable) {
     return (
       <section className={styles.projects}>
@@ -246,14 +256,13 @@ export default function Projects() {
   }
 
   /* ==================================================
-     6) NORMAL / FALLBACK RENDER
-     ================================================== */
-
+     6) NORMAL RENDER
+  ================================================== */
   return (
     <section className={styles.projects}>
       <PageTitle text={label} color={color} />
 
-      {hasFallback && (
+      {showFallback && (
         <div className={styles.notice} role="status" aria-live="polite">
           <strong>{noticeUi.pageFallbackTitle}</strong>
           <p>{noticeUi.pageFallbackText}</p>
@@ -261,7 +270,7 @@ export default function Projects() {
       )}
 
       <Filter
-        lang={effectiveLang || askedLang}
+        lang={displayLang}
         key={filterDefaults.nonce}
         onChange={handleFilterChange}
         defaultMode={filterDefaults.mode}
@@ -274,15 +283,16 @@ export default function Projects() {
       <div className={styles.projectslist}>
         {hasResults ? (
           filteredProjects.map((project) => (
-            <ProjetCard key={project.id} project={project} lang={effectiveLang || askedLang} />
+            <ProjetCard key={project.id} project={project} lang={displayLang} />
           ))
         ) : (
           <div className={styles.empty}>
             <article className={styles.emptyEgg} aria-live="polite">
               <h3 className={styles.emptyEggTitle}>{emptyUi.title}</h3>
               <p className={styles.emptyEggText}>{emptyUi.hint}</p>
+
               <div className={styles.emptyEggActions}>
-                <button type="button" className={styles.emptyEggBtn} onClick={resetFilters}>
+                <button type="button" onClick={resetFilters} className={styles.emptyEggBtn}>
                   {emptyUi.showAll}
                 </button>
               </div>

@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, Outlet, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-
+import ResolvedPageGuard from "./routes/resolvedPageGuard";
 import medallionBack from "./assets/images/medaillon_back.webp";
 import portrait from "./assets/images/AnastasiaGirard.webp";
 import MatryoshkaLoader from "./components/MatryoshkaLoader";
@@ -52,13 +52,15 @@ export default function App() {
         <Route path="/" element={<Navigate to={`/${defaultLang}/`} replace />} />
 
         <Route element={<RequireValidLang defaultLang={defaultLang} />}>
-          <Route path=":lang" element={<Layout />}>
-            <Route index element={<Accueil phase={phase} onFinish={handleMedallionEnd} />} />
-            <Route path="projects" element={<Projects />} />
-            <Route path="skills" element={<Skills />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="cv" element={<CV />} />
-            <Route path="*" element={<NotFound />} />
+          <Route path=":lang" element={<ResolvedPageGuard />}>
+            <Route element={<Layout />}>
+              <Route index element={<Accueil phase={phase} onFinish={handleMedallionEnd} />} />
+              <Route path="projects" element={<Projects />} />
+              <Route path="skills" element={<Skills />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="cv" element={<CV />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
           </Route>
         </Route>
 
