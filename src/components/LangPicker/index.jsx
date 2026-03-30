@@ -54,9 +54,12 @@ export default function LangPicker() {
     const logicalPath = removeLanguage(location.pathname);
     const nextPath = buildInternalLangPath(nextLang, logicalPath);
 
+    const params = new URLSearchParams(location.search);
+    params.delete("from");
+
     navigate({
       pathname: nextPath,
-      search: location.search,
+      search: params.toString() ? `?${params.toString()}` : "",
       hash: location.hash,
     });
 

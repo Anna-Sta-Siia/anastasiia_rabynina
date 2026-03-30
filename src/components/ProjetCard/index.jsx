@@ -1,11 +1,10 @@
-// src/components/ProjetCard/index.jsx
 import { useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { makeAriaId } from "../../utils/makeAriaId.js";
 import { useOverflow } from "../../hooks/useOverflow";
 import { useReturnFocus } from "../../hooks/useReturnFocus";
 import { menuItems } from "../../config/menuConfig";
-import { buildLangUrl } from "../../utils/pathManager";
+import { buildInternalLangPath } from "../../utils/pathManager";
 import styles from "./ProjetCard.module.css";
 import Modal from "../Modal";
 import modalCss from "../Modal/Modal.module.css";
@@ -88,10 +87,10 @@ export default function ProjetCard({ project, lang = "fr" }) {
   );
 
   const skillsUrl = useMemo(() => {
-    return buildLangUrl(lang, {
-      pathname: skillsPath,
+    return {
+      pathname: buildInternalLangPath(lang, skillsPath),
       search: `?only=${encodeURIComponent(id)}`,
-    });
+    };
   }, [lang, skillsPath, id]);
 
   return (

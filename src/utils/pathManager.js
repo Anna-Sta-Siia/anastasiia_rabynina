@@ -3,6 +3,8 @@ export const DEFAULT_LANG = "fr";
 export const LANGUAGE_STORAGE_KEY = "language";
 
 export const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
+// buildLangUrl => full path with BASE_URL, for browser-level navigation
+// buildInternalLangPath => router path without BASE_URL, for Link/navigate
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const LANG_GROUP = LANGS.join("|");
