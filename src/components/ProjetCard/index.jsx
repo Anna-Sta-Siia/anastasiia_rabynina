@@ -22,7 +22,7 @@ import labelsRu from "../../assets/traduction/filters/filters.ru.json";
 const PROJECTS_UI_DICTS = { fr: UiProjetFR, en: UiProjetEn, ru: UiProjetRu };
 const FILTER_LABELS_DICTS = { fr: labelsFr, en: labelsEn, ru: labelsRu };
 
-export default function ProjetCard({ project, lang = "fr" }) {
+export default function ProjetCard({ project, lang = "fr", askedLang = "fr" }) {
   const projectsUi = PROJECTS_UI_DICTS[lang] || PROJECTS_UI_DICTS.fr;
   const filterLabels = FILTER_LABELS_DICTS[lang] || FILTER_LABELS_DICTS.fr;
 
@@ -88,10 +88,10 @@ export default function ProjetCard({ project, lang = "fr" }) {
 
   const skillsUrl = useMemo(() => {
     return {
-      pathname: buildInternalLangPath(lang, skillsPath),
+      pathname: buildInternalLangPath(askedLang, skillsPath),
       search: `?only=${encodeURIComponent(id)}`,
     };
-  }, [lang, skillsPath, id]);
+  }, [askedLang, skillsPath, id]);
 
   return (
     <div className={styles.card} data-project={id}>

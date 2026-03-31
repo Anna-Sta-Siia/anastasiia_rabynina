@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-
+import { useUI } from "../../context";
 import { SKILLS_GUARD_RULES } from "../../guards/page/skillsGuardRules";
 import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
@@ -43,6 +43,7 @@ const GENERAL_BY_LANG = {
 };
 
 export default function Skills() {
+  const { askedLang } = useUI();
   const displayLang = useDisplayLang();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -60,17 +61,17 @@ export default function Skills() {
   ================================================== */
   const guardResult = useMemo(() => {
     return resolveEffectiveLang({
-      askedLang: displayLang,
+      askedLang: askedLang,
       contentByLang: SKILLS_BY_LANG,
       uiByLang: SKILLS_UI_BY_LANG,
       rules: SKILLS_GUARD_RULES,
       debugLabel: "Skills i18n",
     });
-  }, [displayLang]);
+  }, [askedLang]);
 
   const { unavailable } = guardResult;
 
-  const { label, color } = usePageMeta(displayLang);
+  const { label, color } = usePageMeta();
 
   const tPack = useMemo(() => {
     return SKILLS_BY_LANG[displayLang] || SKILLS_BY_LANG.fr;
@@ -264,6 +265,7 @@ export default function Skills() {
             projectNames={projectNames}
             catsLabels={catsLabels}
             lang={displayLang}
+            askedLang={askedLang}
           />
         ))}
       </div>

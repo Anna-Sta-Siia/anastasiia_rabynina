@@ -10,7 +10,14 @@ import styles from "./SkillCard.module.css";
  *  - catsLabels?: { [catId: string]: string }
  *  - lang?: "fr" | "en" | "ru"
  */
-export default function SkillCard({ skill, catsColors, projectNames, catsLabels, lang = "fr" }) {
+export default function SkillCard({
+  skill,
+  catsColors,
+  projectNames,
+  catsLabels,
+  lang = "fr",
+  askedLang = "fr",
+}) {
   const ALL =
     { fr: "Tous les projets", en: "All projects", ru: "Все проекты" }[lang] || "All projects";
 
@@ -52,7 +59,7 @@ export default function SkillCard({ skill, catsColors, projectNames, catsLabels,
       <ul className={styles.projects}>
         {showAll ? (
           <li>
-            <Link className={styles.projectLink} to={`/${lang}/projects`}>
+            <Link className={styles.projectLink} to={`/${askedLang}/projects`}>
               {ALL}
             </Link>
           </li>
@@ -64,7 +71,7 @@ export default function SkillCard({ skill, catsColors, projectNames, catsLabels,
               <li key={pid}>
                 <Link
                   className={styles.projectLink}
-                  to={`/${lang}/projects?only=${encodeURIComponent(pid)}`}
+                  to={`/${askedLang}/projects?only=${encodeURIComponent(pid)}`}
                   title={label}
                   aria-label={label}
                 >

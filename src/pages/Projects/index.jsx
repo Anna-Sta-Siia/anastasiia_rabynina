@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-
+import { useUI } from "../../context";
 import { PROJECTS_GUARD_RULES } from "../../guards/page/projectsGuardRules";
 import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
@@ -75,6 +75,7 @@ const startsAtWord = (title, q) => {
 };
 
 export default function Projects() {
+  const { askedLang } = useUI();
   const displayLang = useDisplayLang();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -91,17 +92,17 @@ export default function Projects() {
   ================================================== */
   const guardResult = useMemo(() => {
     return resolveEffectiveLang({
-      askedLang: displayLang,
+      askedLang: askedLang,
       contentByLang: PROJECTS_BY_LANG,
       uiByLang: PROJECTS_UI_BY_LANG,
       rules: PROJECTS_GUARD_RULES,
       debugLabel: "Projects i18n",
     });
-  }, [displayLang]);
+  }, [askedLang]);
 
   const { unavailable } = guardResult;
 
-  const { label, color } = usePageMeta(displayLang);
+  const { label, color } = usePageMeta();
 
   const allProjects = useMemo(() => {
     return PROJECTS_BY_LANG[displayLang] || [];
@@ -283,7 +284,12 @@ export default function Projects() {
       <div className={styles.projectslist}>
         {hasResults ? (
           filteredProjects.map((project) => (
-            <ProjetCard key={project.id} project={project} lang={displayLang} />
+            <ProjetCard
+              key={project.id}
+              project={project}
+              lang={displayLang}
+              askedLang={askedLang}
+            />
           ))
         ) : (
           <div className={styles.empty}>

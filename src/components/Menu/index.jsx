@@ -25,6 +25,7 @@ export default function Menu() {
   const visibleItems = menuItems.filter((it) => it.showInMenu !== false);
 
   const { hasContactDraft, setHasContactDraft } = useUI();
+  const { askedLang } = useUI();
   const displayLang = useDisplayLang();
 
   const translated = labels[displayLang] || labels.en;
@@ -190,7 +191,7 @@ export default function Menu() {
             const isActive = item.key === activeKey;
 
             const targetPath =
-              !disabled && !isExternal ? buildInternalLangPath(displayLang, item.path) : item.path;
+              !disabled && !isExternal ? buildInternalLangPath(askedLang, item.path) : item.path;
 
             return (
               <Petal

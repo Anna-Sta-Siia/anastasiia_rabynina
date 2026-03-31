@@ -9,13 +9,13 @@ import styles from "./WipMessage.module.css";
  *  - blur?: boolean (default: true)
  *  - lang?: "fr" | "en" | "ru"
  */
-export default function WipMessage({ texts, links, blur = true, lang = "fr" }) {
+export default function WipMessage({ texts, links, blur = true, askedLang = "fr" }) {
   if (!texts) return null;
 
   const resolvedLinks = {
-    projects: buildInternalLangPath(lang, "/projects"),
-    home: buildInternalLangPath(lang, "/"),
-    contact: buildInternalLangPath(lang, "/contact"),
+    projects: buildInternalLangPath(askedLang, "/projects"),
+    home: buildInternalLangPath(askedLang, "/"),
+    contact: buildInternalLangPath(askedLang, "/contact"),
     cv: `${import.meta.env.BASE_URL}cv.pdf`,
     ...links,
   };

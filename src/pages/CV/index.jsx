@@ -4,7 +4,7 @@ import { usePageMeta } from "../../config/hooks/usePageMeta";
 import WipMessage from "../../components/WipMessage";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
 import { buildInternalLangPath } from "../../utils/pathManager";
-
+import { useUI } from "../../context";
 import wipFr from "../../assets/traduction/wip/wip.fr.json";
 import wipEn from "../../assets/traduction/wip/wip.en.json";
 import wipRu from "../../assets/traduction/wip/wip.ru.json";
@@ -18,6 +18,7 @@ const WIP_BY_LANG = {
 };
 
 export default function CV() {
+  const { askedLang } = useUI();
   const displayLang = useDisplayLang();
   const { label, color } = usePageMeta();
 
@@ -27,18 +28,18 @@ export default function CV() {
 
   const links = useMemo(
     () => ({
-      projects: buildInternalLangPath(displayLang, "/projects"),
-      home: buildInternalLangPath(displayLang, "/"),
-      contact: buildInternalLangPath(displayLang, "/contact"),
+      projects: buildInternalLangPath(askedLang, "/projects"),
+      home: buildInternalLangPath(askedLang, "/"),
+      contact: buildInternalLangPath(askedLang, "/contact"),
       cv: `${import.meta.env.BASE_URL}cv.pdf`,
     }),
-    [displayLang],
+    [askedLang],
   );
 
   return (
     <section className={styles.cv}>
       <PageTitle text={label} color={color} />
-      <WipMessage texts={t.cv} links={links} lang={displayLang} />
+      <WipMessage texts={t.cv} links={links} lang={displayLang} askedLang={askedLang} />
     </section>
   );
 }

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useUI } from "../../context";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
-import { buildInternalLangPath, removeLanguage, saveLang } from "../../utils/pathManager";
+import { buildInternalLangPath, removeLanguage } from "../../utils/pathManager";
 import styles from "./LangPicker.module.css";
 
 const LANGS = [
@@ -17,6 +18,7 @@ const T = {
 };
 
 export default function LangPicker() {
+  const { changeLanguage } = useUI();
   const displayLang = useDisplayLang();
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,7 +51,7 @@ export default function LangPicker() {
   }, [open, currentIndex]);
 
   function handleChange(nextLang) {
-    saveLang(nextLang);
+    changeLanguage(nextLang);
 
     const logicalPath = removeLanguage(location.pathname);
     const nextPath = buildInternalLangPath(nextLang, logicalPath);
