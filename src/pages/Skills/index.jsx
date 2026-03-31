@@ -1,8 +1,6 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useUI } from "../../context";
-import { SKILLS_GUARD_RULES } from "../../guards/page/skillsGuardRules";
-import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
 
 import PageTitle from "../../components/PageTitle";
@@ -30,12 +28,6 @@ const SKILLS_BY_LANG = {
   ru: skillsRU,
 };
 
-const SKILLS_UI_BY_LANG = {
-  fr: skillsFR,
-  en: skillsEN,
-  ru: skillsRU,
-};
-
 const GENERAL_BY_LANG = {
   fr: generalFr,
   en: generalEn,
@@ -50,26 +42,15 @@ export default function Skills() {
   const [minLevel, setMinLevel] = useState(1);
   const [showFilterHint, setShowFilterHint] = useState(false);
 
-  // langue demandée avant fallback
-  const requestedLang = searchParams.get("from") || displayLang;
-  const showFallback = requestedLang !== displayLang;
+  // Язык, который реально хотел пользователь
+  // Если страница открыта через fallback, берём from
+  const requestedLang = searchParams.get("from") || askedLang;
 
+  // fallback есть, если в URL присутствует from
+  const showFallback = searchParams.has("from");
+
+  // notice показываем на языке запроса пользователя
   const noticeUi = GENERAL_BY_LANG[requestedLang] || GENERAL_BY_LANG.fr;
-
-  /* ==================================================
-     1) GUARD RESULT (sans redirect ici)
-  ================================================== */
-  const guardResult = useMemo(() => {
-    return resolveEffectiveLang({
-      askedLang: askedLang,
-      contentByLang: SKILLS_BY_LANG,
-      uiByLang: SKILLS_UI_BY_LANG,
-      rules: SKILLS_GUARD_RULES,
-      debugLabel: "Skills i18n",
-    });
-  }, [askedLang]);
-
-  const { unavailable } = guardResult;
 
   const { label, color } = usePageMeta();
 
@@ -81,18 +62,18 @@ export default function Skills() {
     return tPack.skills || {};
   }, [tPack]);
 
-  /* ---------------- Libellés localisés des catégories ---------------- */
+  /* ---------------- Локализованные названия категорий ---------------- */
   const catsLabels = useMemo(() => tSkills.cats || {}, [tSkills]);
 
   /* ---------------- URL (?only=slug) ---------------- */
   const projectOnly = (searchParams.get("only") || "").trim();
 
-  /* ---------------- Couleurs et noms humains ---------------- */
+  /* ---------------- Цвета и человеческие названия ---------------- */
   const catsColors = useMemo(() => Object.fromEntries(CATEGORIES.map((c) => [c.id, c.color])), []);
 
   const projectNames = useMemo(() => Object.fromEntries(PROJECTS.map((p) => [p.id, p.name])), []);
 
-  /* ---------------- Sous-ensemble piloté par ?only= ---------------- */
+  /* ---------------- Подмножество по ?only= ---------------- */
   const usedByProject = useMemo(() => {
     if (!projectOnly) return SKILLS;
 
@@ -102,7 +83,7 @@ export default function Skills() {
     });
   }, [projectOnly]);
 
-  /* ---------------- Catégories initiales si ?only= ---------------- */
+  /* ---------------- Начальные категории, если есть ?only= ---------------- */
   const initialCats = useMemo(() => {
     if (!projectOnly) return [];
 
@@ -115,7 +96,7 @@ export default function Skills() {
     return [...set];
   }, [projectOnly, usedByProject]);
 
-  /* ---------------- État local des filtres ---------------- */
+  /* ---------------- Локальное состояние фильтров ---------------- */
   const [query, setQuery] = useState({
     filters: initialCats,
     search: "",
@@ -127,7 +108,7 @@ export default function Skills() {
     setQuery((q) => ({ ...q, filters: initialCats }));
   }, [initialCats]);
 
-  /* ---------------- Liste finale ---------------- */
+  /* ---------------- Финальный список ---------------- */
   const filteredSkills = useMemo(() => {
     const { filters, mode } = query;
     let list = usedByProject;
@@ -161,7 +142,7 @@ export default function Skills() {
     [projectOnly, searchParams, setSearchParams],
   );
 
-  /* ---------------- Items de Filter ---------------- */
+  /* ---------------- Items для Filter ---------------- */
   const filterItems = useMemo(
     () =>
       CATEGORIES.map((c) => ({
@@ -189,33 +170,6 @@ export default function Skills() {
     return () => clearTimeout(timer);
   }, [showFilterHint]);
 
-  /* ==================================================
-     2) UNAVAILABLE STATE
-  ================================================== */
-  if (unavailable) {
-    return (
-      <section className={styles.skills}>
-        <PageTitle text={label} color={color} />
-
-        <div className={styles.empty}>
-          <article className={styles.emptyEgg} aria-live="polite">
-            <h3 className={styles.emptyEggTitle}>{noticeUi.pageUnavailableTitle}</h3>
-            <p className={styles.emptyEggText}>{noticeUi.pageUnavailableText}</p>
-
-            <div className={styles.emptyEggActions}>
-              <Link to="/" className={styles.emptyEggBtn}>
-                {noticeUi.backHome}
-              </Link>
-            </div>
-          </article>
-        </div>
-      </section>
-    );
-  }
-
-  /* ==================================================
-     3) NORMAL / FALLBACK RENDER
-  ================================================== */
   return (
     <section className={styles.skills}>
       <PageTitle text={label} color={color} />

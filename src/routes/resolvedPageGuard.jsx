@@ -1,5 +1,4 @@
-import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
-import { useUI } from "../context";
+import { Navigate, Outlet, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { buildInternalLangPath, removeLanguage } from "../utils/pathManager";
 import { resolveEffectiveLang } from "../guards/core/resolveEffectiveLang";
 
@@ -67,7 +66,7 @@ const PAGE_GUARDS = {
 export default function ResolvedPageGuard() {
   const { lang } = useParams();
   const location = useLocation();
-  const { askedLang } = useUI();
+  const [searchParams] = useSearchParams();
 
   const logicalPath = removeLanguage(location.pathname);
   const pageGuard = PAGE_GUARDS[logicalPath];
@@ -76,8 +75,10 @@ export default function ResolvedPageGuard() {
     return <Outlet />;
   }
 
+  const requestedLang = searchParams.get("from") || lang;
+
   const result = resolveEffectiveLang({
-    askedLang,
+    askedLang: requestedLang,
     contentByLang: pageGuard.contentByLang,
     uiByLang: pageGuard.uiByLang,
     rules: pageGuard.rules,
@@ -92,7 +93,7 @@ export default function ResolvedPageGuard() {
 
   if (effectiveLang && effectiveLang !== lang) {
     const params = new URLSearchParams(location.search);
-    params.set("from", askedLang);
+    params.set("from", requestedLang);
 
     return (
       <Navigate

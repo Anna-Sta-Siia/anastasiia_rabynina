@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useUI } from "../../context";
-import { PROJECTS_GUARD_RULES } from "../../guards/page/projectsGuardRules";
-import { resolveEffectiveLang } from "../../guards/core/resolveEffectiveLang";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
 
 import styles from "./Projects.module.css";
@@ -80,27 +78,15 @@ export default function Projects() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // langue réellement demandée par l’utilisateur avant fallback
-  const requestedLang = searchParams.get("from") || displayLang;
+  const requestedLang = searchParams.get("from") || askedLang;
 
   // si from=en et URL=/fr/projects => notice visible en anglais
-  const showFallback = requestedLang !== displayLang;
-
+  const showFallback = searchParams.has("from");
   const noticeUi = GENERAL_BY_LANG[requestedLang] || GENERAL_BY_LANG.fr;
 
   /* ==================================================
      1) PAGE GUARD RESULT (sans redirect ici)
   ================================================== */
-  const guardResult = useMemo(() => {
-    return resolveEffectiveLang({
-      askedLang: askedLang,
-      contentByLang: PROJECTS_BY_LANG,
-      uiByLang: PROJECTS_UI_BY_LANG,
-      rules: PROJECTS_GUARD_RULES,
-      debugLabel: "Projects i18n",
-    });
-  }, [askedLang]);
-
-  const { unavailable } = guardResult;
 
   const { label, color } = usePageMeta();
 
@@ -233,31 +219,7 @@ export default function Projects() {
   const hasResults = filteredProjects.length > 0;
 
   /* ==================================================
-     5) UNAVAILABLE STATE
-  ================================================== */
-  if (unavailable) {
-    return (
-      <section className={styles.projects}>
-        <PageTitle text={label} color={color} />
-
-        <div className={styles.empty}>
-          <article className={styles.emptyEgg} aria-live="polite">
-            <h3 className={styles.emptyEggTitle}>{noticeUi.pageUnavailableTitle}</h3>
-            <p className={styles.emptyEggText}>{noticeUi.pageUnavailableText}</p>
-
-            <div className={styles.emptyEggActions}>
-              <Link to="/" className={styles.emptyEggBtn}>
-                {noticeUi.backHome}
-              </Link>
-            </div>
-          </article>
-        </div>
-      </section>
-    );
-  }
-
-  /* ==================================================
-     6) NORMAL RENDER
+     5) NORMAL RENDER
   ================================================== */
   return (
     <section className={styles.projects}>

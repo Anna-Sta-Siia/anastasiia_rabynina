@@ -1,5 +1,5 @@
 import { Outlet, useParams, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useUI } from "../context";
 import { saveLang } from "../utils/pathManager";
 
@@ -11,7 +11,7 @@ export default function SyncAskedLangWithUrl() {
   const from = searchParams.get("from");
   const nextAskedLang = from || lang;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!nextAskedLang) return;
     if (nextAskedLang === askedLang) return;
 
