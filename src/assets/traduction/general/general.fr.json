@@ -12,7 +12,8 @@
   "notAvailable": "Indisponible",
   "missing": "—",
   "pageFallbackTitle": "Version de langue temporairement indisponible",
-  "pageFallbackText": "La version de cette page dans la langue choisie n’est pas encore complètement prête. La version affichée a été remplacée par une langue disponible pour garantir un affichage correct.",
+  "pageFallbackText": "La version de cette page dans la langue choisie n’est pas encore complètement prête.",
+  "pageFallbackHint": "Une version alternative est affichée pour que vous puissiez continuer votre navigation.",
   "pageUnavailableTitle": "Page temporairement indisponible",
   "pageUnavailableText": "Le contenu de cette page est en cours de mise à jour. Merci de réessayer un peu plus tard.",
   "backHome": "Retour à l’accueil"

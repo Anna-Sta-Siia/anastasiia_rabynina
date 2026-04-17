@@ -7,6 +7,7 @@ import PageTitle from "../../components/PageTitle";
 import Filter from "../../components/Filter";
 import LevelSlider from "../../components/LevelSlider";
 import SkillCard from "../../components/SkillCard";
+import FallbackNotice from "../../components/FallbackNotice";
 
 import { SKILLS, CATEGORIES, PROJECTS } from "../../assets/traduction/skills/data";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
@@ -175,10 +176,9 @@ export default function Skills() {
       <PageTitle text={label} color={color} />
 
       {showFallback && (
-        <div className={styles.notice} role="status" aria-live="polite">
-          <strong>{noticeUi.pageFallbackTitle}</strong>
-          <p>{noticeUi.pageFallbackText}</p>
-        </div>
+        <FallbackNotice title={noticeUi.pageFallbackTitle} text={noticeUi.pageFallbackText}>
+          {noticeUi.pageFallbackHint}
+        </FallbackNotice>
       )}
 
       <div

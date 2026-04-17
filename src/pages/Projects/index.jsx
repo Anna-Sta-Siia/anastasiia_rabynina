@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useUI } from "../../context";
 import { useDisplayLang } from "../../hooks/useDisplayLang";
 
@@ -7,6 +7,7 @@ import styles from "./Projects.module.css";
 import Filter from "../../components/Filter";
 import ProjetCard from "../../components/ProjetCard";
 import PageTitle from "../../components/PageTitle";
+import FallbackNotice from "../../components/FallbackNotice";
 import { usePageMeta } from "../../config/hooks/usePageMeta";
 
 // Projects base + localized content
@@ -226,10 +227,9 @@ export default function Projects() {
       <PageTitle text={label} color={color} />
 
       {showFallback && (
-        <div className={styles.notice} role="status" aria-live="polite">
-          <strong>{noticeUi.pageFallbackTitle}</strong>
-          <p>{noticeUi.pageFallbackText}</p>
-        </div>
+        <FallbackNotice title={noticeUi.pageFallbackTitle} text={noticeUi.pageFallbackText}>
+          {noticeUi.pageFallbackHint}
+        </FallbackNotice>
       )}
 
       <Filter

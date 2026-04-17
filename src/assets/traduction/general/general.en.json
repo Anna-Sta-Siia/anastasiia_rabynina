@@ -11,8 +11,9 @@
   "comingSoon": "Coming soon",
   "notAvailable": "Not available",
   "missing": "—",
-  "pageFallbackTitle": "Selected language version temporarily unavailable",
-  "pageFallbackText": "The version of this page in the selected language is not fully ready yet. A fallback language is currently displayed to ensure the page renders correctly.",
+  "pageFallbackTitle": "Selected language version unavailable",
+  "pageFallbackText": "This page is not fully ready in the selected language yet.",
+  "pageFallbackHint": "An alternative version is shown so you can continue browsing.",
   "pageUnavailableTitle": "Page temporarily unavailable",
   "pageUnavailableText": "This page content is currently being updated. Please try again a little later.",
   "backHome": "Back to home"
