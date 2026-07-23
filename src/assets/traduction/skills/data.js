@@ -33,7 +33,7 @@ export const SKILLS = [
   {
     name: "Async / Promises",
     cats: ["js"],
-    level: 3,
+    level: 2,
     projects: ["sophie-bluel", "argentbank", "kasa"],
   },
   {
@@ -47,17 +47,17 @@ export const SKILLS = [
   {
     name: "REST / fetch",
     cats: ["api", "js"],
-    level: 3,
+    level: 2,
     projects: ["sophie-bluel", "kasa", "argentbank"],
   },
   {
     name: "Auth (tokens)",
     cats: ["api", "js"],
-    level: 3,
+    level: 2,
     projects: ["sophie-bluel", "argentbank"],
   },
-  { name: "Swagger / OpenAPI", cats: ["api"], level: 3, projects: ["argentbank"] },
-  { name: "Postman", cats: ["api"], level: 3, projects: ["argentbank"] },
+  { name: "Swagger / OpenAPI", cats: ["api"], level: 2, projects: ["argentbank"] },
+  { name: "Postman", cats: ["api"], level: 2, projects: ["argentbank"] },
 
   { name: "SEO", cats: ["a11y"], level: 3, projects: ["nina-carducci", "mon-projet"] },
 

@@ -1,5 +1,5 @@
 .notice {
-  max-width: min(760px, calc(100% - 2rem));
+  max-width: min(640px, calc(100% - 2rem));
   margin: 0 auto clamp(1.25rem, 2.2vw, 1.8rem);
   padding: clamp(0.85rem, 1.2vw, 1rem) clamp(1.1rem, 2.2vw, 1.45rem) clamp(0.8rem, 1.2vw, 0.95rem);
 
